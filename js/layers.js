@@ -17,17 +17,14 @@ addLayer("L", {
     return new Decimal(2)
     },
     exponent: 1, // Prestige currency exponent
-         gainMult() { // Calculate the multiplier for main currency from bonuses
-        mult = new Decimal(1)
-        
-
-        return mult
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        return new Decimal(1)
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },    
     autoPrestige(){
-        return hasMilestone('L',1) && !hasMilestone('L',3);
+        return hasMilestone('L',1) && !hasMilestone('L',3)
     },    
      row: 0, // Row the layer is in on the tree (0 is the first row)
 
@@ -35,7 +32,7 @@ addLayer("L", {
     player.L.layerPoint=getBuyableAmount("L",11).add(getBuyableAmount("L",12))
     if (player.L.points.gte(3)) {
          player.L.points = new Decimal(3)
-         },
+         }
     },
     
         milestones: {
@@ -58,7 +55,7 @@ addLayer("L", {
             requirementDescription: "1层级点数",
             effectDescription: "第二个里程碑没有作用",
             done() { return player.L.layerPoint.gte(1) }
-        },
+        }
     },
     buyables: {
 
@@ -73,11 +70,9 @@ addLayer("L", {
             return player.points.gte(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L", 11)))) 
         },
         buy() { 
-            {
-               player.points = player.points.minus(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L", 11))))
-            },
+            player.points = player.points.minus(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L", 11))))
             setBuyableAmount("L", 11, getBuyableAmount("L", 11).add(1))
-        },
+        }
     },
     12: {
         title: "层级点数",
@@ -91,8 +86,8 @@ addLayer("L", {
         },
         buy() {
             setBuyableAmount("L", 12, getBuyableAmount("L", 12).add(1))
-        },
-    },
+        }
+    }
 },
         tabFormat: {
     "里程碑": {
@@ -104,7 +99,7 @@ addLayer("L", {
         "resource-display",
         "blank",
         "blank",
-        "milestones",],
+        "milestones"]
         
     },
     "层级点数": {
@@ -116,14 +111,14 @@ addLayer("L", {
         "resource-display",
         "blank",
         "blank",
-        "buyables",],
-    },
+        "buyables"]
+    }
 },
               automateStuff(){
         if(hasMilestone("L",2) && !hasMilestone('L',4)){
-          if(layers.L.buyables[11].canAfford())setBuyableAmount("L",11,player.points.log(10).log(10).floor().add(1))
-          if(layers.L.buyables[12].canAfford())setBuyableAmount("L",12,player.L.layerPoint.log(2).floor().add(1))
-        },
+            if(canBuyBuyable("L",11))buyBuyable("L",11)
+            if(canBuyBuyable("L",12))buyBuyable("L",12)
+        }
     },
     layerShown(){return true}
 })
