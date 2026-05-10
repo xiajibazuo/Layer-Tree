@@ -34,7 +34,6 @@ addLayer("L", {
          player.L.points = new Decimal(3)
          }
     },
-    
         milestones: {
         1: {
             requirementDescription: "0层级",
@@ -63,7 +62,7 @@ addLayer("L", {
         title: "点数",
         display() {
 
-           return "价格：" + format(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L", 11)))) + "点数"
+           return "价格：" + format(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L", 11)))) + "点数<br>数量：" +format(getBuyableAmount("L",11))
         },
         unlocked() { return true},
         canAfford() { 
@@ -72,24 +71,25 @@ addLayer("L", {
         buy() { 
             player.points = player.points.minus(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L", 11))))
             setBuyableAmount("L", 11, getBuyableAmount("L", 11).add(1))
-        }
+        },
+        style: {'height':'100px','width':'200px'}
     },
     12: {
         title: "层级点数",
         display() {
-
-           return "价格：达到" + format(new Decimal("2").pow(getBuyableAmount("L", 12))) + "层级点数"
+           return "价格：达到" + format(new Decimal("3").pow(getBuyableAmount("L", 12))) + "层级点数<br>数量：" +format(getBuyableAmount("L",12))
         },
         unlocked() { return true},
         canAfford() { 
-            return player.L.layerPoint.gte(new Decimal("2").pow(getBuyableAmount("L", 12)))
+            return player.L.layerPoint.gte(new Decimal("3").pow(getBuyableAmount("L", 12)))
         },
         buy() {
             setBuyableAmount("L", 12, getBuyableAmount("L", 12).add(1))
-        }
+        },
+        style: {'height':'100px','width':'200px'}
     }
 },
-        tabFormat: {
+    tabFormat: {
     "里程碑": {
         content: [
         "main-display",
@@ -114,11 +114,20 @@ addLayer("L", {
         "buyables"]
     }
 },
-              automateStuff(){
+    automateStuff(){
         if(hasMilestone("L",2) && !hasMilestone('L',4)){
             if(canBuyBuyable("L",11))buyBuyable("L",11)
             if(canBuyBuyable("L",12))buyBuyable("L",12)
         }
+    },
+    doReset(resettingLayer) {
+        let keep = [];
+        
+        if (resettingLayer=="L") {
+        keep.push("points")
+        keep.push("milestones")
+        }
+        if (layers[resettingLayer].row > this.row || layers[resettingLayer] == "L") {layerDataReset(this.layer, keep)}
     },
     layerShown(){return true}
 })
