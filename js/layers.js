@@ -127,7 +127,7 @@ addLayer("L", {
         keep.push("points")
         keep.push("milestones")
         }
-        if (layers[resettingLayer].row > this.row || layers[resettingLayer] == "L") {layerDataReset(this.layer, keep)}
+        if (layers[resettingLayer].row > this.row || resettingLayer == "L") {layerDataReset(this.layer, keep)}
     },
-    layerShown(){return true}
+    layerShown(){return player.L.points.gte(1)}
 })
