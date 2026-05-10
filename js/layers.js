@@ -141,13 +141,13 @@ addLayer("ED", {
     resource: "结束",            // The name of this layer's main prestige resource.
     row: 114514,                                 // The row this layer is on (0 is the first row).
 
-    baseResource: "static",                 // The name of the resource your prestige gain is based on.
+    baseResource: "点数",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.points },  // A function to return the current amount of baseResource.
 
     requires: new Decimal(0),              // The amount of the base needed to  gain 1 of the prestige currency.
                                             // Also the amount required to unlock the layer.
 
-    type: "normal",                         // Determines the formula used for calculating prestige currency.
+    type: "static",                         // Determines the formula used for calculating prestige currency.
     exponent: 0.5,                          // "normal" prestige gain is (currency^exponent).
     base(){
     return new Decimal(1)
