@@ -6,7 +6,7 @@ let modInfo = {
 
 	discordName: "",
 	discordLink: "",
-	initialStartPoints: new Decimal (0), // Used for hard resets and new players
+	initialStartPoints: new Decimal(0), // Used for hard resets and new players
 	offlineLimit: 0,  // In hours
 }
 
@@ -24,7 +24,7 @@ let changelog = `<h1>Changelog:</h1><br>
   -test:<br>
   <h1>0</h1>`
 
-let winText = `恭喜！您已成功完成游戏并到达终点，不过目前......`
+let winText = `恭喜！您已成功完成游戏并到达终点，不过目前......不妨找找彩蛋(`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -45,6 +45,12 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
+	if (hasUpgrade("p",11)){
+	    if (hasMilestone("p",0))gain.times(7)
+	    else gain.times(4)
+	}
+	if (hasUpgrade("p",12))gain.times(Math.log(player.points.add(1)).add(1))
+	if (hasUpgrade("p",13))gain.times(player.points.pow(0.5))
 	return gain
 }
 
