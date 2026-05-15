@@ -201,9 +201,14 @@ addLayer("ED", {
     },
     update(diff){
     player.p.points = player.points
-    }
+    },
     layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
     milestones: {
+        0: {
+            requirementDescription: "24000点数",
+            effectDescription: "升级1的效果更好(*4→*7)",
+            done() { return player.points.gte(24000) }
+        }
     
     
     
@@ -211,8 +216,26 @@ addLayer("ED", {
     
     
     
-    }
+    },
     upgrades: {
+    11: {
+        title: "1",
+        description(){
+        if(hasMilestone("p",0))return "点数*7"
+        else return "点数*4"
+        },
+        cost: new Decimal(300),
+    },
+    12: {
+        title: "2",
+        description: "点数*(ln(点数+1)+1)",
+        cost: new Decimal(1200),
+    },
+    13: {
+        title: "3",
+        description: "点数*点数^1/2",
+        cost: new Decimal(40000),
+    }
     
     
     
