@@ -64,7 +64,7 @@ addLayer("L", {
         display() {
            return "价格：" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount("L",11))
         },
-        unlocked() { return true},
+        unlocked() { return true },
         canAfford() { 
             return player.points.gte(this.cost()) 
         },
@@ -79,7 +79,7 @@ addLayer("L", {
         display() {
            return "价格：达到" + format(new Decimal("3").pow(getBuyableAmount("L", 12))) + "层级点数<br>数量：" +format(getBuyableAmount("L",12))
         },
-        unlocked() { return true},
+        unlocked() { return true },
         canAfford() { 
             return player.L.layerPoint.gte(new Decimal("3").pow(getBuyableAmount("L", 12)))
         },
@@ -134,7 +134,7 @@ addLayer("L", {
 addLayer("ED", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
         unlocked: true,                     // You can add more variables here to add them to your layer.
-        points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
+        points: new Decimal(0)             // "points" is the internal name for the main resource of the layer.
     }},
 
     color: "#808080",                       // The color for this layer, which affects many elements.
@@ -187,7 +187,7 @@ addLayer("ED", {
     baseResource: "points",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.points },  // A function to return the current amount of baseResource.
 
-    requires: new Decimal("F1.78e308"),              // The amount of the base needed to  gain 1 of the prestige currency.
+    requires: new Decimal("1F1.78e308"),              // The amount of the base needed to  gain 1 of the prestige currency.
                                             // Also the amount required to unlock the layer.
 
     type: "normal",                         // Determines the formula used for calculating prestige currency.
@@ -224,17 +224,17 @@ addLayer("ED", {
         if(hasMilestone("p",0))return "点数*7"
         else return "点数*4"
         },
-        cost: new Decimal(300),
+        cost: new Decimal(300)
     },
     12: {
         title: "2",
         description: "点数*(ln(点数+1)+1)",
-        cost: new Decimal(1200),
+        cost: new Decimal(1200)
     },
     13: {
         title: "3",
         description: "点数*点数^1/2",
-        cost: new Decimal(40000),
+        cost: new Decimal(40000)
     }
     
     
