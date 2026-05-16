@@ -24,7 +24,7 @@ let changelog = `<h1>Changelog:</h1><br>
   -test:<br>
   <h1>114514</h1>`
 
-let winText = `恭喜！您已成功完成游戏并到达终点，不过目前......不妨找找彩蛋( `
+let winText = `恭喜！您已成功完成游戏并到达终点，不过目前...... `
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -45,12 +45,6 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
-	if (hasUpgrade("p",11)){
-	    if (hasMilestone("p",0))gain=gain.times(7)
-	    else gain=gain.times(4)
-	}
-	if (hasUpgrade("p",12))gain=gain.times(player.points.add(1).log(2.718281828).add(1))
-	if (hasUpgrade("p",13))gain=gain.times(player.points.pow(0.5))
 	return gain
 }
 
