@@ -60,7 +60,6 @@ addLayer("L", {
 
     11: {
         title: "点数",
-        cost(x) { return new Decimal("10").pow(new Decimal("10").pow(x)) },
         display() {
             if(getBuyableAmount("L",11).eq(0))return "价格：5点数<br>数量：0"
             else return "价格：" + format(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L",11)))) + "点数<br>数量：" +format(getBuyableAmount("L",11))
