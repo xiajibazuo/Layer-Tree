@@ -60,16 +60,16 @@ addLayer("L", {
 
     11: {
         title: "点数",
-        cost(x) { return new Decimal("10").pow(new Decimal("10").pow(x)) },
         display() {
-           return "价格：" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount("L",11))
+
+           return "价格：" + format(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L", 11)))) + "点数<br>数量：" +format(getBuyableAmount("L",11))
         },
-        unlocked() { return true },
+        unlocked() { return true},
         canAfford() { 
-            return player.points.gte(this.cost()) 
+            return player.points.gte(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L", 11)))) 
         },
         buy() { 
-            player.points = player.points.minus(this.cost())
+            player.points = player.points.minus(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L", 11))))
             setBuyableAmount("L", 11, getBuyableAmount("L", 11).add(1))
         },
         style: {'height':'100px','width':'200px'}
@@ -79,7 +79,7 @@ addLayer("L", {
         display() {
            return "价格：达到" + format(new Decimal("3").pow(getBuyableAmount("L", 12))) + "层级点数<br>数量：" +format(getBuyableAmount("L",12))
         },
-        unlocked() { return true },
+        unlocked() { return true},
         canAfford() { 
             return player.L.layerPoint.gte(new Decimal("3").pow(getBuyableAmount("L", 12)))
         },
@@ -134,7 +134,7 @@ addLayer("L", {
 addLayer("ED", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
         unlocked: true,                     // You can add more variables here to add them to your layer.
-        points: new Decimal(0)             // "points" is the internal name for the main resource of the layer.
+        points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
     }},
 
     color: "#808080",                       // The color for this layer, which affects many elements.
@@ -165,6 +165,8 @@ addLayer("ED", {
           "blank",
         ["prestige-button",function(){return ""}],
         "blank",
+        "resource-display",
+        "blank",
         "blank",
         ["display-text",function(){
           let s=""
@@ -173,5 +175,5 @@ addLayer("ED", {
         }]]
     }
 },
-    layerShown() { return player.points.gte(0)}          // Returns a bool for if this layer's node should be visible in the tree.别忘了改!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    layerShown() { return player.L.points.gte(2)}          // Returns a bool for if this layer's node should be visible in the tree.
 })
