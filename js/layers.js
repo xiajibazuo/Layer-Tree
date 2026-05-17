@@ -66,7 +66,7 @@ addLayer("L", {
         },
         unlocked() { return true },
         canAfford() { 
-            if(getBuyableAmount("L",11).eq(0)) return new Decimal(5)
+            if(getBuyableAmount("L",11).eq(0)) return new Decimal("5")
             else return player.points.gte(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L",11)))) 
         },
         buy() { 
@@ -176,6 +176,7 @@ addLayer("ED", {
     }
 },
     layerShown() { return player.points.gte(0)}          // Returns a bool for if this layer's node should be visible in the tree.
+    //别忘了改!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 })
 addLayer("p", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
@@ -190,10 +191,10 @@ addLayer("p", {
     baseResource: "points",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.points },  // A function to return the current amount of baseResource.
 
-    requires: new Decimal("0"),              // The amount of the base needed to  gain 1 of the prestige currency.
+    requires: new Decimal("10^^1.78e308"),              // The amount of the base needed to  gain 1 of the prestige currency.
                                             // Also the amount required to unlock the layer.
 
-    type: "normal",                         // Determines the formula used for calculating prestige currency.
+    type: "none",                         // Determines the formula used for calculating prestige currency.
     exponent: 0.5,                          // "normal" prestige gain is (currency^exponent).
 
     gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
@@ -201,5 +202,52 @@ addLayer("p", {
     },
     gainExp() {                             // Returns the exponent to your gain of the prestige resource.
         return new Decimal(1)
+    },
+    update(diff){
+    player.p.points = player.points
+    },
+    layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
+    milestones: {
+        0: {
+            requirementDescription: "24000点数",
+            effectDescription: "升级1的效果更好(*4→*7)",
+            done() { return player.points.gte(24000) }
+        }
+    },
+    upgrades: {
+        11: {
+            title: "1",
+            description(){
+                if(hasMilestone("p",0))return "点数*7"
+                else return "点数*4"
+            },
+            cost: new Decimal(300)
+        },
+        12: {
+            title: "2",
+            description: "点数*(ln(点数+1)+1)",
+            cost: new Decimal(1200)
+        },
+        13: {
+            title: "3",
+            description: "点数*点数^1/2",
+            cost: new Decimal(40000)
+        }
+    },
+    tabFormat: {
+    "里程碑": {
+        content: [
+        "main-display",
+        "blank",
+        "blank",
+        "milestones"]
+    },
+    "升级": {
+        content: [
+        "main-display",
+        "blank",
+        "blank",
+        "upgrades"]
     }
+}
 })
