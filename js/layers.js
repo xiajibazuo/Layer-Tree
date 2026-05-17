@@ -61,17 +61,17 @@ addLayer("L", {
     11: {
         title: "点数",
         display() {
-            if(getBuyableAmount("L",11).eq(0))return "价格：5点数<br>数量：0"
+            if(getBuyableAmount("L",11).eq(0)) return "价格：5点数<br>数量：0"
             else return "价格：" + format(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L",11)))) + "点数<br>数量：" +format(getBuyableAmount("L",11))
         },
         unlocked() { return true },
         canAfford() { 
-            if(getBuyableAmount("L",11).eq(0))return new Decimal(5)
+            if(getBuyableAmount("L",11).eq(0)) return new Decimal(5)
             else return player.points.gte(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L",11)))) 
         },
         buy() { 
-            if(getBuyableAmount("L",11).eq(0))player.points = player.points.minus(5)
-            else player.points = player.points.minus(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L",11))))
+            if(getBuyableAmount("L",11).eq(0)) player.points = player.points.minus(5)
+            else {player.points = player.points.minus(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L",11))))}
             setBuyableAmount("L", 11, getBuyableAmount("L", 11).add(1))
         },
         style: {'height':'100px','width':'200px'}
@@ -176,8 +176,8 @@ addLayer("ED", {
     }
 },
     layerShown() { return player.points.gte(0)}          // Returns a bool for if this layer's node should be visible in the tree.
-    //别忘了改!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-})addLayer("p", {
+})
+addLayer("p", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
         unlocked: true,                     // You can add more variables here to add them to your layer.
         points: new Decimal(0)             // "points" is the internal name for the main resource of the layer.
