@@ -30,14 +30,14 @@ addLayer("L", {
 
     update(diff){
     player.L.layerPoint=getBuyableAmount("L",11).add(getBuyableAmount("L",12))
-    if (player.L.points.gte(3)) {
+   /* if (player.L.points.gte(3)) {
          player.L.points = new Decimal(3)
-         }
+         }*/
     },
         milestones: {
         1: {
             requirementDescription: "0层级",
-            effectDescription: "自动购买层级，每一个层级都会解锁一个层级，上限为3个层级",
+            effectDescription: "自动购买层级，每一个层级都会解锁一个层级，上限为?个层级",
             done() { return player.L.points.gte(0) }
         },
         2: {
@@ -54,6 +54,13 @@ addLayer("L", {
             requirementDescription: "1层级点数",
             effectDescription: "第二个里程碑没有作用",
             done() { return player.L.layerPoint.gte(1) }
+        },
+        5: {
+            requirementDescription: "2层级",
+            effectDescription(){ 
+                return "基于层级点数增益点数（10^层级点数）<br>效果：" + format(player.L.points.exp(10))
+            },
+            done() { return player.L.points.gte(2) }
         }
     },
     buyables: {
@@ -66,7 +73,7 @@ addLayer("L", {
         },
         unlocked() { return true },
         canAfford() { 
-            if(getBuyableAmount("L",11).eq(0)) return new Decimal("5")
+            if(getBuyableAmount("L",11).eq(0)) return player.points.gte(5)
             else return player.points.gte(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L",11)))) 
         },
         buy() { 
@@ -206,7 +213,7 @@ addLayer("p", {
     update(diff){
     player.p.points = player.points
     },
-    layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
+    layerShown() { return player.L.points.gte(2)},          // Returns a bool for if this layer's node should be visible in the tree.
     milestones: {
         0: {
             requirementDescription: "24000点数",
@@ -225,12 +232,16 @@ addLayer("p", {
         },
         12: {
             title: "2",
-            description: "点数*(ln(点数+1)+1)",
+            description(){
+                return "点数*(ln(点数+1)+1)<br>效果：*" + format(player.points.add(1).log(2.718281828).add(1))
+            },
             cost: new Decimal(1200)
         },
         13: {
             title: "3",
-            description: "点数*点数^1/2",
+            description(){
+                return "点数*点数^1/2<br>效果：*" + format(player.points.pow(0.2))
+            },
             cost: new Decimal(40000)
         }
     },
