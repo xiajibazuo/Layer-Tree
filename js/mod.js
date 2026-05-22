@@ -45,7 +45,7 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
-	if (hasMilestone("L",5))gain=gain.times(player.L.layerPoint.exp(10))
+	if (hasMilestone("L",5))gain=gain.times(new Decimal(10).pow(player.L.layerPoint))
 	if (hasUpgrade("p",11)){
 	    if (hasMilestone("p",0))gain=gain.times(7)
 	    else gain=gain.times(4)
