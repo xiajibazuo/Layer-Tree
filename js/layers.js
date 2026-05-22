@@ -182,7 +182,7 @@ addLayer("ED", {
         }]]
     }
 },
-    layerShown() { return player.Lpoints.gte(3)}          // Returns a bool for if this layer's node should be visible in the tree.
+    layerShown() { return player.L.points.gte(3)}          // Returns a bool for if this layer's node should be visible in the tree.
     //别忘了改!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 })
 addLayer("p", {
