@@ -58,7 +58,7 @@ addLayer("L", {
         5: {
             requirementDescription: "2层级",
             effectDescription(){ 
-                return "基于层级点数增益点数（10^层级点数）<br>效果：" + format(player.L.points.exp(10))
+                return "基于层级点数增益点数（10^层级点数）<br>效果：" + format(new Decimal(10).pow(player.L.layerPoint))
             },
             done() { return player.L.points.gte(2) }
         }
@@ -182,7 +182,7 @@ addLayer("ED", {
         }]]
     }
 },
-    layerShown() { return player.points.gte(0)}          // Returns a bool for if this layer's node should be visible in the tree.
+    layerShown() { return player.Lpoints.gte(3)}          // Returns a bool for if this layer's node should be visible in the tree.
     //别忘了改!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 })
 addLayer("p", {
