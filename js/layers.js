@@ -240,7 +240,7 @@ addLayer("p", {
         13: {
             title: "3",
             description(){
-                return "点数*点数^1/2<br>效果：*" + format(player.points.pow(0.2))
+                return "点数*点数^1/2<br>效果：*" + format(player.points.pow(0.5).add(1))
             },
             cost: new Decimal(40000)
         }
