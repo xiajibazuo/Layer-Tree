@@ -58,9 +58,14 @@ addLayer("L", {
         5: {
             requirementDescription: "2层级",
             effectDescription(){ 
-                return "基于层级点数增益点数（10^层级点数）<br>效果：" + format(new Decimal(10).pow(player.L.layerPoint))
+                return "基于层级点数增益点数<br>公式：10^层级点数<br>效果：" + format(new Decimal(10).pow(player.L.layerPoint))
             },
             done() { return player.L.points.gte(2) }
+        },
+        6: {
+            requirementDescription: "3层级",
+            effectDescription: "声望点数重置时保留L层级",
+            done() { return player.L.points.gte(3) }
         }
     },
     buyables: {
@@ -136,7 +141,7 @@ addLayer("L", {
         keep.push("points")
         keep.push("milestones")
         }
-        if (layers[resettingLayer].row > this.row || resettingLayer == "L") {layerDataReset(this.layer, keep)}
+        if (layers[resettingLayer].row > this.row || resettingLayer == "L" || resettingLayer !== "P") {layerDataReset(this.layer, keep)}
     },
     layerShown(){return player.L.points.gte(1)}
 })
@@ -182,10 +187,11 @@ addLayer("ED", {
         }]]
     }
 },
-    layerShown() { return player.L.points.gte(3)}          // Returns a bool for if this layer's node should be visible in the tree.
+    layerShown() { return player.L.points.gte(4)}          // Returns a bool for if this layer's node should be visible in the tree.
     //别忘了改!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 })
 addLayer("p", {
+    name: "点数", // This is optional, only used in a few places, If absent it just uses the layer id.
     startData() { return {                  // startData is a function that returns default data for a layer. 
         unlocked: true,                     // You can add more variables here to add them to your layer.
         points: new Decimal(0)             // "points" is the internal name for the main resource of the layer.
@@ -214,35 +220,116 @@ addLayer("p", {
     player.p.points = player.points
     },
     layerShown() { return player.L.points.gte(2)},          // Returns a bool for if this layer's node should be visible in the tree.
-    milestones: {
-        0: {
-            requirementDescription: "24000点数",
-            effectDescription: "升级1的效果更好(*4→*7)",
-            done() { return player.points.gte(24000) }
-        }
-    },
     upgrades: {
         11: {
             title: "1",
             description(){
-                if(hasMilestone("p",0))return "点数*7"
-                else return "点数*4"
+                if(hasUpgrade("p",13))return "点数增益自己<br>公式：*7"
+                else return "点数增益自己<br>公式：*4"
             },
             cost: new Decimal(300)
         },
         12: {
             title: "2",
             description(){
-                return "点数*(ln(点数+1)+1)<br>效果：*" + format(player.points.add(1).log(2.718281828).add(1))
+                return "点数增益自己<br>公式：*(ln(点数+1)+1)<br>效果：*" + format(player.points.add(1).log(2.718281828).add(1))
             },
             cost: new Decimal(1200)
         },
         13: {
             title: "3",
             description(){
-                return "点数*点数^1/2<br>效果：*" + format(player.points.pow(0.5).add(1))
+                return "升级1的效果更好(*4→*7)"
+            },
+            cost: new Decimal(24000)
+        },
+        14: {
+            title: "4",
+            description(){
+                return "点数增益自己<br>公式：*点数^1/4+1<br>效果：*" + format(player.points.pow(0.25).add(1))
             },
             cost: new Decimal(40000)
+        },
+        15: {
+            title: "5",
+            description(){
+                return "点数增益自己<br>公式：*点数^1/4+1<br>效果：*" + format(player.points.pow(0.25).add(1))
+            },
+            cost: new Decimal(1e6)
+        }
+    },
+    tabFormat: {
+    "升级": {
+        content: [
+        "main-display",
+          "blank",
+        ["prestige-button",function(){return ""}],
+        "blank",
+        "resource-display",
+        "blank",
+        "blank",
+        "upgrades"]
+        
+        },
+    },
+    doReset(resettingLayer) {
+        let keep = [];
+        if (hasMilestone("P",1)) keep.push("upgrade")
+        
+        if (layers[resettingLayer].row > this.row || resettingLayer == "L") {layerDataReset(this.layer, keep)}
+    }
+})
+addLayer("P", {
+    startData() { return {                  // startData is a function that returns default data for a layer. 
+        unlocked: true,                     // You can add more variables here to add them to your layer.
+        points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
+        total: new Decimal(0)
+    }},
+
+    color: "#4BDC13",                       // The color for this layer, which affects many elements.
+    resource: "声望点数",            // The name of this layer's main prestige resource.
+    row: 1,                                 // The row this layer is on (0 is the first row).
+
+    baseResource: "点数",                 // The name of the resource your prestige gain is based on.
+    baseAmount() { return player.points },  // A function to return the current amount of baseResource.
+
+    requires: new Decimal(1e14),              // The amount of the base needed to  gain 1 of the prestige currency.
+                                            // Also the amount required to unlock the layer.
+
+    type: "normal",                         // Determines the formula used for calculating prestige currency.
+    exponent: 0.2,                          // "normal" prestige gain is (currency^exponent).
+
+    gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
+        return new Decimal(1)               // Factor in any bonuses multiplying gain here.
+    },
+    gainExp() {                             // Returns the exponent to your gain of the prestige resource.
+        return new Decimal(1)
+    },
+
+    layerShown() { return player.L.points.gte(3) },          // Returns a bool for if this layer's node should be visible in the tree.
+
+    milestones: {
+        1: {
+            requirementDescription: "10声望点数",
+            effectDescription: "重置时保留p层级升级",
+            done() { return player.P.points.gte(10) }
+        }
+    },
+    upgrades: {
+        11: {
+            title: "P1",
+            description(){
+                return "声望点数增益点数<br>公式：*(声望点数*ln(声望点数+1)+1)<br>效果：*" + format(player.P.points.times(player.P.points.add(1).log(2.718281828)).add(1))
+            },
+            cost: new Decimal(1)
+        },
+        1000000001: {
+            title: "点不到的升级",
+            description(){
+                return "棍母"
+            },
+            canAfford(){return player.P.total.lte(0)},
+            pay(){}
         }
     },
     tabFormat: {
@@ -260,33 +347,4 @@ addLayer("p", {
         "blank",
         "upgrades"]
     }
-}
-})
-addLayer("P", {
-    startData() { return {                  // startData is a function that returns default data for a layer. 
-        unlocked: true,                     // You can add more variables here to add them to your layer.
-        points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
-    }},
-
-    color: "#4BDC13",                       // The color for this layer, which affects many elements.
-    resource: "prestige points",            // The name of this layer's main prestige resource.
-    row: 0,                                 // The row this layer is on (0 is the first row).
-
-    baseResource: "points",                 // The name of the resource your prestige gain is based on.
-    baseAmount() { return player.points },  // A function to return the current amount of baseResource.
-
-    requires: new Decimal(10),              // The amount of the base needed to  gain 1 of the prestige currency.
-                                            // Also the amount required to unlock the layer.
-
-    type: "normal",                         // Determines the formula used for calculating prestige currency.
-    exponent: 0.5,                          // "normal" prestige gain is (currency^exponent).
-
-    gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
-        return new Decimal(1)               // Factor in any bonuses multiplying gain here.
-    },
-    gainExp() {                             // Returns the exponent to your gain of the prestige resource.
-        return new Decimal(1)
-    },
-
-    layerShown() { return true }           // Returns a bool for if this layer's node should be visible in the tree.
 })
