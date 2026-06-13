@@ -262,15 +262,10 @@ addLayer("p", {
     "升级": {
         content: [
         "main-display",
-          "blank",
-        ["prestige-button",function(){return ""}],
-        "blank",
-        "resource-display",
         "blank",
         "blank",
         "upgrades"]
-        
-        },
+        }
     },
     doReset(resettingLayer) {
         let keep = [];
@@ -336,6 +331,10 @@ addLayer("P", {
     "里程碑": {
         content: [
         "main-display",
+          "blank",
+        ["prestige-button",function(){return ""}],
+        "blank",
+        "resource-display",
         "blank",
         "blank",
         "milestones"]
@@ -343,6 +342,10 @@ addLayer("P", {
     "升级": {
         content: [
         "main-display",
+          "blank",
+        ["prestige-button",function(){return ""}],
+        "blank",
+        "resource-display",
         "blank",
         "blank",
         "upgrades"]
