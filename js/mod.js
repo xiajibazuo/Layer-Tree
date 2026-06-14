@@ -22,7 +22,7 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Added stuff.<br>
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
   -test:<br>
-  <h1>log(1)</h1>`
+  <h1>log(e)</h1>`
 
 let winText = `恭喜！您已成功完成游戏并到达终点，不过目前......不妨找找彩蛋( `
 
@@ -44,14 +44,15 @@ function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
 
-	let gain = new Decimal(1)
+	let gain = new Decimal(1e100)
 	if (hasMilestone("L",5))gain=gain.times(new Decimal(10).pow(player.L.layerPoint))
 	if (hasUpgrade("p",11)){
-	    if (hasMilestone("p",0))gain=gain.times(7)
+	    if (hasUpgrade("p",13))gain=gain.times(7)
 	    else gain=gain.times(4)
 	}
 	if (hasUpgrade("p",12))gain=gain.times(player.points.add(1).log(2.718281828).add(1))
-	if (hasUpgrade("p",13))gain=gain.times(player.points.pow(0.5).add(1))
+	if (hasUpgrade("p",14))gain=gain.times(player.points.pow(0.25).add(1))
+	if (hasUpgrade("p",15))gain=gain.times(player.points.pow(0.25).add(1))
 	return gain
 }
 
