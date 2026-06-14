@@ -276,7 +276,7 @@ addLayer("p", {
 })
 addLayer("P", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
-        unlocked: true,                     // You can add more variables here to add them to your layer.
+        unlocked: false,                     // You can add more variables here to add them to your layer.
         points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
         total: new Decimal(0)
     }},
@@ -324,7 +324,8 @@ addLayer("P", {
                 return "棍母"
             },
             canAfford(){return player.P.total.lte(0)},
-            pay(){}
+            pay(){},
+            cost: new Decimal(0)
         }
     },
     tabFormat: {
