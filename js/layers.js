@@ -318,7 +318,7 @@ addLayer("P", {
             },
             cost: new Decimal(1)
         },
-        1000000001: {
+        91: {
             title: "点不到的升级",
             description(){
                 return "棍母"
