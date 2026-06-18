@@ -29,7 +29,7 @@ addLayer("L", {
      row: 0, // Row the layer is in on the tree (0 is the first row)
 
     update(diff){
-    player.L.layerPoint=getBuyableAmount("L",11).add(getBuyableAmount("L",12))
+    player.L.layerPoint=getBuyableAmount("L",11).add(getBuyableAmount("L",12)).add(getBuyableAmount("L", 13))
    /* if (player.L.points.gte(3)) {
          player.L.points = new Decimal(3)
          }*/
@@ -101,6 +101,21 @@ addLayer("L", {
             setBuyableAmount("L", 12, getBuyableAmount("L", 12).add(1))
         },
         style: {'height':'100px','width':'200px'}
+    },
+    13: {
+        title: "声望点数",
+        display() {
+           return "价格：" + format(new Decimal("10").pow(getBuyableAmount("L", 13).pow(2).times(0.5).add(getBuyableAmount("L", 13).times(1.5).add(1)))) + "声望点数<br>数量：" +format(getBuyableAmount("L",13))
+        },
+        unlocked() { return hasUpgrade("P",12) },
+        canAfford() { 
+            return player.P.points.gte(new Decimal("10").pow(getBuyableAmount("L", 13).pow(2).times(0.5).add(getBuyableAmount("L", 13).times(1.5).add(1))))
+        },
+        buy() {
+            player.P.points=player.P.points.minus(new Decimal("10").pow(getBuyableAmount("L", 13).pow(2).times(0.5).add(getBuyableAmount("L", 13).times(1.5).add(1))))
+            setBuyableAmount("L", 13, getBuyableAmount("L", 13).add(1))
+        },
+        style: {'height':'100px','width':'200px'}
     }
 },
     tabFormat: {
@@ -125,6 +140,11 @@ addLayer("L", {
         "resource-display",
         "blank",
         "blank",
+        ["display-text",function(){
+          let s=""
+          s+="可购买用于购买层级点数<br>"
+          return s
+        }],
         "buyables"]
     }
 },
@@ -132,6 +152,7 @@ addLayer("L", {
         if(hasMilestone("L",2) && !hasMilestone('L',4)){
             if(canBuyBuyable("L",11))buyBuyable("L",11)
             if(canBuyBuyable("L",12))buyBuyable("L",12)
+            if(canBuyBuyable("L",13))buyBuyable("L",13)
         }
     },
     doReset(resettingLayer) {
@@ -224,8 +245,9 @@ addLayer("p", {
         11: {
             title: "1",
             description(){
-                if(hasUpgrade("p",13))return "点数增益自己<br>公式：*7"
-                else return "点数增益自己<br>公式：*4"
+                if(hasUpgrade("P",13))return "增益点数<br>公式：^ee45e4"
+                if(hasUpgrade("p",13))return "增益点数<br>公式：*7"
+                else return "增益点数<br>公式：*4"
             },
             cost: new Decimal(300)
         },
@@ -239,6 +261,7 @@ addLayer("p", {
         13: {
             title: "3",
             description(){
+                if(hasUpgrade("P",13)) return "升级1的效果更好(*4→^ee45e4)"
                 return "升级1的效果更好(*4→*7)"
             },
             cost: new Decimal(24000)
@@ -317,6 +340,20 @@ addLayer("P", {
                 return "声望点数增益点数<br>公式：*(声望点数*ln(声望点数+1)+1)<br>效果：*" + format(player.P.points.times(player.P.points.add(1).log(2.718281828)).add(1))
             },
             cost: new Decimal(1)
+        },
+        12: {
+            title: "P2",
+            description(){
+                return "解锁声望点数的层级可购买"
+            },
+            cost: new Decimal(10)
+        },        
+        13: {
+            title: "P3",
+            description(){
+                return "升级3的效果更好(*7→^ee45e4)"
+            },
+            cost: new Decimal(1000)
         },
         91: {
             title: "点不到的升级",
