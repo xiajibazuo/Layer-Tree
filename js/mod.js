@@ -1,6 +1,6 @@
 let modInfo = {
 	name: "The Layer Tree",
-	author: "xiajibazuo",
+	author: "我是xiajibazuo我埃及吧做啥就做啥",
 	pointsName: "点数",
 	modFiles: ["layers.js", "tree.js"],
 
@@ -12,11 +12,16 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
+	num: "0.1",
 	name: "Literally nothing",
 }
 
-let changelog = `<h1>Changelog:</h1><br>
+let changelog = `<h1>更新日志:</h1><br>
+    <h3>v0.1</h3><br>
+        -新增5个层级
+        -新增8个升级
+        -新增9个里程碑
+        -新增3个可点击
 	<h3>v0.0</h3><br>
 		- Added things.<br>
 		- Added stuff.<br>
@@ -56,7 +61,9 @@ function getPointGen() {
 	if (hasUpgrade("p",15))gain=gain.times(player.points.pow(0.25).add(1))
 	if (hasUpgrade("P",11))gain=gain.times(player.P.points.times(player.P.points.add(1).log(2.718281828)).add(1))
 	
-	if (hasUpgrade("p",11) && hasUpgrade("p",13) && hasUpgrade("P",13))exp = exp.times(1.2)
+	if (hasUpgrade("p",14))exp = exp.times(1.5)
+	if (hasUpgrade("p",15))exp = exp.times(1.5)
+	if (hasUpgrade("p",11) && hasUpgrade("p",13) && hasUpgrade("P",13))exp = exp.times(1.3)
 	
 	gain = gain.pow(exp)
 	return gain
