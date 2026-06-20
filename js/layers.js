@@ -359,7 +359,7 @@ addLayer("p", {
     },
     doReset(resettingLayer) {
         let keep = [];
-        if (hasMilestone("P",1)) keep.push("upgrades")
+        if (hasMilestone("P",1) || resettingLayer == "P") keep.push("upgrades")
         
         if ((resettingLayer == "ED" && getClickableState("ED",11) == 1 ) || resettingLayer == "L" || resettingLayer == "P") {layerDataReset(this.layer, keep)}
     }
@@ -378,7 +378,7 @@ addLayer("P", {
     baseResource: "点数",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.points },  // A function to return the current amount of baseResource.
 
-    requires: new Decimal(1e14),              // The amount of the base needed to  gain 1 of the prestige currency.
+    requires: new Decimal(5e14),              // The amount of the base needed to  gain 1 of the prestige currency.
                                             // Also the amount required to unlock the layer.
 
     type: "normal",                         // Determines the formula used for calculating prestige currency.
