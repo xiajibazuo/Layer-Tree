@@ -19,9 +19,10 @@ let VERSION = {
 let changelog = `<h1>更新日志:</h1><br>
     <h3>v0.1</h3><br>
         -新增5个层级
-        -新增8个升级
+        -新增9个升级
         -新增9个里程碑
         -新增3个可点击
+        -新增3个可购买
 	<h3>v0.0</h3><br>
 		- Added things.<br>
 		- Added stuff.<br>
@@ -71,6 +72,8 @@ function getPointGen() {
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
+    devSpeed: new Decimal(1)
+    
 }}
 
 // Display extra things at the top of the page
