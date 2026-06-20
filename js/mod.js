@@ -58,8 +58,6 @@ function getPointGen() {
 	    else gain=gain.times(4)
 	}
 	if (hasUpgrade("p",12))gain=gain.times(player.points.add(1).log(2.718281828).add(1))
-	if (hasUpgrade("p",14))gain=gain.times(player.points.pow(0.25).add(1))
-	if (hasUpgrade("p",15))gain=gain.times(player.points.pow(0.25).add(1))
 	if (hasUpgrade("P",11))gain=gain.times(player.P.points.times(player.P.points.add(1).log(2.718281828)).add(1))
 	
 	if (hasUpgrade("p",14))exp = exp.times(1.5)
