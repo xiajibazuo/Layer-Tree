@@ -165,7 +165,7 @@ addLayer("L", {
         keep.push("points")
         keep.push("milestones")
         }
-        if (((resettingLayer == "ED" || getClickableState("ED",91) == 1 ) || resettingLayer == "L" )&& resettingLayer !== "P") {layerDataReset(this.layer, keep)}
+        if (((resettingLayer == "ED" && getClickableState("ED",91) == 1 ) || resettingLayer == "L" )&& resettingLayer !== "P") {layerDataReset(this.layer, keep)}
     },
     layerShown(){return player.L.points.gte(1)}
 })
@@ -301,9 +301,9 @@ addLayer("p", {
         11: {
             title: "1",
             description(){
-                if(hasUpgrade("P",13))return "增益点数<br>公式：^1.3"
-                if(hasUpgrade("p",13))return "增益点数<br>公式：*7"
-                else return "增益点数<br>公式：*4"
+                if(hasUpgrade("P",13))return "增益点数<br>效果：^1.3"
+                if(hasUpgrade("p",13))return "增益点数<br>效果：*7"
+                else return "增益点数<br>效果：*4"
             },
             unlocked(){return true},
             cost: new Decimal(300)
@@ -311,8 +311,9 @@ addLayer("p", {
         12: {
             title: "2",
             description(){
-                return "点数增益自己<br>公式：*(ln(点数+1)+1)<br>效果：*" + format(player.points.add(1).log(2.718281828).add(1))
+                return "点数增益自己<br>效果：*" + format(player.points.add(1).log(2.718281828).add(1))
             },
+            tooltip: "公式：*(ln(点数+1)+1)",
             unlocked(){return hasUpgrade("p",11)},
             cost: new Decimal(1200)
         },
@@ -328,7 +329,7 @@ addLayer("p", {
         14: {
             title: "4",
             description(){
-                return "增益点数<br>公式：^1.5"
+                return "增益点数<br>效果：^1.5"
             },
             unlocked(){return hasUpgrade("p",13)},
             cost: new Decimal(40000)
@@ -336,7 +337,7 @@ addLayer("p", {
         15: {
             title: "5",
             description(){
-                return "增益点数<br>公式：^1.5"
+                return "增益点数<br>效果：^1.5"
             },
             unlocked(){return hasUpgrade("p",14)},
             cost: new Decimal(5e6)
@@ -360,7 +361,7 @@ addLayer("p", {
         let keep = [];
         if (hasMilestone("P",1)) keep.push("upgrades")
         
-        if ((resettingLayer == "ED" || getClickableState("ED",11) == 1 ) || resettingLayer == "L") {layerDataReset(this.layer, keep)}
+        if ((resettingLayer == "ED" && getClickableState("ED",11) == 1 ) || resettingLayer == "L" || resettingLayer == "P") {layerDataReset(this.layer, keep)}
     }
 })
 addLayer("P", {
@@ -405,8 +406,9 @@ addLayer("P", {
         11: {
             title: "P1",
             description(){
-                return "声望点数增益点数<br>公式：*(声望点数*ln(声望点数+1)+1)<br>效果：*" + format(player.P.points.times(player.P.points.add(1).log(2.718281828)).add(1))
+                return "声望点数增益点数<br>效果：*" + format(player.P.points.times(player.P.points.add(1).log(2.718281828)).add(1))
             },
+            tooltip: "公式：*(声望点数*ln(声望点数+1)+1)",
             cost: new Decimal(1)
         },
         12: {
@@ -463,7 +465,7 @@ addLayer("P", {
     doReset(resettingLayer) {
         let keep = [];
         
-        if ((resettingLayer == "ED" || getClickableState("ED",21) == 1 ) || resettingLayer == "L") {layerDataReset(this.layer, keep)}
+        if ((resettingLayer == "ED" && getClickableState("ED",21) == 1 ) || resettingLayer == "L") {layerDataReset(this.layer, keep)}
     }
 })
 addLayer("GM", {
