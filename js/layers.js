@@ -29,7 +29,7 @@ addLayer("L", {
     autoPrestige(){
         return hasMilestone('L',1) && !hasMilestone('L',3)
     },    
-     row: 0, // Row the layer is in on the tree (0 is the first row)
+     row: 11, // Row the layer is in on the tree (0 is the first row)
 
     update(diff){
     player.L.layerPoint=getBuyableAmount("L",11).add(getBuyableAmount("L",12)).add(getBuyableAmount("L", 13))
@@ -177,7 +177,7 @@ addLayer("ED", {
 
     color: "#808080",                       // The color for this layer, which affects many elements.
     resource: "结束",            // The name of this layer's main prestige resource.
-    row: 114514,                                 // The row this layer is on (0 is the first row).
+    row: 12,                                 // The row this layer is on (0 is the first row).
 
     baseResource: "点数",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.points },  // A function to return the current amount of baseResource.
@@ -200,17 +200,6 @@ addLayer("ED", {
     
     clickables: {
     11: {
-        title: "重置层级",
-        display() {
-            if (getClickableState("ED",11) == 1) return "是"
-            else return "否"
-            },
-        onClick(){
-            if (getClickableState("ED",11) == 0) setClickableState("ED",11,1)
-            else setClickableState("ED",11,0)
-        }
-    },
-    12: {
         title: "重置点数",
         display() {
             if (getClickableState("ED",12) == 1) return "是"
@@ -219,7 +208,11 @@ addLayer("ED", {
         onClick(){
             if (getClickableState("ED",12) == 0) setClickableState("ED",12,1)
             else setClickableState("ED",12,0)
-        }
+        },
+        canClick(){
+            return true
+        },
+        style: {"color": "#FF0000"}
     },
     21: {
         title: "重置声望点数",
@@ -230,7 +223,26 @@ addLayer("ED", {
         onClick(){
             if (getClickableState("ED",21) == 0) setClickableState("ED",21,1)
             else setClickableState("ED",21,0)
-        }
+        },
+        canClick(){
+            return true
+        },
+        style: {"color": "#48DC13"}
+    },
+    91: {
+        title: "重置层级",
+        display() {
+            if (getClickableState("ED",91) == 1) return "是"
+            else return "否"
+            },
+        onClick(){
+            if (getClickableState("ED",91) == 0) setClickableState("ED",91,1)
+            else setClickableState("ED",91,0)
+        },
+        canClick(){
+            return true
+        },
+        style: {"color": "#7FAFFF"}
     }
     },
     tabFormat: {
@@ -262,7 +274,7 @@ addLayer("p", {
     color: "#FF0000",                       // The color for this layer, which affects many elements.
     resource: "点数",            // The name of this layer's main prestige resource.
     row: 0,                                 // The row this layer is on (0 is the first row).
-    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
 
     baseResource: "points",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.points },  // A function to return the current amount of baseResource.
@@ -460,9 +472,10 @@ addLayer("GM", {
         points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
     }},
 
+    symbol: " ", // This appears on the layer's node. Default is the id with the first letter capitalized
     color: "#FFFFFF",                       // The color for this layer, which affects many elements.
     resource: "棍母",            // The name of this layer's main prestige resource.
-    row: 0,                                 // The row this layer is on (0 is the first row).
+    row: 13,                                 // The row this layer is on (0 is the first row).
 
     baseResource: "棍母",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.points },  // A function to return the current amount of baseResource.
@@ -495,7 +508,7 @@ addLayer("GM", {
           let s=""
           s+="你有多少棍母?是一个,1.79e308个,还是" + format(player.points) + "个?<br>这不重要,重要的是,你怎么解锁棍母的?"
           return s
-        }],
+        },{"font-size": "32px"}],
         "blank",
         "blank",
         "milestones"]
