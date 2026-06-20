@@ -18,17 +18,15 @@ let VERSION = {
 
 let changelog = `<h1>更新日志:</h1><br>
     <h3>v0.1</h3><br>
-        -新增5个层级
-        -新增9个升级
-        -新增9个里程碑
-        -新增3个可点击
-        -新增3个可购买
-	<h3>v0.0</h3><br>
-		- Added things.<br>
-		- Added stuff.<br>
+        -新增5个层级<br>
+        -新增9个升级<br>
+        -新增9个里程碑<br>
+        -新增3个可点击<br>
+        -新增3个可购买<br>
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
   -test:<br>
-  <h1>log(e)</h1>`
+  <h1>?</h1><br>
+  这只是用于测试的,不要介意(`
 
 let winText = `恭喜！您已成功完成游戏并到达终点，不过目前......不妨找找彩蛋( `
 
