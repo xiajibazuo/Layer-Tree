@@ -165,7 +165,7 @@ addLayer("L", {
         keep.push("points")
         keep.push("milestones")
         }
-        if (((resettingLayer == "ED" || getClickableState("ED",11) == 1 ) || resettingLayer == "L" )&& resettingLayer !== "P") {layerDataReset(this.layer, keep)}
+        if (((resettingLayer == "ED" || getClickableState("ED",91) == 1 ) || resettingLayer == "L" )&& resettingLayer !== "P") {layerDataReset(this.layer, keep)}
     },
     layerShown(){return player.L.points.gte(1)}
 })
@@ -212,7 +212,7 @@ addLayer("ED", {
         canClick(){
             return true
         },
-        style: {"color": "#FF0000"}
+        style: {"background-color": "#FF0000"}
     },
     21: {
         title: "重置声望点数",
@@ -227,7 +227,7 @@ addLayer("ED", {
         canClick(){
             return true
         },
-        style: {"color": "#48DC13"}
+        style: {"background-color": "#48DC13"}
     },
     91: {
         title: "重置层级",
@@ -242,7 +242,7 @@ addLayer("ED", {
         canClick(){
             return true
         },
-        style: {"color": "#7FAFFF"}
+        style: {"background-color": "#7FAFFF"}
     }
     },
     tabFormat: {
@@ -360,7 +360,7 @@ addLayer("p", {
         let keep = [];
         if (hasMilestone("P",1)) keep.push("upgrades")
         
-        if ((resettingLayer == "ED" || getClickableState("ED",12) == 1 ) || resettingLayer == "L") {layerDataReset(this.layer, keep)}
+        if ((resettingLayer == "ED" || getClickableState("ED",11) == 1 ) || resettingLayer == "L") {layerDataReset(this.layer, keep)}
     }
 })
 addLayer("P", {
@@ -463,7 +463,7 @@ addLayer("P", {
     doReset(resettingLayer) {
         let keep = [];
         
-        if ((resettingLayer == "ED" || getClickableState("ED",13) == 1 ) || resettingLayer == "L") {layerDataReset(this.layer, keep)}
+        if ((resettingLayer == "ED" || getClickableState("ED",21) == 1 ) || resettingLayer == "L") {layerDataReset(this.layer, keep)}
     }
 })
 addLayer("GM", {
