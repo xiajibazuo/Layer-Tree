@@ -89,7 +89,7 @@ addLayer("L", {
             else {player.points = player.points.minus(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L",11))))}
             setBuyableAmount("L", 11, getBuyableAmount("L", 11).add(1))
         },
-        style: {'height':'100px','width':'200px',"background-color": "#FF0000"}
+        style: {'height':'100px','width':'200px'}
     },
     12: {
         title: "层级点数",
@@ -118,7 +118,7 @@ addLayer("L", {
             player.P.points=player.P.points.minus(new Decimal("10").pow(getBuyableAmount("L", 13).pow(2).times(0.5).add(getBuyableAmount("L", 13).times(1.5).add(1))))
             setBuyableAmount("L", 13, getBuyableAmount("L", 13).add(1))
         },
-        style: {'height':'100px','width':'200px',"background-color": "#48DC13"}
+        style: {'height':'100px','width':'200px'}
     }
 },
     clickables: {
