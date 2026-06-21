@@ -89,7 +89,7 @@ addLayer("L", {
             else {player.points = player.points.minus(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L",11))))}
             setBuyableAmount("L", 11, getBuyableAmount("L", 11).add(1))
         },
-        style: {'height':'100px','width':'200px'}
+        style: {'height':'100px','width':'200px',"background-color": "#FF0000"}
     },
     12: {
         title: "层级点数",
@@ -118,9 +118,41 @@ addLayer("L", {
             player.P.points=player.P.points.minus(new Decimal("10").pow(getBuyableAmount("L", 13).pow(2).times(0.5).add(getBuyableAmount("L", 13).times(1.5).add(1))))
             setBuyableAmount("L", 13, getBuyableAmount("L", 13).add(1))
         },
-        style: {'height':'100px','width':'200px'}
+        style: {'height':'100px','width':'200px',"background-color": "#48DC13"}
     }
 },
+    clickables: {
+    11: {
+        display() {return "*1.1"},
+        onClick(){
+            player.devSpeed = player.devSpeed.times(1.1)
+        },
+        canClick(){
+            return true
+        },
+        style: {'height':'100px','width':'100px'}
+    },
+    12: {
+        display() {return "/1.1"},
+        onClick(){
+            player.devSpeed = player.devSpeed.div(1.1)
+        },
+        canClick(){
+            return true
+        },
+        style: {'height':'100px','width':'100px'}
+    },
+    13: {
+        display() {return "=1"},
+        onClick(){
+            player.devSpeed = new Decimal(1)
+        },
+        canClick(){
+            return true
+        },
+        style: {'height':'100px','width':'100px'}
+    }
+    },
     tabFormat: {
     "里程碑": {
         content: [
@@ -149,6 +181,22 @@ addLayer("L", {
           return s
         }],
         "buyables"]
+    },
+    "调试": {
+        content: [
+        "main-display",
+          "blank",
+        ["prestige-button",function(){return ""}],
+        "blank",
+        "resource-display",
+        "blank",
+        "blank",
+        ["display-text",function(){
+          let s=""
+          s+="(不要滥用)调试全局速率<br>全局速率：" + format(player.devSpeed)
+          return s
+        }],
+        "clickables"]
     }
 },
     automateStuff(){
@@ -359,7 +407,7 @@ addLayer("p", {
     },
     doReset(resettingLayer) {
         let keep = [];
-        if (hasMilestone("P",1) || resettingLayer == "P") keep.push("upgrades")
+        if (hasMilestone("P",1) && resettingLayer == "P") keep.push("upgrades")
         
         if ((resettingLayer == "ED" && getClickableState("ED",11) == 1 ) || resettingLayer == "L" || resettingLayer == "P") {layerDataReset(this.layer, keep)}
     }
@@ -393,7 +441,7 @@ addLayer("P", {
 
     layerShown() { return player.L.points.gte(3) },          // Returns a bool for if this layer's node should be visible in the tree.
     branches: ["L","p"],
-    tooltip: "达到1e14点数解锁层级(关于层级要二次解锁这件事)",
+    tooltip: "达到5e14点数解锁层级(关于层级要二次解锁这件事)",
     
     milestones: {
         1: {
