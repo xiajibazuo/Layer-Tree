@@ -23,10 +23,8 @@ let changelog = `<h1>更新日志:</h1><br>
         -新增9个里程碑<br>
         -新增6个可点击<br>
         -新增3个可购买<br>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-  -test:<br>
-  <h1>?</h1><br>
-  这只是用于测试的,不要介意(`
+    <h3>v0.0</h3><br>
+        -棍母`
 
 let winText = `恭喜！您已成功完成游戏并到达终点，不过目前......不妨找找彩蛋( `
 
