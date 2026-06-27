@@ -89,7 +89,7 @@ addLayer("L", {
             else {player.points = player.points.minus(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L",11))))}
             setBuyableAmount("L", 11, getBuyableAmount("L", 11).add(1))
         },
-        style: {'height':'100px','width':'200px'}
+        style: {'height':'100px','width':'200px',"background-color": "#FF0000"}
     },
     12: {
         title: "层级点数",
@@ -118,7 +118,7 @@ addLayer("L", {
             player.P.points=player.P.points.minus(new Decimal("10").pow(getBuyableAmount("L", 13).pow(2).times(0.5).add(getBuyableAmount("L", 13).times(1.5).add(1))))
             setBuyableAmount("L", 13, getBuyableAmount("L", 13).add(1))
         },
-        style: {'height':'100px','width':'200px'}
+        style: {'height':'100px','width':'200px',"background-color": "#48DC13"}
     }
 },
     clickables: {
@@ -196,7 +196,12 @@ addLayer("L", {
           s+="(不要滥用)调试全局速率<br>全局速率：" + format(player.devSpeed)
           return s
         }],
-        "clickables"]
+        "clickables",
+        ["display-text",function(){
+          let s=""
+          s+="<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>test:" + (player.test ? "<br><h1>?</h1>" : "<br><h1>!</h1>") + "<br>这只是用于测试的,不要介意("
+          return s
+        }],]
     }
 },
     automateStuff(){
@@ -441,13 +446,13 @@ addLayer("P", {
 
     layerShown() { return player.L.points.gte(3) },          // Returns a bool for if this layer's node should be visible in the tree.
     branches: ["L","p"],
-    tooltip: "达到5e14点数解锁层级(关于层级要二次解锁这件事)",
+    tooltipLocked: "达到5e14点数解锁层级(关于层级要二次解锁这件事)",
     
     milestones: {
         1: {
-            requirementDescription: "10声望点数",
+            requirementDescription: "10总声望点数",
             effectDescription: "重置时保留p层级升级",
-            done() { return player.P.points.gte(10) }
+            done() { return player.P.total.gte(10) }
         }
     },
     upgrades: {
@@ -466,13 +471,29 @@ addLayer("P", {
             },
             unlocked(){return hasUpgrade("P",11)},
             cost: new Decimal(10)
-        },        
+        },
         13: {
             title: "P3",
             description(){
                 return "升级3的效果更好(*7→^1.3)"
             },
             unlocked(){return hasUpgrade("P",12)},
+            cost: new Decimal(1000)
+        },
+        14: {
+            title: "P4",
+            description(){
+                return "aba aba"
+            },
+            unlocked(){return hasChallenge("P",13)},
+            cost: new Decimal(1000)
+        },
+        15: {
+            title: "P5",
+            description(){
+                return "解锁一个声望挑战"
+            },
+            unlocked(){return hasUpgrade("P",14)},
             cost: new Decimal(1000)
         },
         91: {
@@ -485,6 +506,56 @@ addLayer("P", {
             pay(){},
             cost: new Decimal(0)
         }
+    },
+    challenges: {
+        11: {
+            name: "PC1",
+            challengeDescription: "点数获取开ee45e4次根",
+            canComplete: function() {return player.points.gte(100)},
+            goalDescription: "ee45e4点数",
+            rewardDescription: "点数^ee45e4",
+            unlocked(){return true}
+        },
+        12: {
+            name: "PC2",
+            challengeDescription: "点数获取开ee45e4次根",
+            canComplete: function() {return player.points.gte(100)},
+            goalDescription: "ee45e4点数",
+            rewardDescription: "点数^ee45e4",
+            unlocked(){return hasChallenge("P",11)}
+        },
+        13: {
+            name: "PC3",
+            challengeDescription: "点数获取开ee45e4次根",
+            canComplete: function() {return player.points.gte(100)},
+            goalDescription: "ee45e4点数",
+            rewardDescription: "点数^ee45e4",
+            unlocked(){return hasChallenge("P",12)}
+        },
+        21: {
+            name: "PC4",
+            challengeDescription: "点数获取开ee45e4次根",
+            canComplete: function() {return player.points.gte(100)},
+            goalDescription: "ee45e4点数",
+            rewardDescription: "点数^ee45e4",
+            unlocked(){return hasUpgrade("P",15)}
+        },
+        22: {
+            name: "PC5",
+            challengeDescription: "点数获取开ee45e4次根",
+            canComplete: function() {return player.points.gte(100)},
+            goalDescription: "ee45e4点数",
+            rewardDescription: "点数^ee45e4",
+            unlocked(){return hasChallenge("P",21)}
+        },
+        23: {
+            name: "PC6",
+            challengeDescription: "点数获取开ee45e4次根",
+            canComplete: function() {return player.points.gte(100)},
+            goalDescription: "ee45e4点数",
+            rewardDescription: "点数^ee45e4",
+            unlocked(){return hasChallenge("P",22)}
+        },
     },
     tabFormat: {
     "里程碑": {
@@ -508,10 +579,23 @@ addLayer("P", {
         "blank",
         "blank",
         "upgrades"]
+    },
+    "挑战": {
+        unlocked(){return hasMilestone("f",1)}
+        content: [
+        "main-display",
+          "blank",
+        ["prestige-button",function(){return ""}],
+        "blank",
+        "resource-display",
+        "blank",
+        "blank",
+        "challenges"]
     }
     },
     doReset(resettingLayer) {
         let keep = [];
+        if (resettingLayer !== "ED") keep.push("total")
         
         if ((resettingLayer == "ED" && getClickableState("ED",21) == 1 ) || resettingLayer == "L") {layerDataReset(this.layer, keep)}
     }
@@ -521,7 +605,7 @@ addLayer("GM", {
         unlocked: true,                     // You can add more variables here to add them to your layer.
         points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
     }},
-
+    
     symbol: " ", // This appears on the layer's node. Default is the id with the first letter capitalized
     color: "#FFFFFF",                       // The color for this layer, which affects many elements.
     resource: "棍母",            // The name of this layer's main prestige resource.
@@ -544,6 +628,8 @@ addLayer("GM", {
     },
 
     layerShown() { return player.L.points.gte(5) },          // Returns a bool for if this layer's node should be visible in the tree.
+    tooltip: "棍母",
+    
     milestones: {
         1: {
             requirementDescription: "-1棍母",
@@ -558,9 +644,61 @@ addLayer("GM", {
           let s=""
           s+="你有多少棍母?是一个,1.79e308个,还是" + format(player.points) + "个?<br>这不重要,重要的是,你怎么解锁棍母的?"
           return s
-        },{"font-size": "32px"}],
+        },{"font-size": "12px"}],
         "blank",
         "blank",
+        "milestones"]
+        }
+    }
+})
+addLayer("f", {
+    startData() { return {                  // startData is a function that returns default data for a layer. 
+        unlocked: true,                     // You can add more variables here to add them to your layer.
+        points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
+    }},
+
+    color: "#FF7F00",                       // The color for this layer, which affects many elements.
+    resource: "快速点数",            // The name of this layer's main prestige resource.
+    row: 0,                                 // The row this layer is on (0 is the first row).
+
+    baseResource: "声望点数",                 // The name of the resource your prestige gain is based on.
+    baseAmount() { return player.P.points },  // A function to return the current amount of baseResource.
+
+    requires: new Decimal(2.5e12),              // The amount of the base needed to  gain 1 of the prestige currency.
+                                            // Also the amount required to unlock the layer.
+
+    type: "static",                         // Determines the formula used for calculating prestige currency.
+
+    gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
+        return new Decimal(1)               // Factor in any bonuses multiplying gain here.
+    },
+    gainExp() {                             // Returns the exponent to your gain of the prestige resource.
+        return new Decimal(1)
+    },
+    base(){
+    return new Decimal("eeeee114514") //i d k y
+    },
+
+    layerShown() { return player.test},          // Returns a bool for if this layer's node should be visible in the tree.
+
+    milestones: {
+        0: {
+            requirementDescription: "1快速点数",
+            effectDescription: "解锁声望挑战",
+            done() { return player.f.points.gte(1) }
+        }
+    },
+    tabFormat: {
+    "里程碑": {
+        content: [
+        "main-display",
+        "blank",
+        "blank",
+        ["display-text",function(){
+          let s=""
+          s+="“快速”不是膨胀,是《快速》过掉这个层级(<br>"
+          return s
+        }],
         "milestones"]
         }
     }
