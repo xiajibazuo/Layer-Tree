@@ -201,7 +201,7 @@ addLayer("L", {
           let s=""
           s+="<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>test:" + (player.test ? "<br><h1>?</h1>" : "<br><h1>!</h1>") + "<br>这只是用于测试的,不要介意("
           return s
-        }],]
+        }]]
     }
 },
     automateStuff(){
@@ -581,7 +581,7 @@ addLayer("P", {
         "upgrades"]
     },
     "挑战": {
-        unlocked(){return hasMilestone("f",1)}
+        unlocked(){return hasMilestone("f",0)},
         content: [
         "main-display",
           "blank",
