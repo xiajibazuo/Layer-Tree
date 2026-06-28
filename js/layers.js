@@ -1,3 +1,8 @@
+//i d k y do i fill 棍母
+
+
+
+
 addLayer("L", {
     name: "层级", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "L", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -89,7 +94,10 @@ addLayer("L", {
             else {player.points = player.points.minus(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L",11))))}
             setBuyableAmount("L", 11, getBuyableAmount("L", 11).add(1))
         },
-        style: {'height':'100px','width':'200px',"background-color": "#FF0000"}
+        style(){
+            if (player.points.gte(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L",11))))) return {'height':'100px','width':'200px',"background-color": "#FF0000"}
+            else return {'height':'100px','width':'200px',"background-color": "#BF8F8F"}
+        }
     },
     12: {
         title: "层级点数",
@@ -118,7 +126,10 @@ addLayer("L", {
             player.P.points=player.P.points.minus(new Decimal("10").pow(getBuyableAmount("L", 13).pow(2).times(0.5).add(getBuyableAmount("L", 13).times(1.5).add(1))))
             setBuyableAmount("L", 13, getBuyableAmount("L", 13).add(1))
         },
-        style: {'height':'100px','width':'200px',"background-color": "#48DC13"}
+        style(){
+            if (player.points.gte(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L",11))))) return {'height':'100px','width':'200px',"background-color": "#48DC13"}
+            else return {'height':'100px','width':'200px',"background-color": "#BF8F8F"}
+        }
     }
 },
     clickables: {
@@ -129,8 +140,7 @@ addLayer("L", {
         },
         canClick(){
             return true
-        },
-        style: {'height':'100px','width':'100px'}
+        }
     },
     12: {
         display() {return "/1.1"},
@@ -139,8 +149,7 @@ addLayer("L", {
         },
         canClick(){
             return true
-        },
-        style: {'height':'100px','width':'100px'}
+        }
     },
     13: {
         display() {return "=1"},
@@ -149,8 +158,7 @@ addLayer("L", {
         },
         canClick(){
             return true
-        },
-        style: {'height':'100px','width':'100px'}
+        }
     }
     },
     tabFormat: {
@@ -327,6 +335,7 @@ addLayer("p", {
     color: "#FF0000",                       // The color for this layer, which affects many elements.
     resource: "点数",            // The name of this layer's main prestige resource.
     row: 0,                                 // The row this layer is on (0 is the first row).
+    symbol: "p", // This appears on the layer's node. Default is the id with the first letter capitalized
     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
 
     baseResource: "points",                 // The name of the resource your prestige gain is based on.
@@ -394,6 +403,61 @@ addLayer("p", {
             },
             unlocked(){return hasUpgrade("p",14)},
             cost: new Decimal(5e6)
+        },
+        21: {
+            title: "6",
+            description(){
+                return "增益点数<br>效果：^1.5"
+            },
+            unlocked(){return hasChallenge("P",23)},
+            cost(){
+                if (false) return new Decimal("eeeeeeeeee114514")
+                return new Decimal("0")
+            }
+        },
+        22: {
+            title: "7",
+            description(){
+                return "增益点数<br>效果：^1.5"
+            },
+            unlocked(){return hasUpgrade("p",21)},
+            cost(){
+                if (false) return new Decimal("eeeeeeeeee114514")
+                return new Decimal("0")
+            }
+        },
+        23: {
+            title: "8",
+            description(){
+                return "增益点数<br>效果：^1.5"
+            },
+            unlocked(){return hasUpgrade("p",22)},
+            cost(){
+                if (false) return new Decimal("eeeeeeeeee114514")
+                return new Decimal("0")
+            }
+        },
+        24: {
+            title: "9",
+            description(){
+                return "增益点数<br>效果：^1.5"
+            },
+            unlocked(){return hasUpgrade("p",23)},
+            cost(){
+                if (false) return new Decimal("eeeeeeeeee114514")
+                return new Decimal("0")
+            }
+        },
+        25: {
+            title: "10",
+            description(){
+                return "增益点数<br>效果：^1.5"
+            },
+            unlocked(){return hasUpgrade("p",24)},
+            cost(){
+                if (false) return new Decimal("eeeeeeeeee114514")
+                return new Decimal("0")
+            }
         }
     },
     tabFormat: {
@@ -427,6 +491,7 @@ addLayer("P", {
     color: "#4BDC13",                       // The color for this layer, which affects many elements.
     resource: "声望点数",            // The name of this layer's main prestige resource.
     row: 1,                                 // The row this layer is on (0 is the first row).
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
 
     baseResource: "点数",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.points },  // A function to return the current amount of baseResource.
@@ -510,11 +575,14 @@ addLayer("P", {
     challenges: {
         11: {
             name: "PC1",
-            challengeDescription: "点数获取开ee45e4次根",
+            challengeDescription: "进入重置点数升级,同时点数获取开ee45e4次根",
             canComplete: function() {return player.points.gte(100)},
             goalDescription: "ee45e4点数",
             rewardDescription: "点数^ee45e4",
-            unlocked(){return true}
+            unlocked(){return true},
+            onEnter(){
+                layerDataReset("p",[])
+            }
         },
         12: {
             name: "PC2",
@@ -529,7 +597,7 @@ addLayer("P", {
             challengeDescription: "点数获取开ee45e4次根",
             canComplete: function() {return player.points.gte(100)},
             goalDescription: "ee45e4点数",
-            rewardDescription: "点数^ee45e4",
+            rewardDescription: "解锁更多声望升级",
             unlocked(){return hasChallenge("P",12)}
         },
         21: {
@@ -553,7 +621,7 @@ addLayer("P", {
             challengeDescription: "点数获取开ee45e4次根",
             canComplete: function() {return player.points.gte(100)},
             goalDescription: "ee45e4点数",
-            rewardDescription: "点数^ee45e4",
+            rewardDescription: "解锁更多点数升级",
             unlocked(){return hasChallenge("P",22)}
         },
     },
@@ -659,7 +727,9 @@ addLayer("f", {
 
     color: "#FF7F00",                       // The color for this layer, which affects many elements.
     resource: "快速点数",            // The name of this layer's main prestige resource.
-    row: 0,                                 // The row this layer is on (0 is the first row).
+    row: 1,                                 // The row this layer is on (0 is the first row).
+    symbol: "f", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
 
     baseResource: "声望点数",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.P.points },  // A function to return the current amount of baseResource.
@@ -692,6 +762,10 @@ addLayer("f", {
     "里程碑": {
         content: [
         "main-display",
+          "blank",
+        ["prestige-button",function(){return ""}],
+        "blank",
+        "resource-display",
         "blank",
         "blank",
         ["display-text",function(){
