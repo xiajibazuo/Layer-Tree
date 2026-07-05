@@ -122,7 +122,7 @@ addLayer("L", {
     13: {
         title: "声望点数",
         cost(x){
-            if(x.gte(4))return new Decimal("10").pow(x.pow(x.minus(1)).times(0.5).add(x.pow(x.minus(2)).times(1.5).add(1)))}
+            if(x.gte(4))return new Decimal("10").pow(x.pow(x.minus(1)).times(0.5).add(x.pow(x.minus(2)).times(1.5).add(1)))
             return new Decimal("10").pow(x.pow(2).times(0.5).add(x.times(1.5).add(1)))}
         display() {
            return "价格：" + format(this.cost()) + "声望点数<br>数量：" +format(getBuyableAmount("L",13))
