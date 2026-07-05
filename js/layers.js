@@ -34,7 +34,8 @@ addLayer("L", {
     autoPrestige(){
         return hasMilestone('L',1) && !hasMilestone('L',3)
     },    
-     row: 11, // Row the layer is in on the tree (0 is the first row)
+    row: 11, // Row the layer is in on the tree (0 is the first row)
+    resetsNothing(){return hasMilestone("L",7)}
 
     update(diff){
     player.L.layerPoint=getBuyableAmount("L",11).add(getBuyableAmount("L",12)).add(getBuyableAmount("L", 13))
@@ -74,6 +75,11 @@ addLayer("L", {
             requirementDescription: "3层级",
             effectDescription: "声望点数重置时保留L层级",
             done() { return player.L.points.gte(3) }
+        },
+        7: {
+            requirementDescription: "4层级",
+            effectDescription: "层级不重置任何东西",
+            done() { return player.L.points.gte(4)}
         }
     },
     buyables: {
@@ -115,19 +121,22 @@ addLayer("L", {
     },
     13: {
         title: "声望点数",
+        cost(x){
+            if(getBuyableAmount("L",13).gte(114514))return new Decimal(114514)
+            return new Decimal("10").pow(x.pow(2).times(0.5).add(x.times(1.5).add(1)))}
         display() {
-           return "价格：" + format(new Decimal("10").pow(getBuyableAmount("L", 13).pow(2).times(0.5).add(getBuyableAmount("L", 13).times(1.5).add(1)))) + "声望点数<br>数量：" +format(getBuyableAmount("L",13))
+           return "价格：" + format(this.cost()) + "声望点数<br>数量：" +format(getBuyableAmount("L",13))
         },
         unlocked() { return hasUpgrade("P",12) },
         canAfford() { 
-            return player.P.points.gte(new Decimal("10").pow(getBuyableAmount("L", 13).pow(2).times(0.5).add(getBuyableAmount("L", 13).times(1.5).add(1))))
+            return player.P.points.gte(this.cost())
         },
         buy() {
-            player.P.points=player.P.points.minus(new Decimal("10").pow(getBuyableAmount("L", 13).pow(2).times(0.5).add(getBuyableAmount("L", 13).times(1.5).add(1))))
+            player.P.points=player.P.points.minus(this.cost())
             setBuyableAmount("L", 13, getBuyableAmount("L", 13).add(1))
         },
         style(){
-            if (player.points.gte(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L",11))))) return {'height':'100px','width':'200px',"background-color": "#48DC13"}
+            if (player.P.points.gte(this.cost()) return {'height':'100px','width':'200px',"background-color": "#48DC13"}
             else return {'height':'100px','width':'200px',"background-color": "#BF8F8F"}
         }
     }
@@ -261,7 +270,7 @@ addLayer("ED", {
     
     clickables: {
     11: {
-        title: "重置点数",
+        title: "重置点数层",
         display() {
             if (getClickableState("ED",12) == 1) return "是"
             else return "否"
@@ -276,7 +285,7 @@ addLayer("ED", {
         style: {"background-color": "#FF0000"}
     },
     21: {
-        title: "重置声望点数",
+        title: "重置声望层",
         display() {
             if (getClickableState("ED",21) == 1) return "是"
             else return "否"
@@ -289,6 +298,22 @@ addLayer("ED", {
             return true
         },
         style: {"background-color": "#48DC13"}
+    },
+    22: {
+        title: "重置快速层",
+        display() {
+            if (getClickableState("ED",22) == 1) return "是"
+            else return "否"
+            },
+        onClick(){
+            if (getClickableState("ED",22) == 0) setClickableState("ED",22,1)
+            else setClickableState("ED",22,0)
+        },
+        canClick(){
+            return true
+        },
+        style: {"background-color": "#FF7F00"},
+        unlocked(){return player.test}
     },
     91: {
         title: "重置层级",
@@ -363,9 +388,13 @@ addLayer("p", {
         11: {
             title: "1",
             description(){
-                if(hasUpgrade("P",13))return "增益点数<br>效果：^1.3"
-                if(hasUpgrade("p",13))return "增益点数<br>效果：*7"
-                else return "增益点数<br>效果：*4"
+                if(hasUpgrade("p",13)){
+                    if(hasUpgrade("P",13)){
+                        return "增益点数<br>效果：*1e10"
+                    }
+                    return "增益点数<br>效果：*7"
+                }
+                return "增益点数<br>效果：*4"
             },
             unlocked(){return true},
             cost: new Decimal(300)
@@ -382,7 +411,9 @@ addLayer("p", {
         13: {
             title: "3",
             description(){
-                if(hasUpgrade("P",13)) return "升级1的效果更好(*4→^1.3)"
+                if(hasUpgrade("P",13)){
+                    return "升级1的效果更好(*4→*1e10)"
+                }
                 return "升级1的效果更好(*4→*7)"
             },
             unlocked(){return hasUpgrade("p",12)},
@@ -391,18 +422,20 @@ addLayer("p", {
         14: {
             title: "4",
             description(){
-                return "增益点数<br>效果：^1.5"
+                return "点数增益自己<br>效果：*" + format(player.points.pow(0.25).add(1))
             },
+            tooltip: "公式：*(点数^0.25)",
             unlocked(){return hasUpgrade("p",13)},
             cost: new Decimal(40000)
         },
         15: {
             title: "5",
             description(){
-                return "增益点数<br>效果：^1.5"
+                return "点数增益自己<br>效果：*" + format(player.points.pow(0.25).add(1))
             },
+            tooltip: "公式：*(点数^0.25)",
             unlocked(){return hasUpgrade("p",14)},
-            cost: new Decimal(5e6)
+            cost: new Decimal(1000000)
         },
         21: {
             title: "6",
@@ -496,7 +529,7 @@ addLayer("P", {
     baseResource: "点数",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.points },  // A function to return the current amount of baseResource.
 
-    requires: new Decimal(5e14),              // The amount of the base needed to  gain 1 of the prestige currency.
+    requires: new Decimal(1e14),              // The amount of the base needed to  gain 1 of the prestige currency.
                                             // Also the amount required to unlock the layer.
 
     type: "normal",                         // Determines the formula used for calculating prestige currency.
@@ -511,7 +544,7 @@ addLayer("P", {
 
     layerShown() { return player.L.points.gte(3) },          // Returns a bool for if this layer's node should be visible in the tree.
     branches: ["L","p"],
-    tooltipLocked: "达到5e14点数解锁层级(关于层级要二次解锁这件事)",
+    tooltipLocked: "达到1e14点数解锁层级(关于层级要二次解锁这件事)",
     
     milestones: {
         1: {
@@ -540,10 +573,10 @@ addLayer("P", {
         13: {
             title: "P3",
             description(){
-                return "升级3的效果更好(*7→^1.3)"
+                return "升级3的效果更好(*7→*1e10)"
             },
             unlocked(){return hasUpgrade("P",12)},
-            cost: new Decimal(1000)
+            cost: new Decimal(100)
         },
         14: {
             title: "P4",
@@ -575,9 +608,9 @@ addLayer("P", {
     challenges: {
         11: {
             name: "PC1",
-            challengeDescription: "进入重置点数升级,同时点数获取开ee45e4次根",
-            canComplete: function() {return player.points.gte(100)},
-            goalDescription: "ee45e4点数",
+            challengeDescription: "重置点数升级,同时点数获取开0.15次根",
+            canComplete: function() {return player.points.gte(1e11)},
+            goalDescription: "1e11点数",
             rewardDescription: "点数^ee45e4",
             unlocked(){return true},
             onEnter(){
@@ -712,7 +745,7 @@ addLayer("GM", {
           let s=""
           s+="你有多少棍母?是一个,1.79e308个,还是" + format(player.points) + "个?<br>这不重要,重要的是,你怎么解锁棍母的?"
           return s
-        },{"font-size": "12px"}],
+        }],
         "blank",
         "blank",
         "milestones"]
@@ -734,7 +767,7 @@ addLayer("f", {
     baseResource: "声望点数",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.P.points },  // A function to return the current amount of baseResource.
 
-    requires: new Decimal(2.5e12),              // The amount of the base needed to  gain 1 of the prestige currency.
+    requires: new Decimal(2.5e11),              // The amount of the base needed to  gain 1 of the prestige currency.
                                             // Also the amount required to unlock the layer.
 
     type: "static",                         // Determines the formula used for calculating prestige currency.
@@ -746,10 +779,11 @@ addLayer("f", {
         return new Decimal(1)
     },
     base(){
-    return new Decimal("eeeee114514") //i d k y
+    return new Decimal(1.01) //i d k y
     },
 
     layerShown() { return player.test},          // Returns a bool for if this layer's node should be visible in the tree.
+    branches: ["L","P"],
 
     milestones: {
         0: {
@@ -775,5 +809,10 @@ addLayer("f", {
         }],
         "milestones"]
         }
+    },
+    doReset(resettingLayer) {
+        let keep = [];
+        
+        if ((resettingLayer == "ED" && getClickableState("ED",22) == 1 ) || resettingLayer == "L") {layerDataReset(this.layer, keep)}
     }
 })
