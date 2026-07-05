@@ -35,7 +35,7 @@ addLayer("L", {
         return hasMilestone('L',1) && !hasMilestone('L',3)
     },    
     row: 11, // Row the layer is in on the tree (0 is the first row)
-    resetsNothing(){return hasMilestone("L",7)}
+    resetsNothing(){return hasMilestone("L",7)},
 
     update(diff){
     player.L.layerPoint=getBuyableAmount("L",11).add(getBuyableAmount("L",12)).add(getBuyableAmount("L", 13))
