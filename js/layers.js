@@ -122,7 +122,7 @@ addLayer("L", {
     13: {
         title: "声望点数",
         cost(x){
-            if(getBuyableAmount("L",13).gte(114514))return new Decimal(114514)
+            if(x.gte(4))return new Decimal("10").pow(x.pow(x.minus(1)).times(0.5).add(x.pow(x.minus(2)).times(1.5).add(1)))}
             return new Decimal("10").pow(x.pow(2).times(0.5).add(x.times(1.5).add(1)))}
         display() {
            return "价格：" + format(this.cost()) + "声望点数<br>数量：" +format(getBuyableAmount("L",13))
@@ -136,7 +136,7 @@ addLayer("L", {
             setBuyableAmount("L", 13, getBuyableAmount("L", 13).add(1))
         },
         style(){
-            if (player.P.points.gte(this.cost()) return {'height':'100px','width':'200px',"background-color": "#48DC13"}
+            if (player.P.points.gte(this.cost())) return {'height':'100px','width':'200px',"background-color": "#48DC13"}
             else return {'height':'100px','width':'200px',"background-color": "#BF8F8F"}
         }
     }
