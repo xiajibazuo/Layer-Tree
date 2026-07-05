@@ -49,16 +49,24 @@ function getPointGen() {
 	let gain = new Decimal(1)
 	let exp = new Decimal(1)
 	if (hasMilestone("L",5))gain=gain.times(new Decimal(10).pow(player.L.layerPoint))
-	if (hasUpgrade("p",11) && !hasUpgrade("P",13)){
-	    if (hasUpgrade("p",13))gain=gain.times(7)
+	if (hasUpgrade("p",11)){
+	    if (hasUpgrade("p",13)){
+	        if (hasUpgrade("P",13)){
+	            if (false){
+	                gain = gain.times(1)
+	            }
+	            else gain = gain.times(1e10)
+	        }
+	        else gain=gain.times(7)
+	    }
 	    else gain=gain.times(4)
 	}
 	if (hasUpgrade("p",12))gain=gain.times(player.points.add(1).log(2.718281828).add(1))
+	if (hasUpgrade("p",14))gain=gain.times(player.points.pow(0.25).add(1))
+	if (hasUpgrade("p",15))gain=gain.times(player.points.pow(0.25).add(1))
 	if (hasUpgrade("P",11))gain=gain.times(player.P.points.times(player.P.points.add(1).log(2.718281828)).add(1))
 	
-	if (hasUpgrade("p",14))exp = exp.times(1.5)
-	if (hasUpgrade("p",15))exp = exp.times(1.5)
-	if (hasUpgrade("p",11) && hasUpgrade("p",13) && hasUpgrade("P",13))exp = exp.times(1.3)
+	if (inChallenge("P",11))exp = exp.times(0.15)
 	
 	gain = gain.pow(exp)
 	return gain
