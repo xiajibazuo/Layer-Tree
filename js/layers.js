@@ -123,7 +123,7 @@ addLayer("L", {
         title: "声望点数",
         cost(x){
             if(x.gte(4))return new Decimal("10").pow(x.pow(x.minus(1)).times(0.5).add(x.pow(x.minus(2)).times(1.5).add(1)))
-            return new Decimal("10").pow(x.pow(2).times(0.5).add(x.times(1.5).add(1)))}
+            return new Decimal("10").pow(x.pow(2).times(0.5).add(x.times(1.5).add(1)))},
         display() {
            return "价格：" + format(this.cost()) + "声望点数<br>数量：" +format(getBuyableAmount("L",13))
         },
@@ -216,7 +216,7 @@ addLayer("L", {
         "clickables",
         ["display-text",function(){
           let s=""
-          s+="<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>test:" + (player.test ? "<br><h1>?</h1>" : "<br><h1>!</h1>") + "<br>这只是用于测试的,不要介意("
+          s+="<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>test:" + (player.test ? "<br><h1>!</h1>" : "<br><h1>?</h1>") + "<br>这只是用于测试的,不要介意("
           return s
         }]]
     }
