@@ -804,7 +804,7 @@ addLayer("f", {
         "blank",
         ["display-text",function(){
           let s=""
-          s+="“快速”不是膨胀,是《快速》过掉这个层级(<br>"
+          s+="“快速”不是膨胀,是《快速》过掉这个层级("
           return s
         }],
         "milestones"]
