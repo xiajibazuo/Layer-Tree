@@ -235,7 +235,7 @@ addLayer("L", {
         keep.push("points")
         keep.push("milestones")
         }
-        if (((resettingLayer == "ED" && getClickableState("ED",91) == 1 ) || resettingLayer == "L" )&& resettingLayer !== "P") {layerDataReset(this.layer, keep)}
+        if ((resettingLayer == "ED" && getClickableState("ED",91) == 1 ) || resettingLayer == "L" ) {layerDataReset(this.layer, keep)}
     },
     layerShown(){return player.L.points.gte(1)}
 })
@@ -496,34 +496,51 @@ addLayer("p", {
     challenges: {
         11: {
             name: "C1",
-            challengeDescription: "?",
-            canComplete: function() {return player.points.gte(1)},
-            goalDescription: "10000000点数",
-            rewardDescription: "点数*1000",
+            challengeDescription: "点数/1e20(没那么难,指数前面)",
+            canComplete: function() {return player.points.gte(100)},
+            goalDescription: "100点数",
+            rewardDescription: "点数*1e20(没那么好,指数前面)",
             unlocked(){return true},
             onEnter(){
-                layerDataReset("p",[])
+                player.points = new Decimal(0)
             }
         },
         12: {
             name: "C2",
-            challengeDescription: "?",
+            challengeDescription: "点数需要主动获取",
             canComplete: function() {return player.points.gte(1)},
-            goalDescription: "1e38点数",
-            rewardDescription: "点数*1000",
-            unlocked(){return hasChallenge("p",11)}
+            goalDescription: "?点数",
+            rewardDescription: "点数*?",
+            unlocked(){return hasChallenge("p",11)},
+            onEnter(){
+                player.points = new Decimal(0)
+            }
         },
         13: {
             name: "C3",
-            challengeDescription(){return "?"},
+            challengeDescription(){return "凑数挑战"},
             canComplete: function() {return player.points.gte(1)},
-            goalDescription: "1e20点数",
-            rewardDescription: "完成挑战",
+            goalDescription: "?点数",
+            rewardDescription: "可以完成PC4",
             unlocked(){return hasChallenge("p",12)},
             onEnter(){
-                layerDataReset("p",[])
+                player.points = new Decimal(0)
             }
         }
+    },
+    clickables: {
+    11: {
+        display(){
+            return "主动获取点数"
+        },
+        onClick(){
+            player.points.add(player.preGetPointGen)
+        },
+        canClick(){
+            return true
+        },
+        tooltip: "可点击而不可长按焉<br>(《爱莲说》这一块)"
+    }
     },
     tabFormat: {
     "升级": {
@@ -550,6 +567,7 @@ addLayer("p", {
     },
     doReset(resettingLayer) {
         let keep = [];
+        if (hasMilestone("P",1) && resettingLayer == "P") keep.push("upgrades")
         if (hasMilestone("P",1) && resettingLayer == "P") keep.push("upgrades")
         
         if ((resettingLayer == "ED" && getClickableState("ED",11) == 1 ) || resettingLayer == "L" || resettingLayer == "P") {layerDataReset(this.layer, keep)}
@@ -653,7 +671,7 @@ addLayer("P", {
     challenges: {
         11: {
             name: "PC1",
-            challengeDescription: "重置点数升级,同时点数获取开0.15次根",
+            challengeDescription: "重置点数升级,同时点数^0.15",
             canComplete: function() {return player.points.gte(1e7)},
             goalDescription: "10000000点数",
             rewardDescription: "点数*1000",
@@ -683,7 +701,7 @@ addLayer("P", {
         },
         21: {
             name: "PC4",
-            challengeDescription: "重置点数升级,同时点数获取开ee45e4次根,解锁点数挑战",
+            challengeDescription: "重置点数升级,同时点数^0.05,解锁点数挑战",
             canComplete: function() {return hasChallenge("p",13)},
             goalDescription: "???",
             rewardDescription: "重置时保留点数挑战,点数*?",
