@@ -51,7 +51,7 @@ function getPointGen() {
 	if (hasMilestone("L",5))gain=gain.times(new Decimal(10).pow(player.L.layerPoint))
 	if (hasUpgrade("p",11)){
 	    if (hasUpgrade("p",13)){
-	        if (hasUpgrade("P",13)){
+	        if (hasUpgrade("P",13) && !inChallenge("P",22)){
 	            if (false){
 	                gain = gain.times(1)
 	            }
@@ -61,10 +61,14 @@ function getPointGen() {
 	    }
 	    else gain=gain.times(4)
 	}
-	if (hasUpgrade("p",12))gain=gain.times(player.points.add(1).log(2.718281828).add(1))
-	if (hasUpgrade("p",14))gain=gain.times(player.points.pow(0.25).add(1))
-	if (hasUpgrade("p",15))gain=gain.times(player.points.pow(0.25).add(1))
-	if (hasUpgrade("P",11))gain=gain.times(player.P.points.times(player.P.points.add(1).log(2.718281828)).add(1))
+	if (hasUpgrade("p",12))gain = gain.times(player.points.add(1).log(2.718281828).add(1))
+	if (hasUpgrade("p",14) && !inChallenge("P",12))gain = gain.times(player.points.pow(0.25).add(1))
+	if (hasUpgrade("p",15) && !inChallenge("P",12))gain = gain.times(player.points.pow(0.25).add(1))
+	if (hasUpgrade("P",11) && !inChallenge("P",22))gain = gain.times(player.P.points.times(player.P.points.add(1).log(2.718281828)).add(1))
+	if (hasChallenge("P",11))gain = gain.times(1000)
+	if (hasChallenge("P",12))gain = gain.times(1000)
+	if (inChallenge("P",13))gain = gain.div(player.points.pow(0.3).add(1)).div(1e30)
+	if (hasUpgrade("P",14))gain = gain.times(1000)
 	
 	if (inChallenge("P",11))exp = exp.times(0.15)
 	
