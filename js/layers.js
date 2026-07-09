@@ -523,6 +523,7 @@ addLayer("p", {
             onEnter(){
                 layerDataReset("p",[])
             }
+        }
     },
     tabFormat: {
     "升级": {
