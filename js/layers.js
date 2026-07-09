@@ -34,7 +34,7 @@ addLayer("L", {
     autoPrestige(){
         return hasMilestone('L',1) && !hasMilestone('L',3)
     },    
-    row: 11, // Row the layer is in on the tree (0 is the first row)
+    row: 9, // Row the layer is in on the tree (0 is the first row)
     resetsNothing(){return hasMilestone("L",7)},
 
     update(diff){
@@ -122,7 +122,7 @@ addLayer("L", {
     13: {
         title: "声望点数",
         cost(x){
-            if(x.gte(4))return new Decimal("10").pow(x.pow(x.minus(1)).times(0.5).add(x.pow(x.minus(2)).times(1.5).add(1)))
+            if(x.gte(7))return new Decimal("10").pow(x.pow(x.minus(4)).times(0.5).add(x.pow(x.minus(5)).times(1.5).add(1)))
             return new Decimal("10").pow(x.pow(2).times(0.5).add(x.times(1.5).add(1)))},
         display() {
            return "价格：" + format(this.cost()) + "声望点数<br>数量：" +format(getBuyableAmount("L",13))
@@ -247,7 +247,7 @@ addLayer("ED", {
 
     color: "#808080",                       // The color for this layer, which affects many elements.
     resource: "结束",            // The name of this layer's main prestige resource.
-    row: 12,                                 // The row this layer is on (0 is the first row).
+    row: 13,                                 // The row this layer is on (0 is the first row).
 
     baseResource: "点数",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.points },  // A function to return the current amount of baseResource.
@@ -389,7 +389,7 @@ addLayer("p", {
             title: "1",
             description(){
                 if(hasUpgrade("p",13)){
-                    if(hasUpgrade("P",13)){
+                    if(hasUpgrade("P",13) && !inChallenge("P",22)){
                         return "增益点数<br>效果：*1e10"
                     }
                     return "增益点数<br>效果：*7"
@@ -411,7 +411,7 @@ addLayer("p", {
         13: {
             title: "3",
             description(){
-                if(hasUpgrade("P",13)){
+                if(hasUpgrade("P",13) && !inChallenge("P",22)){
                     return "升级1的效果更好(*4→*1e10)"
                 }
                 return "升级1的效果更好(*4→*7)"
@@ -424,7 +424,7 @@ addLayer("p", {
             description(){
                 return "点数增益自己<br>效果：*" + format(player.points.pow(0.25).add(1))
             },
-            tooltip: "公式：*(点数^0.25)",
+            tooltip: "公式：*(点数^0.25+1)",
             unlocked(){return hasUpgrade("p",13)},
             cost: new Decimal(40000)
         },
@@ -433,7 +433,7 @@ addLayer("p", {
             description(){
                 return "点数增益自己<br>效果：*" + format(player.points.pow(0.25).add(1))
             },
-            tooltip: "公式：*(点数^0.25)",
+            tooltip: "公式：*(点数^0.25+1)",
             unlocked(){return hasUpgrade("p",14)},
             cost: new Decimal(1000000)
         },
@@ -493,6 +493,37 @@ addLayer("p", {
             }
         }
     },
+    challenges: {
+        11: {
+            name: "C1",
+            challengeDescription: "?",
+            canComplete: function() {return player.points.gte(1)},
+            goalDescription: "10000000点数",
+            rewardDescription: "点数*1000",
+            unlocked(){return true},
+            onEnter(){
+                layerDataReset("p",[])
+            }
+        },
+        12: {
+            name: "C2",
+            challengeDescription: "?",
+            canComplete: function() {return player.points.gte(1)},
+            goalDescription: "1e38点数",
+            rewardDescription: "点数*1000",
+            unlocked(){return hasChallenge("p",11)}
+        },
+        13: {
+            name: "C3",
+            challengeDescription(){return "?"},
+            canComplete: function() {return player.points.gte(1)},
+            goalDescription: "1e20点数",
+            rewardDescription: "完成挑战",
+            unlocked(){return hasChallenge("p",12)},
+            onEnter(){
+                layerDataReset("p",[])
+            }
+    },
     tabFormat: {
     "升级": {
         content: [
@@ -504,8 +535,17 @@ addLayer("p", {
           s+="升级不消耗点数(才不是因为不会写代码呢)<br>"
           return s
         }],
+        "blank",
         "upgrades"]
-        }
+        },
+    "挑战": {
+        unlocked(){return inChallenge("P",21) || hasChallenge("P",21)},
+        content: [
+        "main-display",
+        "blank",
+        "blank",
+        "challenges"]
+    }
     },
     doReset(resettingLayer) {
         let keep = [];
@@ -518,7 +558,8 @@ addLayer("P", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
         unlocked: false,                     // You can add more variables here to add them to your layer.
         points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
-        total: new Decimal(0)
+        total: new Decimal(0),
+        total2: new Decimal(0)
     }},
 
     color: "#4BDC13",                       // The color for this layer, which affects many elements.
@@ -545,6 +586,9 @@ addLayer("P", {
     layerShown() { return player.L.points.gte(3) },          // Returns a bool for if this layer's node should be visible in the tree.
     branches: ["L","p"],
     tooltipLocked: "达到1e14点数解锁层级(关于层级要二次解锁这件事)",
+    update(diff){
+        if (player.P.total.gte(player.P.total2)){player.P.total2 = player.P.total}
+    },
     
     milestones: {
         1: {
@@ -581,10 +625,10 @@ addLayer("P", {
         14: {
             title: "P4",
             description(){
-                return "aba aba"
+                return "点数*1000"
             },
             unlocked(){return hasChallenge("P",13)},
-            cost: new Decimal(1000)
+            cost: new Decimal(1e17)
         },
         15: {
             title: "P5",
@@ -592,7 +636,7 @@ addLayer("P", {
                 return "解锁一个声望挑战"
             },
             unlocked(){return hasUpgrade("P",14)},
-            cost: new Decimal(1000)
+            cost: new Decimal(1e19)
         },
         91: {
             title: "点不到的升级",
@@ -609,9 +653,9 @@ addLayer("P", {
         11: {
             name: "PC1",
             challengeDescription: "重置点数升级,同时点数获取开0.15次根",
-            canComplete: function() {return player.points.gte(1e11)},
-            goalDescription: "1e11点数",
-            rewardDescription: "点数^ee45e4",
+            canComplete: function() {return player.points.gte(1e7)},
+            goalDescription: "10000000点数",
+            rewardDescription: "点数*1000",
             unlocked(){return true},
             onEnter(){
                 layerDataReset("p",[])
@@ -619,31 +663,37 @@ addLayer("P", {
         },
         12: {
             name: "PC2",
-            challengeDescription: "点数获取开ee45e4次根",
-            canComplete: function() {return player.points.gte(100)},
-            goalDescription: "ee45e4点数",
-            rewardDescription: "点数^ee45e4",
+            challengeDescription: "升级4,5没有作用",
+            canComplete: function() {return player.points.gte(1e38)},
+            goalDescription: "1e38点数",
+            rewardDescription: "点数*1000",
             unlocked(){return hasChallenge("P",11)}
         },
         13: {
             name: "PC3",
-            challengeDescription: "点数获取开ee45e4次根",
-            canComplete: function() {return player.points.gte(100)},
-            goalDescription: "ee45e4点数",
+            challengeDescription(){return "重置点数升级,同时点数削弱自己(公式：/((点数^0.5+1)*1e30))<br>效果：/" + format(player.points.pow(0.3).add(1).times(1e30))},
+            canComplete: function() {return player.points.gte(1e20)},
+            goalDescription: "1e20点数",
             rewardDescription: "解锁更多声望升级",
-            unlocked(){return hasChallenge("P",12)}
+            unlocked(){return hasChallenge("P",12)},
+            onEnter(){
+                layerDataReset("p",[])
+            }
         },
         21: {
             name: "PC4",
-            challengeDescription: "点数获取开ee45e4次根",
-            canComplete: function() {return player.points.gte(100)},
-            goalDescription: "ee45e4点数",
-            rewardDescription: "点数^ee45e4",
-            unlocked(){return hasUpgrade("P",15)}
+            challengeDescription: "重置点数升级,同时点数获取开ee45e4次根,解锁点数挑战",
+            canComplete: function() {return hasChallenge("p",13)},
+            goalDescription: "???",
+            rewardDescription: "重置时保留点数挑战,点数*?",
+            unlocked(){return hasUpgrade("P",15)},
+            onEnter(){
+                layerDataReset("p",[])
+            }
         },
         22: {
             name: "PC5",
-            challengeDescription: "点数获取开ee45e4次根",
+            challengeDescription: "声望升级没有效果",
             canComplete: function() {return player.points.gte(100)},
             goalDescription: "ee45e4点数",
             rewardDescription: "点数^ee45e4",
@@ -656,7 +706,7 @@ addLayer("P", {
             goalDescription: "ee45e4点数",
             rewardDescription: "解锁更多点数升级",
             unlocked(){return hasChallenge("P",22)}
-        },
+        }
     },
     tabFormat: {
     "里程碑": {
@@ -696,7 +746,7 @@ addLayer("P", {
     },
     doReset(resettingLayer) {
         let keep = [];
-        if (resettingLayer !== "ED") keep.push("total")
+        if (resettingLayer !== "ED") keep.push("total2")
         
         if ((resettingLayer == "ED" && getClickableState("ED",21) == 1 ) || resettingLayer == "L") {layerDataReset(this.layer, keep)}
     }
@@ -710,7 +760,7 @@ addLayer("GM", {
     symbol: " ", // This appears on the layer's node. Default is the id with the first letter capitalized
     color: "#FFFFFF",                       // The color for this layer, which affects many elements.
     resource: "棍母",            // The name of this layer's main prestige resource.
-    row: 13,                                 // The row this layer is on (0 is the first row).
+    row: 12,                                 // The row this layer is on (0 is the first row).
 
     baseResource: "棍母",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.points },  // A function to return the current amount of baseResource.
