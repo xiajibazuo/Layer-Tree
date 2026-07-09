@@ -38,14 +38,11 @@ function getStartPoints(){
 
 // Determines if it should show points/sec
 function canGenPoints(){
-	return true
+	return (!inChallenge("p",12))
 }
 
 // Calculate points/sec!
 function getPointGen() {
-	if(!canGenPoints())
-		return new Decimal(0)
-
 	let gain = new Decimal(1)
 	let exp = new Decimal(1)
 	if (hasMilestone("L",5))gain=gain.times(new Decimal(10).pow(player.L.layerPoint))
@@ -69,17 +66,26 @@ function getPointGen() {
 	if (hasChallenge("P",12))gain = gain.times(1000)
 	if (inChallenge("P",13))gain = gain.div(player.points.pow(0.3).add(1)).div(1e30)
 	if (hasUpgrade("P",14))gain = gain.times(1000)
+	if (inChallenge("p",11))gain = gain.div(1e20)
+	if (hasChallenge("p",11))gain = gain.times(1e20)
 	
 	if (inChallenge("P",11))exp = exp.times(0.15)
+	if (inChallenge("P",21))exp = exp.times(0.05)
 	
 	gain = gain.pow(exp)
+	
+	if(!canGenPoints()){
+	    player.preGetPointGen = gain
+		return new Decimal(0)
+	}
 	return gain
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
     devSpeed: new Decimal(1),
-    test: false
+    test: false,
+    preGetPointGen: new Decimal(1)
 }}
 
 // Display extra things at the top of the page
