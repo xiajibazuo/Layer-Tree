@@ -122,7 +122,7 @@ addLayer("L", {
     13: {
         title: "声望点数",
         cost(x){
-            if(x.gte(7))return new Decimal("10").pow(x.pow(x.minus(4)).times(0.5).add(x.pow(x.minus(5)).times(1.5).add(1)))
+            if(x.gte(7))return new Decimal("10").pow(x.pow(x.times(0.02).add(2)).times(0.5).add(x.pow(x.times(0.02).add(1)).times(1.5).add(1)))
             return new Decimal("10").pow(x.pow(2).times(0.5).add(x.times(1.5).add(1)))},
         display() {
            return "价格：" + format(this.cost()) + "声望点数<br>数量：" +format(getBuyableAmount("L",13))
@@ -247,7 +247,7 @@ addLayer("ED", {
 
     color: "#808080",                       // The color for this layer, which affects many elements.
     resource: "结束",            // The name of this layer's main prestige resource.
-    row: 13,                                 // The row this layer is on (0 is the first row).
+    row: 11,                                 // The row this layer is on (0 is the first row).
 
     baseResource: "点数",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.points },  // A function to return the current amount of baseResource.
@@ -356,7 +356,7 @@ addLayer("p", {
         unlocked: true,                     // You can add more variables here to add them to your layer.
         points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
         best: new Decimal(0),
-        best2: new Decimal(0),
+        best2: new Decimal(0)
     }},
 
     color: "#FF0000",                       // The color for this layer, which affects many elements.
@@ -385,6 +385,9 @@ addLayer("p", {
     },
     layerShown() { return player.L.points.gte(2)},          // Returns a bool for if this layer's node should be visible in the tree.
     branches: ["L"],
+    update(diff){
+        if (player.points.gte(player.p.best)){player.p.best = player.points}
+    },
     
     upgrades: {
         11: {
@@ -510,8 +513,8 @@ addLayer("p", {
         12: {
             name: "C2",
             challengeDescription: "点数需要主动获取",
-            canComplete: function() {return player.points.gte(1)},
-            goalDescription: "?点数",
+            canComplete: function() {return player.points.gte(100000)},
+            goalDescription: "100000点数",
             rewardDescription: "点数*?,升级2,4,5可以基于点数最大值",
             unlocked(){return hasChallenge("p",11)},
             onEnter(){
@@ -521,8 +524,8 @@ addLayer("p", {
         13: {
             name: "C3",
             challengeDescription(){return "凑数挑战"},
-            canComplete: function() {return player.points.gte(1)},
-            goalDescription: "?点数",
+            canComplete: function() {return player.points.gte(1e7)},
+            goalDescription: "10000000点数",
             rewardDescription: "可以完成PC4",
             unlocked(){return hasChallenge("p",12)},
             onEnter(){
@@ -541,7 +544,7 @@ addLayer("p", {
             if(hasChallenge("p",12)){
                 if(player.p.best.gt(player.p.best2)) player.p.best2 = player.p.best
             }
-            else player.points.add(player.preGetPointGen)
+            else player.points =player.points.add(player.preGetPointGen)
         },
         canClick(){
             return true
@@ -556,6 +559,12 @@ addLayer("p", {
           "blank",
         "clickables",
         "blank",
+        "blank",
+        ["display-text",function(){
+          let s=""
+          s+="升级不消耗点数(才不是因为不会写代码呢)<br>"
+          return s
+        }],
         "blank",
         "upgrades"]
     },
@@ -573,7 +582,7 @@ addLayer("p", {
     doReset(resettingLayer) {
         let keep = [];
         if (hasMilestone("P",1) && resettingLayer == "P") keep.push("upgrades")
-        if (hasMilestone("P",1) && resettingLayer == "P") keep.push("upgrades")
+        if (hasChallenge("P",21) && resettingLayer == "P") keep.push("challenges")
         
         if ((resettingLayer == "ED" && getClickableState("ED",11) == 1 ) || resettingLayer == "L" || resettingLayer == "P") {layerDataReset(this.layer, keep)}
     }
