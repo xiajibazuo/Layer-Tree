@@ -354,9 +354,9 @@ addLayer("p", {
     name: "点数", // This is optional, only used in a few places, If absent it just uses the layer id.
     startData() { return {                  // startData is a function that returns default data for a layer. 
         unlocked: true,                     // You can add more variables here to add them to your layer.
-        points: new Decimal(0)             // "points" is the internal name for the main resource of the layer.
-        best: new Decimal(0)
-        best2: new Decimal(0)
+        points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
+        best: new Decimal(0),
+        best2: new Decimal(0),
     }},
 
     color: "#FF0000",                       // The color for this layer, which affects many elements.
