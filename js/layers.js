@@ -355,6 +355,8 @@ addLayer("p", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
         unlocked: true,                     // You can add more variables here to add them to your layer.
         points: new Decimal(0)             // "points" is the internal name for the main resource of the layer.
+        best: new Decimal(0)
+        best2: new Decimal(0)
     }},
 
     color: "#FF0000",                       // The color for this layer, which affects many elements.
@@ -402,7 +404,7 @@ addLayer("p", {
         12: {
             title: "2",
             description(){
-                return "点数增益自己<br>效果：*" + format(player.points.add(1).log(2.718281828).add(1))
+                return "点数增益自己<br>效果：*" + format(player.points.max(player.p.best2).add(1).log(2.718281828).add(1))
             },
             tooltip: "公式：*(ln(点数+1)+1)",
             unlocked(){return hasUpgrade("p",11)},
@@ -422,7 +424,7 @@ addLayer("p", {
         14: {
             title: "4",
             description(){
-                return "点数增益自己<br>效果：*" + format(player.points.pow(0.25).add(1))
+                return "点数增益自己<br>效果：*" + format(player.points.max(player.p.best2).pow(0.25).add(1))
             },
             tooltip: "公式：*(点数^0.25+1)",
             unlocked(){return hasUpgrade("p",13)},
@@ -431,7 +433,7 @@ addLayer("p", {
         15: {
             title: "5",
             description(){
-                return "点数增益自己<br>效果：*" + format(player.points.pow(0.25).add(1))
+                return "点数增益自己<br>效果：*" + format(player.points.max(player.p.best2).pow(0.25).add(1))
             },
             tooltip: "公式：*(点数^0.25+1)",
             unlocked(){return hasUpgrade("p",14)},
@@ -510,7 +512,7 @@ addLayer("p", {
             challengeDescription: "点数需要主动获取",
             canComplete: function() {return player.points.gte(1)},
             goalDescription: "?点数",
-            rewardDescription: "点数*?",
+            rewardDescription: "点数*?,升级2,4,5可以基于点数最大值",
             unlocked(){return hasChallenge("p",11)},
             onEnter(){
                 player.points = new Decimal(0)
@@ -531,10 +533,15 @@ addLayer("p", {
     clickables: {
     11: {
         display(){
-            return "主动获取点数"
+            if(hasChallenge("p",12))return "升级2,4,5的效果基于现在点数最大值<br>目前升级基于" + format(player.p.best2) + "点数<br>当前最大值：" + format(player.p.best)
+            else return "主动获取点数"
         },
+        unlocked(){return(inChallenge("p",12) || hasChallenge("p",12))},
         onClick(){
-            player.points.add(player.preGetPointGen)
+            if(hasChallenge("p",12)){
+                if(player.p.best.gt(player.p.best2)) player.p.best2 = player.p.best
+            }
+            else player.points.add(player.preGetPointGen)
         },
         canClick(){
             return true
@@ -546,20 +553,18 @@ addLayer("p", {
     "升级": {
         content: [
         "main-display",
+          "blank",
+        "clickables",
         "blank",
-        "blank",
-        ["display-text",function(){
-          let s=""
-          s+="升级不消耗点数(才不是因为不会写代码呢)<br>"
-          return s
-        }],
         "blank",
         "upgrades"]
-        },
+    },
     "挑战": {
-        unlocked(){return inChallenge("P",21) || hasChallenge("P",21)},
+        unlocked(){return hasMilestone("f",0)},
         content: [
         "main-display",
+          "blank",
+        "clickables",
         "blank",
         "blank",
         "challenges"]
