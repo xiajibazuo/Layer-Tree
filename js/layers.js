@@ -380,12 +380,10 @@ addLayer("p", {
     gainExp() {                             // Returns the exponent to your gain of the prestige resource.
         return new Decimal(1)
     },
-    update(diff){
-    player.p.points = player.points
-    },
     layerShown() { return player.L.points.gte(2)},          // Returns a bool for if this layer's node should be visible in the tree.
     branches: ["L"],
     update(diff){
+        player.p.points = player.points
         if (player.points.gte(player.p.best)){player.p.best = player.points}
     },
     
@@ -515,7 +513,7 @@ addLayer("p", {
             challengeDescription: "点数需要主动获取",
             canComplete: function() {return player.points.gte(100000)},
             goalDescription: "100000点数",
-            rewardDescription: "点数*?,升级2,4,5可以基于点数最大值",
+            rewardDescription: "升级2,4,5可以基于点数最大值(声望重置保留)",
             unlocked(){return hasChallenge("p",11)},
             onEnter(){
                 player.points = new Decimal(0)
@@ -524,8 +522,8 @@ addLayer("p", {
         13: {
             name: "C3",
             challengeDescription(){return "凑数挑战"},
-            canComplete: function() {return player.points.gte(1e7)},
-            goalDescription: "10000000点数",
+            canComplete: function() {return player.points.gte(1e6)},
+            goalDescription: "1000000点数",
             rewardDescription: "可以完成PC4",
             unlocked(){return hasChallenge("p",12)},
             onEnter(){
@@ -569,7 +567,7 @@ addLayer("p", {
         "upgrades"]
     },
     "挑战": {
-        unlocked(){return hasMilestone("f",0)},
+        unlocked(){return (inChallenge("P",21) || hasChallenge("P",21))},
         content: [
         "main-display",
           "blank",
@@ -583,6 +581,7 @@ addLayer("p", {
         let keep = [];
         if (hasMilestone("P",1) && resettingLayer == "P") keep.push("upgrades")
         if (hasChallenge("P",21) && resettingLayer == "P") keep.push("challenges")
+        if (hasChallenge("p",12) && resettingLayer == "P") keep.push("best2")
         
         if ((resettingLayer == "ED" && getClickableState("ED",11) == 1 ) || resettingLayer == "L" || resettingLayer == "P") {layerDataReset(this.layer, keep)}
     }
@@ -718,7 +717,7 @@ addLayer("P", {
             challengeDescription: "重置点数升级,同时点数^0.05,解锁点数挑战",
             canComplete: function() {return hasChallenge("p",13)},
             goalDescription: "???",
-            rewardDescription: "重置时保留点数挑战,点数*?",
+            rewardDescription: "重置时保留点数挑战",
             unlocked(){return hasUpgrade("P",15)},
             onEnter(){
                 layerDataReset("p",[])
@@ -726,9 +725,9 @@ addLayer("P", {
         },
         22: {
             name: "PC5",
-            challengeDescription: "声望升级没有效果",
-            canComplete: function() {return player.points.gte(100)},
-            goalDescription: "ee45e4点数",
+            challengeDescription: "声望升级没有效果,同时点数/1e114(好臭的削弱)",
+            canComplete: function() {return player.points.gte(1e20)},
+            goalDescription: "1e20点数",
             rewardDescription: "点数^ee45e4",
             unlocked(){return hasChallenge("P",21)}
         },
