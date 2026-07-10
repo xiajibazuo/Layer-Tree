@@ -69,9 +69,12 @@ function getPointGen() {
 	if (inChallenge("p",11))gain = gain.div(1e20)
 	if (hasChallenge("p",11))gain = gain.times(1e20)
 	if (hasChallenge("p",12))gain = gain.times(1e20)
+	if (hasChallenge("P",22))gain = gain.times(1000)
+	if (inChallenge("P",13))gain = gain.div(1e114)
 	
 	if (inChallenge("P",11))exp = exp.times(0.15)
 	if (inChallenge("P",21))exp = exp.times(0.05)
+	if (inChallenge("P",23))exp = exp.div(player.points.log(Math.E).add(1)).div(1)
 	
 	gain = gain.pow(exp)
 	
