@@ -643,7 +643,7 @@ buyables: {
         content: [
         "main-display",
           "blank",
-        "clickables"
+        "clickables",
         "blank",
         "blank",
         ["display-text",function(){
