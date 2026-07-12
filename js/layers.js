@@ -455,12 +455,12 @@ addLayer("p", {
         21: {
             title: "6",
             description(){
-                return "解锁点数可购买"
+                return "解锁点数可购买<br>需要在PC4中购买"
             },
             unlocked(){return hasChallenge("P",23)},
             cost(){
-                if (false) return new Decimal("eeeeeeeeee114514")
-                return new Decimal("0")
+                if (!inChallenge("P",21)) return new Decimal("eeeeeeeeee114514")
+                return new Decimal(1e15)
             }
         },
         22: {
@@ -562,10 +562,10 @@ buyables: {
     },
     12: {
         cost(x) {
-            return new Decimal(1e275).times(new Decimal(1e15).pow(x))
+            return new Decimal(1e280).times(new Decimal(1e15).pow(x))
         },
         effect(x){
-            return player.points.pow(x.times(0.05))
+            return player.points.pow(new Decimal(x).times(0.05))
         },
         display() {
            return "增益点数<br>效果：*" + format(this.effect(x)) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount("p",11))
@@ -810,7 +810,7 @@ addLayer("P", {
         },
         23: {
             name: "PC6",
-            challengeDescription(){return "重置点数升级,同时点数削弱自己(公式：^(1/(ln(ln(点数^0.5+1)+1)+1))),同时点数/1e114(好臭的削弱)<br>效果：/" + format(player.points.pow(0.5).add(1).log(Math.E).add(1).log(Math.E).add(1))},
+            challengeDescription(){return "重置点数升级,同时点数削弱自己(公式：^(1/(ln(ln(点数^0.5+1)+1)+1))),同时点数/1e114(好臭的削弱)<br>效果：^(1/" + format(player.points.pow(0.5).add(1).log(Math.E).add(1).log(Math.E).add(1)) + ")"},
             canComplete: function() {return player.points.gte(1e33)},
             goalDescription: "1e33点数",
             rewardDescription: "解锁更多点数升级",
