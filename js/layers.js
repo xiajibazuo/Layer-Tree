@@ -405,9 +405,13 @@ addLayer("p", {
         12: {
             title: "2",
             description(){
-                return "点数增益自己<br>效果：*" + format(player.points.max(player.p.best2).add(1).log(2.718281828).add(1))
+                return "点数增益自己<br>效果：*" + format(player.points.max(player.p.best2).min("1.79e308").add(1).log(2.718281828).add(1))
             },
-            tooltip: "公式：*(ln(点数+1)+1)",
+            tooltip(){
+                let s = "公式：*(ln(点数+1)+1)"
+                if(player.points.gte("1.79e308")) s+="<br>现在点数超过了1.79e308,效果达到硬上限,"
+                return s
+            },
             unlocked(){return hasUpgrade("p",11)},
             cost: new Decimal(1200)
         },
@@ -425,25 +429,33 @@ addLayer("p", {
         14: {
             title: "4",
             description(){
-                return "点数增益自己<br>效果：*" + format(player.points.max(player.p.best2).pow(0.25).add(1))
+                return "点数增益自己<br>效果：*" + format(player.points.max(player.p.best2).min("1.79e308").pow(0.25).add(1))
             },
-            tooltip: "公式：*(点数^0.25+1)",
+            tooltip(){
+                let s = "公式：*(点数^0.25+1)"
+                if(player.points.gte("1.79e308")) s+="<br>现在点数超过了1.79e308,效果达到硬上限,"
+                return s
+            },
             unlocked(){return hasUpgrade("p",13)},
             cost: new Decimal(40000)
         },
         15: {
             title: "5",
             description(){
-                return "点数增益自己<br>效果：*" + format(player.points.max(player.p.best2).pow(0.25).add(1))
+                return "点数增益自己<br>效果：*" + format(player.points.max(player.p.best2).min("1.79e308").pow(0.25).add(1))
             },
-            tooltip: "公式：*(点数^0.25+1)",
+            tooltip(){
+                let s = "公式：*(点数^0.25+1)"
+                if(player.points.gte("1.79e308")) s+="<br>现在点数超过了1.79e308,效果达到硬上限,"
+                return s
+            },
             unlocked(){return hasUpgrade("p",14)},
             cost: new Decimal(1000000)
         },
         21: {
             title: "6",
             description(){
-                return "增益点数<br>效果：^1.5"
+                return "解锁点数可购买"
             },
             unlocked(){return hasChallenge("P",23)},
             cost(){
@@ -531,6 +543,56 @@ addLayer("p", {
             }
         }
     },
+buyables: {
+    11: {
+        cost(x) {
+            return new Decimal(1e270).times(new Decimal(1e10).pow(x))
+        },
+        effect(x){
+            return new Decimal(1e5).pow(x)
+        },
+        display() {
+           return "增益点数<br>效果：*" + format(this.effect(x)) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount("p",11))
+        },
+        tooltip: "效果公式：*100000^(可购买数量)",
+        canAfford() { return player[this.layer].points.gte(this.cost()) },
+        buy() {
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        }
+    },
+    12: {
+        cost(x) {
+            return new Decimal(1e275).times(new Decimal(1e15).pow(x))
+        },
+        effect(x){
+            return player.points.pow(x.times(0.05))
+        },
+        display() {
+           return "增益点数<br>效果：*" + format(this.effect(x)) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount("p",11))
+        },
+        tooltip: "效果公式：*点数^(可购买数量*0.05)",
+        canAfford() { return player[this.layer].points.gte(this.cost()) },
+        buy() {
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        }
+    },
+    13: {
+        cost(x) {
+            return new Decimal(1e300).times(new Decimal(1e20).pow(x))
+        },
+        effect(x){
+            return new Decimal(0.01).times(x).add(1)
+        },
+        display() {
+           return "增益点数<br>效果：^" + format(this.effect(x)) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount("p",11))
+        },
+        tooltip: "效果公式：^(可购买数量*0.01+1)",
+        canAfford() { return player[this.layer].points.gte(this.cost()) },
+        buy() {
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        }
+    }
+},
     clickables: {
     11: {
         display(){
@@ -575,6 +637,21 @@ addLayer("p", {
         "blank",
         "blank",
         "challenges"]
+    },
+    "可购买": {
+        unlocked(){return hasUpgrade("p",21)},
+        content: [
+        "main-display",
+          "blank",
+        "clickables"
+        "blank",
+        "blank",
+        ["display-text",function(){
+          let s=""
+          s+="依旧不消耗点数(<br>"
+          return s
+        }],
+        "buyables"]
     }
     },
     doReset(resettingLayer) {
@@ -690,7 +767,7 @@ addLayer("P", {
             rewardDescription: "点数*1000",
             unlocked(){return true},
             onEnter(){
-                layerDataReset("p",[])
+                player.p.upgrades = []
             }
         },
         12: {
@@ -709,7 +786,7 @@ addLayer("P", {
             rewardDescription: "解锁更多声望升级",
             unlocked(){return hasChallenge("P",12)},
             onEnter(){
-                layerDataReset("p",[])
+                player.p.upgrades = []
             }
         },
         21: {
@@ -720,24 +797,27 @@ addLayer("P", {
             rewardDescription: "重置时保留点数挑战",
             unlocked(){return hasUpgrade("P",15)},
             onEnter(){
-                layerDataReset("p",[])
+                player.p.upgrades = []
             }
         },
         22: {
             name: "PC5",
             challengeDescription: "声望升级没有效果,同时点数/1e114(好臭的削弱)",
-            canComplete: function() {return player.points.gte(1e20)},
-            goalDescription: "1e20点数",
+            canComplete: function() {return player.points.gte(1e80)},
+            goalDescription: "1e80点数",
             rewardDescription: "点数^ee45e4",
             unlocked(){return hasChallenge("P",21)}
         },
         23: {
             name: "PC6",
-            challengeDescription: "点数获取开ee45e4次根",
-            canComplete: function() {return player.points.gte(100)},
-            goalDescription: "ee45e4点数",
+            challengeDescription(){return "重置点数升级,同时点数削弱自己(公式：^(1/(ln(ln(点数^0.5+1)+1)+1))),同时点数/1e114(好臭的削弱)<br>效果：/" + format(player.points.pow(0.5).add(1).log(Math.E).add(1).log(Math.E).add(1))},
+            canComplete: function() {return player.points.gte(1e33)},
+            goalDescription: "1e33点数",
             rewardDescription: "解锁更多点数升级",
-            unlocked(){return hasChallenge("P",22)}
+            unlocked(){return hasChallenge("P",22)},
+            onEnter(){
+                player.p.upgrades = []
+            }
         }
     },
     tabFormat: {
