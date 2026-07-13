@@ -58,10 +58,10 @@ function getPointGen() {
 	    }
 	    else gain=gain.times(4)
 	}
-	if (hasUpgrade("p",12))gain = gain.times(player.points.max(player.p.best2).min("1.79e308").add(1).log(2.718281828).add(1))
+	if (hasUpgrade("p",12))gain = gain.times(player.points.max(player.p.best2).min("1.79e308").add(1).log(Math.E).add(1))
 	if (hasUpgrade("p",14) && !inChallenge("P",12))gain = gain.times(player.points.max(player.p.best2).min("1.79e308").pow(0.25).add(1))
 	if (hasUpgrade("p",15) && !inChallenge("P",12))gain = gain.times(player.points.max(player.p.best2).min("1.79e308").pow(0.25).add(1))
-	if (hasUpgrade("P",11) && !inChallenge("P",22))gain = gain.times(player.P.points.times(player.P.points.add(1).log(2.718281828)).add(1))
+	if (hasUpgrade("P",11) && !inChallenge("P",22))gain = gain.times(player.P.points.times(player.P.points.add(1).log(Math.E)).add(1))
 	if (hasChallenge("P",11))gain = gain.times(1000)
 	if (hasChallenge("P",12))gain = gain.times(1000)
 	if (inChallenge("P",13))gain = gain.div(player.points.pow(0.3).add(1)).div(1e30)
@@ -72,10 +72,15 @@ function getPointGen() {
 	if (hasChallenge("P",22))gain = gain.times(1000)
 	if (inChallenge("P",22))gain = gain.div(1e114)
 	if (inChallenge("P",23))gain = gain.div(1e114)
+	if (hasUpgrade("p",21))gain = gain.times(10)
+	gain = gain.times(buyableEffect("p",11))
+	gain = gain.times(buyableEffect("p",12))
+	if (hasUpgrade("p",22))gain = gain.times(10)
 	
 	if (inChallenge("P",11))exp = exp.times(0.15)
 	if (inChallenge("P",21))exp = exp.times(0.05)
 	if (inChallenge("P",23))exp = exp.div(player.points.pow(0.5).add(1).log(Math.E).add(1).log(Math.E).add(1))
+	exp = exp.times(buyableEffect("p",13))
 	
 	gain = gain.pow(exp)
 	
