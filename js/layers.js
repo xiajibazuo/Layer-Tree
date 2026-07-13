@@ -820,7 +820,7 @@ addLayer("P", {
             else s+="重置点数升级,同时"
             s+="点数^0.05,解锁点数挑战"
             return s
-            },,
+            },
             canComplete: function() {return hasChallenge("p",13)},
             goalDescription: "???",
             rewardDescription: "重置时保留点数挑战",
