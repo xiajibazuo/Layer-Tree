@@ -466,7 +466,7 @@ addLayer("p", {
         21: {
             title: "6",
             description(){
-                return "解锁点数可购买,点数*10<br>需要在PC4中购买"
+                return "解锁点数可购买,这一行每一个升级点数*10<br>需要在PC4中购买"
             },
             unlocked(){return hasChallenge("P",23)},
             cost(){
@@ -477,7 +477,7 @@ addLayer("p", {
         22: {
             title: "7",
             description(){
-                return "点数*10,PC1,3,4,6不重置点数升级<br>需要在PC2中购买"
+                return "PC1,3,4,6不重置点数升级,但是在PC3,6里全局速率/100<br>需要在PC2中购买"
             },
             unlocked(){return hasUpgrade("p",21)},
             cost(){
@@ -488,23 +488,23 @@ addLayer("p", {
         23: {
             title: "8",
             description(){
-                return "增益点数<br>效果：^1.5"
+                return "解锁一个可购买<br>需要在PC1中购买"
             },
             unlocked(){return hasUpgrade("p",22)},
             cost(){
-                if (false) return new Decimal("eeeeeeeeee114514")
-                return new Decimal("0")
+                if (!inChallenge("P",11)) return new Decimal("eeeeeeeeee114514")
+                return new Decimal(1e45)
             }
         },
         24: {
             title: "9",
             description(){
-                return "增益点数<br>效果：^1.5"
+                return "声望不重置点数可购买<br>需要在PC5中购买"
             },
             unlocked(){return hasUpgrade("p",23)},
             cost(){
-                if (false) return new Decimal("eeeeeeeeee114514")
-                return new Decimal("0")
+                if (!inChallenge("P",22)) return new Decimal("eeeeeeeeee114514")
+                return new Decimal(1e115)
             }
         },
         25: {
@@ -514,7 +514,7 @@ addLayer("p", {
             },
             unlocked(){return hasUpgrade("p",24)},
             cost(){
-                if (false) return new Decimal("eeeeeeeeee114514")
+                if (!inChallenge("P",11)) return new Decimal("eeeeeeeeee114514")
                 return new Decimal("0")
             }
         }
@@ -565,7 +565,7 @@ buyables: {
         display() {
            return "增益点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount("p",11))
         },
-        tooltip: "效果公式：*100000^(可购买数量)",
+        tooltip: "效果公式：*1000^(可购买数量)",
         canAfford() { return player[this.layer].points.gte(this.cost()) },
         buy() {
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
@@ -573,19 +573,20 @@ buyables: {
     },
     12: {
         cost(x) {
-            return new Decimal(1e280).times(new Decimal(1e15).pow(x))
+            return new Decimal("1e315").times(new Decimal(1e15).pow(x))
         },
         effect(x){
-            return player.points.pow(new Decimal(x).add(1).log(Math.E).add(1).log(Math.E).times(0.05))
+            return player.points.pow(new Decimal(x).add(1).log(Math.E).add(1).log(Math.E).times(0.05)).add(1)
         },
         display() {
            return "增益点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount("p",12))
         },
-        tooltip: "效果公式：*点数^(可购买数量*0.05)",
+        tooltip: "效果公式：*点数^(ln(ln(可购买数量+1)+1)*0.05)+1",
         canAfford() { return player[this.layer].points.gte(this.cost()) },
         buy() {
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
-        }
+        },
+        unlocked(){return hasUpgrade("p",23)}
     },
     13: {
         cost(x) {
@@ -597,7 +598,7 @@ buyables: {
         display() {
            return "增益点数<br>效果：^" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount("p",13))
         },
-        tooltip: "效果公式：^(可购买数量*0.01+1)",
+        tooltip: "效果公式：^(ln(可购买数量+1)*0.01+1)",
         canAfford() { return player[this.layer].points.gte(this.cost()) },
         buy() {
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
@@ -670,6 +671,7 @@ buyables: {
         if (hasMilestone("P",1) && resettingLayer == "P") keep.push("upgrades")
         if (hasChallenge("P",21) && resettingLayer == "P") keep.push("challenges")
         if (hasChallenge("p",12) && resettingLayer == "P") keep.push("best2")
+        if (hasUpgrade("p",24) && resettingLayer == "P") keep.push("buyables")
         
         if ((resettingLayer == "ED" && getClickableState("ED",11) == 1 ) || resettingLayer == "L" || resettingLayer == "P") {layerDataReset(this.layer, keep)}
     }
@@ -801,7 +803,7 @@ addLayer("P", {
             let s = ""
             if(hasUpgrade("p",22))s+="<del>重置点数升级,同时</del>"
             else s+="重置点数升级,同时"
-            s+=("点数削弱自己(公式：/((点数^0.5+1)*1e30))<br>效果：/" + format(player.points.pow(0.3).add(1).times(1e30)))
+            s+=("点数削弱自己(公式：/(点数^0.5+1),同时点数/1e30<br>效果：/" + format(player.points.pow(0.3).add(1).times(1e30)))
             return s
             },
             canComplete: function() {return player.points.gte(1e20)},
@@ -810,6 +812,10 @@ addLayer("P", {
             unlocked(){return hasChallenge("P",12)},
             onEnter(){
                 if(!hasUpgrade("p",22))player.p.upgrades = []
+                if(hasUpgrade("p",22))player.devSpeed = player.devSpeed.times(0.01)
+            },
+            onExit(){
+                if(hasUpgrade("p",22))player.devSpeed = player.devSpeed.times(100)
             }
         },
         21: {
@@ -852,6 +858,10 @@ addLayer("P", {
             unlocked(){return hasChallenge("P",22)},
             onEnter(){
                 if(!hasUpgrade("p",22))player.p.upgrades = []
+                if(hasUpgrade("p",22))player.devSpeed = player.devSpeed.times(0.01)
+            },
+            onExit(){
+                if(hasUpgrade("p",22))player.devSpeed = player.devSpeed.times(100)
             }
         }
     },
