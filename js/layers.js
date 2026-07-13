@@ -811,6 +811,12 @@ addLayer("P", {
             rewardDescription: "解锁更多声望升级",
             unlocked(){return hasChallenge("P",12)},
             onEnter(){
+                let upgrades = []
+                let resetList = [11,12,13,14,15]
+                for(let i in player.p.upgrades){
+                    if(!(resetList.includes(player.p.upgrades[i])))upgrades.push(player.p.upgrades[i])
+                }
+                player.p.upgrades = upgrades
                 if(!hasUpgrade("p",22))player.p.upgrades = []
                 if(hasUpgrade("p",22))player.devSpeed = player.devSpeed.times(0.01)
             },
@@ -857,6 +863,12 @@ addLayer("P", {
             rewardDescription: "解锁更多点数升级",
             unlocked(){return hasChallenge("P",22)},
             onEnter(){
+                let upgrades = []
+                let resetList = [11,12,13,14,15]
+                for(let i in player.p.upgrades){
+                    if(!(resetList.includes(player.p.upgrades[i])))upgrades.push(player.p.upgrades[i])
+                }
+                player.p.upgrades = upgrades
                 if(!hasUpgrade("p",22))player.p.upgrades = []
                 if(hasUpgrade("p",22))player.devSpeed = player.devSpeed.times(0.01)
             },
