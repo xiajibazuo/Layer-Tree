@@ -728,26 +728,22 @@ addLayer("P", {
         2: {
             requirementDescription: "1e70总声望点数",
             effectDescription: "点数*1000",
-            done() { return player.P.total.gte(1e70) },
-            unlocked(){return hasUpgrade("p",25)}
+            done() { return player.P.total.gte(1e70) }
         },
         3: {
             requirementDescription: "5e71总声望点数和10层级点数",
             effectDescription: "层级里程碑公式更好(*10^层级点数→*层级点数^层级点数)",
-            done() { return player.P.total.gte(5e71) && player.L.layerPoint.gte(10)},
-            unlocked(){return hasUpgrade("p",25)}
+            done() { return player.P.total.gte(5e71) && player.L.layerPoint.gte(10)}
         },
         4: {
             requirementDescription: "1e74总声望点数",
             effectDescription: "点数*100",
-            done() { return player.P.total.gte(1e74) },
-            unlocked(){return hasUpgrade("p",25)}
+            done() { return player.P.total.gte(1e74) }
         },
         5: {
             requirementDescription: "1e75总声望点数",
             effectDescription: "pB3效果更好(^(ln(可购买数量+1)*0.01+1)→^(ln(可购买数量+1)*0.03+1))",
-            done() { return player.P.total.gte(1e75) },
-            unlocked(){return hasUpgrade("p",25)}
+            done() { return player.P.total.gte(1e75) }
         }
     },
     upgrades: {
