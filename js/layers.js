@@ -50,7 +50,7 @@ addLayer("L", {
                 let s = ""
                 if(hasMilestone("L",3))s+="<del>自动购买层级,</del>"
                 else s+="自动购买层级,"
-                s+="每一个层级都会解锁一个层级,上限为5个层级"
+                s+="每一个层级都会解锁一个层级,上限为6个层级"
                 return s
             },     //别忘了改!!!!!!!!!!!!!!!!!!!!!!!
             done() { return player.L.points.gte(0) }
@@ -77,8 +77,11 @@ addLayer("L", {
         },
         5: {
             requirementDescription: "2层级",
-            effectDescription(){ 
-                return "基于层级点数增益点数<br>公式：10^层级点数<br>效果：" + format(new Decimal(10).pow(player.L.layerPoint))
+            effectDescription(){
+                let s="基于层级点数增益点数<br>公式："
+                if(hasMilestone("P",3))s+=("层级点数^层级点数<br>效果：" + format(player.L.layerPoint.pow(player.L.layerPoint)))
+                else s+=("10^层级点数<br>效果：" + format(new Decimal(10).pow(player.L.layerPoint)))
+                return s
             },
             done() { return player.L.points.gte(2) }
         },
@@ -358,7 +361,7 @@ addLayer("ED", {
         "clickables"]
     }
 },
-    layerShown() { return player.L.points.gte(4)}          // Returns a bool for if this layer's node should be visible in the tree.
+    layerShown() { return player.L.points.gte(5)}          // Returns a bool for if this layer's node should be visible in the tree.
     //别忘了改!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 })
 addLayer("p", {
@@ -477,7 +480,7 @@ addLayer("p", {
         22: {
             title: "7",
             description(){
-                return "PC1,3,4,6不重置点数升级,但是在PC3,6里全局速率/100<br>需要在PC2中购买"
+                return "PC1,3,4,6不重置点数升级,但是第1行在PC3,6里除外<br>需要在PC2中购买"
             },
             unlocked(){return hasUpgrade("p",21)},
             cost(){
@@ -510,12 +513,12 @@ addLayer("p", {
         25: {
             title: "10",
             description(){
-                return "增益点数<br>效果：^1.5"
+                return "解锁一个可购买,解锁四个里程碑<br>需要在PC3中购买"
             },
             unlocked(){return hasUpgrade("p",24)},
             cost(){
-                if (!inChallenge("P",11)) return new Decimal("eeeeeeeeee114514")
-                return new Decimal("0")
+                if (!inChallenge("P",13)) return new Decimal("eeeeeeeeee114514")
+                return new Decimal(1e250)
             }
         }
     },
@@ -556,6 +559,7 @@ addLayer("p", {
     },
 buyables: {
     11: {
+        title: "pB1",
         cost(x) {
             return new Decimal(1e270).times(new Decimal(1e10).pow(x))
         },
@@ -572,6 +576,7 @@ buyables: {
         }
     },
     12: {
+        title: "pB2",
         cost(x) {
             return new Decimal("1e315").times(new Decimal(1e15).pow(x))
         },
@@ -589,20 +594,22 @@ buyables: {
         unlocked(){return hasUpgrade("p",23)}
     },
     13: {
+        title: "pB3",
         cost(x) {
-            return new Decimal(1e300).times(new Decimal(1e20).pow(x))
+            return new Decimal("1e350").times(new Decimal(1e20).pow(x))
         },
         effect(x){
-            return new Decimal(x).add(1).log(Math.E).times(0.01).add(1)
+            return new Decimal(x).add(1).log(Math.E).times(hasMilestone("P",5) ? 0.03 : 0.01).add(1)
         },
         display() {
            return "增益点数<br>效果：^" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount("p",13))
         },
-        tooltip: "效果公式：^(ln(可购买数量+1)*0.01+1)",
+        tooltip: "效果公式：^(ln(可购买数量+1)*" + (hasMilestone("P",5) ? "0.03" : "0.01") + "+1)",
         canAfford() { return player[this.layer].points.gte(this.cost()) },
         buy() {
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
-        }
+        },
+        unlocked(){return hasUpgrade("p",25)}
     }
 },
     clickables: {
@@ -715,8 +722,32 @@ addLayer("P", {
     milestones: {
         1: {
             requirementDescription: "10总声望点数",
-            effectDescription: "重置时保留p层级升级",
+            effectDescription: "重置时保留点数升级",
             done() { return player.P.total.gte(10) }
+        },
+        2: {
+            requirementDescription: "1e70总声望点数",
+            effectDescription: "点数*1000",
+            done() { return player.P.total.gte(1e70) },
+            unlocked(){return hasUpgrade("p",25)}
+        },
+        3: {
+            requirementDescription: "5e71总声望点数和10层级点数",
+            effectDescription: "层级里程碑公式更好(*10^层级点数→*层级点数^层级点数)",
+            done() { return player.P.total.gte(5e71) && player.L.layerPoint.gte(10)},
+            unlocked(){return hasUpgrade("p",25)}
+        },
+        4: {
+            requirementDescription: "1e74总声望点数",
+            effectDescription: "点数*100",
+            done() { return player.P.total.gte(1e74) },
+            unlocked(){return hasUpgrade("p",25)}
+        },
+        5: {
+            requirementDescription: "1e75总声望点数",
+            effectDescription: "pB3效果更好(^(ln(可购买数量+1)*0.01+1)→^(ln(可购买数量+1)*0.03+1))",
+            done() { return player.P.total.gte(1e75) },
+            unlocked(){return hasUpgrade("p",25)}
         }
     },
     upgrades: {
@@ -818,10 +849,6 @@ addLayer("P", {
                 }
                 player.p.upgrades = upgrades
                 if(!hasUpgrade("p",22))player.p.upgrades = []
-                if(hasUpgrade("p",22))player.devSpeed = player.devSpeed.times(0.01)
-            },
-            onExit(){
-                if(hasUpgrade("p",22))player.devSpeed = player.devSpeed.times(100)
             }
         },
         21: {
@@ -870,10 +897,6 @@ addLayer("P", {
                 }
                 player.p.upgrades = upgrades
                 if(!hasUpgrade("p",22))player.p.upgrades = []
-                if(hasUpgrade("p",22))player.devSpeed = player.devSpeed.times(0.01)
-            },
-            onExit(){
-                if(hasUpgrade("p",22))player.devSpeed = player.devSpeed.times(100)
             }
         }
     },
@@ -947,7 +970,7 @@ addLayer("GM", {
         return new Decimal(1)
     },
 
-    layerShown() { return player.L.points.gte(5) },          // Returns a bool for if this layer's node should be visible in the tree.
+    layerShown() { return player.L.points.gte(6) },          // Returns a bool for if this layer's node should be visible in the tree.
     tooltip: "棍母",
     
     milestones: {
