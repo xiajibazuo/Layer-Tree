@@ -45,7 +45,7 @@ function canGenPoints(){
 function getPointGen() {
 	let gain = new Decimal(1)
 	let exp = new Decimal(1)
-	if (hasMilestone("L",5))gain=gain.times(new Decimal(10).pow(player.L.layerPoint))
+	if (hasMilestone("L",5))gain=gain.times((hasMilestone("P",3) ? player.L.layerPoint : new Decimal(10)).pow(player.L.layerPoint))
 	if (hasUpgrade("p",11)){
 	    if (hasUpgrade("p",13)){
 	        if (hasUpgrade("P",13) && !inChallenge("P",22)){
@@ -73,17 +73,19 @@ function getPointGen() {
 	if (inChallenge("P",22))gain = gain.div(1e114)
 	if (inChallenge("P",23))gain = gain.div(1e114)
 	if (hasUpgrade("p",21))gain = gain.times(10)
-	gain = gain.times(buyableEffect("p",11))
-	gain = gain.times(buyableEffect("p",12))
+	if (hasUpgrade("p",21))gain = gain.times(buyableEffect("p",11))
+	if (hasUpgrade("p",23))gain = gain.times(buyableEffect("p",12))
 	if (hasUpgrade("p",22))gain = gain.times(10)
 	if (hasUpgrade("p",23))gain = gain.times(10)
 	if (hasUpgrade("p",24))gain = gain.times(10)
 	if (hasUpgrade("p",25))gain = gain.times(10)
+	if (hasMilestone("P",2))gain = gain.times(1000)
+	if (hasMilestone("P",4))gain = gain.times(100)
 	
 	if (inChallenge("P",11))exp = exp.times(0.15)
 	if (inChallenge("P",21))exp = exp.times(0.05)
 	if (inChallenge("P",23))exp = exp.div(player.points.pow(0.5).add(1).log(Math.E).add(1).log(Math.E).add(1))
-	exp = exp.times(buyableEffect("p",13))
+	if (hasUpgrade("p",25))exp = exp.times(buyableEffect("p",13))
 	
 	gain = gain.pow(exp)
 	
