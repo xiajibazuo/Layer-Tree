@@ -14,7 +14,7 @@ addLayer("L", {
     }},
     color: "#7FAFFF",
     requires(){
-        if (hasUpgrade("P",91)) return new Decimal(0.5)
+        if (hasUpgrade("P",91)) return new Decimal(0.499)
         return new Decimal(1)
         }, // Can be a function that takes requirement increases into account
     resource: "层级", // Name of prestige currency
@@ -326,8 +326,7 @@ addLayer("ED", {
         canClick(){
             return true
         },
-        style: {"background-color": "#FF7F00"},
-        unlocked(){return player.test}
+        style: {"background-color": "#FF7F00"}
     },
     91: {
         title: "重置层级",
@@ -728,22 +727,26 @@ addLayer("P", {
         2: {
             requirementDescription: "1e70总声望点数",
             effectDescription: "点数*1000",
-            done() { return player.P.total.gte(1e70) }
+            done() { return player.P.total.gte(1e70) },
+            unlocked(){return hasUpgrade("p",25)}
         },
         3: {
             requirementDescription: "5e71总声望点数和10层级点数",
             effectDescription: "层级里程碑公式更好(*10^层级点数→*层级点数^层级点数)",
-            done() { return player.P.total.gte(5e71) && player.L.layerPoint.gte(10)}
+            done() { return player.P.total.gte(5e71) && player.L.layerPoint.gte(10)},
+            unlocked(){return hasUpgrade("p",25)}
         },
         4: {
             requirementDescription: "1e74总声望点数",
             effectDescription: "点数*100",
-            done() { return player.P.total.gte(1e74) }
+            done() { return player.P.total.gte(1e74) },
+            unlocked(){return hasUpgrade("p",25)}
         },
         5: {
             requirementDescription: "1e75总声望点数",
             effectDescription: "pB3效果更好(^(ln(可购买数量+1)*0.01+1)→^(ln(可购买数量+1)*0.03+1))",
-            done() { return player.P.total.gte(1e75) }
+            done() { return player.P.total.gte(1e75) },
+            unlocked(){return hasUpgrade("p",25)}
         }
     },
     upgrades: {
@@ -1020,7 +1023,7 @@ addLayer("f", {
     return new Decimal(1.01) //i d k y
     },
 
-    layerShown() { return player.test},          // Returns a bool for if this layer's node should be visible in the tree.
+    layerShown() { return player.L.points.gte(4)},          // Returns a bool for if this layer's node should be visible in the tree.
     branches: ["L","P"],
 
     milestones: {
