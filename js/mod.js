@@ -1,5 +1,5 @@
 let modInfo = {
-	name: "The Layer Tree",
+	name: "层级树",
 	author: "我是xiajibazuo我埃及吧做啥就做啥",
 	pointsName: "点数",
 	modFiles: ["layers.js", "tree.js"],
@@ -12,7 +12,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1",
+	num: "0.2",
 	name: "Literally nothing",
 }
 
