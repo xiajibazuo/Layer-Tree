@@ -757,7 +757,7 @@ addLayer("P", {
     gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
         let mult = new Decimal(1)
     	if (hasMilestone("L",5) && (getClickableState("F",11) == 1))mult = mult.times((hasMilestone("P",3) ? player.L.layerPoint : new Decimal(10)).pow(player.L.layerPoint))
-        return new mult               // Factor in any bonuses multiplying gain here.
+        return mult               // Factor in any bonuses multiplying gain here.
     },
     gainExp() {                             // Returns the exponent to your gain of the prestige resource.
         return new Decimal(1)
