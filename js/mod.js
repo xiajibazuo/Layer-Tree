@@ -52,22 +52,16 @@ function canGenPoints(){
 function getPointGen() {
 	let gain = new Decimal(1)
 	let exp = new Decimal(1)
-	if (hasMilestone("L",5))gain=gain.times((hasMilestone("P",3) ? player.L.layerPoint : new Decimal(10)).pow(player.L.layerPoint))
+	if (hasMilestone("L",5) && !(getClickableState("F",11) == 1))gain=gain.times((hasMilestone("P",3) ? player.L.layerPoint : new Decimal(10)).pow(player.L.layerPoint))
 	if (hasUpgrade("p",11)){
-	    if (hasUpgrade("p",13)){
-	        if (hasUpgrade("P",13) && !inChallenge("P",22)){
-	            if (false){
-	                gain = gain.times(1)
-	            }
-	            else gain = gain.times(1e10)
-	        }
-	        else gain=gain.times(7)
+	    if (player.p.pu1EffType == "exp"){
+	        exp=exp.times(upgradeEffect("p",11))
 	    }
-	    else gain=gain.times(4)
+	    else gain=gain.times(upgradeEffect("p",11))
 	}
-	if (hasUpgrade("p",12))gain = gain.times(player.points.max(player.p.best2).min("1.79e308").add(1).log(Math.E).add(1))
-	if (hasUpgrade("p",14) && !inChallenge("P",12))gain = gain.times(player.points.max(player.p.best2).min("1.79e308").pow(0.25).add(1))
-	if (hasUpgrade("p",15) && !inChallenge("P",12))gain = gain.times(player.points.max(player.p.best2).min("1.79e308").pow(0.25).add(1))
+	if (hasUpgrade("p",12))gain = gain.times(upgradeEffect("p",12))
+	if (hasUpgrade("p",14) && !inChallenge("P",12))gain = gain.times(upgradeEffect("p",14))
+	if (hasUpgrade("p",15) && !inChallenge("P",12))gain = gain.times(upgradeEffect("p",15))
 	if (hasUpgrade("P",11) && !inChallenge("P",22))gain = gain.times(player.P.points.times(player.P.points.add(1).log(Math.E)).add(1))
 	if (hasChallenge("P",11))gain = gain.times(1000)
 	if (hasChallenge("P",12))gain = gain.times(1000)
@@ -88,6 +82,7 @@ function getPointGen() {
 	if (hasUpgrade("p",25))gain = gain.times(10)
 	if (hasMilestone("P",2))gain = gain.times(1000)
 	if (hasMilestone("P",4))gain = gain.times(100)
+	if (getClickableState("F",11) == 1)gain = gain.times(player.F.falsePoint.pow(0.2))
 	
 	if (inChallenge("P",11))exp = exp.times(0.15)
 	if (inChallenge("P",21))exp = exp.times(0.05)
@@ -107,7 +102,8 @@ function getPointGen() {
 function addedPlayerData() { return {
     devSpeed: new Decimal(1),
     test: false,
-    preGetPointGen: new Decimal(1)
+    preGetPointGen: new Decimal(1),
+    layerLimit: new Decimal(6)     //别忘了改!!!!!!!!!!!!!!!!!!!!!!!
 }}
 
 // Display extra things at the top of the page
