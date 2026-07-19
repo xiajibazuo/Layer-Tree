@@ -1374,7 +1374,7 @@ buyables: {
           let s=""
           s+="你有" + format(player.F.falsePoint) + "错误点数<br>(" + format(player.F.falsePointGain) + "每秒)<br>这将点数*" + format(player.F.falsePoint.pow(0.2)) + "<br>公式：ln(点数+1)"
           return s
-        }]
+        }],
         "blank",
         "buyables"]
     }
