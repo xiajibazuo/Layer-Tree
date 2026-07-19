@@ -1,8 +1,8 @@
-//i d k y do i fill 棍母
+/*i d k y do i fill 棍母
+mod.js
 
 
-
-
+*/
 addLayer("L", {
     name: "层级", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "L", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -35,13 +35,13 @@ addLayer("L", {
         return hasMilestone('L',1) && !hasMilestone('L',3)
     },    
     row: 9, // Row the layer is in on the tree (0 is the first row)
-    resetsNothing(){return hasMilestone("L",7)},
+    resetsNothing(){return hasMilestone("L",6)},
 
     update(diff){
     player.L.layerPoint=getBuyableAmount("L",11).add(getBuyableAmount("L",12)).add(getBuyableAmount("L", 13))
-   /* if (player.L.points.gte(3)) {
-         player.L.points = new Decimal(3)
-         }*/
+    if (player.L.points.gte(player.layerLimit)) {
+         player.L.points = new Decimal(player.layerLimit)
+         }
     },
         milestones: {
         1: {
@@ -50,9 +50,9 @@ addLayer("L", {
                 let s = ""
                 if(hasMilestone("L",3))s+="<del>自动购买层级,</del>"
                 else s+="自动购买层级,"
-                s+="每一个层级都会解锁一个层级,上限为6个层级"
+                s+="每一个层级都会解锁一个层级,上限为" + player.layerLimit + "个层级" + ((getClickableState("F",11) == 1) ? ",同时层级点数不被层级重置" : "")
                 return s
-            },     //别忘了改!!!!!!!!!!!!!!!!!!!!!!!
+            },
             done() { return player.L.points.gte(0) }
         },
         2: {
@@ -78,19 +78,11 @@ addLayer("L", {
         5: {
             requirementDescription: "2层级",
             effectDescription(){
-                let s="基于层级点数增益点数<br>公式："
-                if(hasMilestone("P",3))s+=("层级点数^层级点数<br>效果：" + format(player.L.layerPoint.pow(player.L.layerPoint)))
-                else s+=("10^层级点数<br>效果：" + format(new Decimal(10).pow(player.L.layerPoint)))
-                return s
+                return "基于层级点数增益" + ((getClickableState("F",11) == 1) ? "<del>点数</del>声望点数" : "点数") + "<br>公式：" + (hasMilestone("P",3) ? ("层级点数^层级点数<br>效果：" + format(player.L.layerPoint.pow(player.L.layerPoint))) : ("10^层级点数<br>效果：" + format(new Decimal(10).pow(player.L.layerPoint))))
             },
             done() { return player.L.points.gte(2) }
         },
         6: {
-            requirementDescription: "3层级",
-            effectDescription: "声望点数重置时保留L层级",
-            done() { return player.L.points.gte(3) }
-        },
-        7: {
             requirementDescription: "4层级",
             effectDescription: "层级不重置任何东西",
             done() { return player.L.points.gte(4)}
@@ -248,8 +240,9 @@ addLayer("L", {
         if (resettingLayer=="L") {
         keep.push("points")
         keep.push("milestones")
+        if (getClickableState("F",11)) keep.push("buyables")
         }
-        if ((resettingLayer == "ED" && getClickableState("ED",91) == 1 ) || resettingLayer == "L" ) {layerDataReset(this.layer, keep)}
+        if ((resettingLayer == "ED" && getClickableState("ED",91) == 1 ) || resettingLayer == "L" || resettingLayer == "F") {layerDataReset(this.layer, keep)}
     },
     layerShown(){return player.L.points.gte(1)}
 })
@@ -342,6 +335,23 @@ addLayer("ED", {
             return true
         },
         style: {"background-color": "#7FAFFF"}
+    },
+    101: {
+        title: "重置错误",
+        display() {
+            if (getClickableState("ED",101) == 1) return "是"
+            else return "否"
+            },
+        onClick(){
+            if (getClickableState("ED",101) == 0) setClickableState("ED",101,1)
+            else setClickableState("ED",101,0)
+        },
+        canClick(){
+            return hasUpgrade("P",91)
+        },
+        style: {"background-color": "#BF8F8F"},
+        unlocked(){return player.test},
+        tooltip: "能点吗"
     }
     },
     tabFormat: {
@@ -360,7 +370,7 @@ addLayer("ED", {
         "clickables"]
     }
 },
-    layerShown() { return player.L.points.gte(5)}          // Returns a bool for if this layer's node should be visible in the tree.
+    layerShown() { return player.L.points.gte(player.layerLimit.minus(1))}          // Returns a bool for if this layer's node should be visible in the tree.
     //别忘了改!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 })
 addLayer("p", {
@@ -369,7 +379,8 @@ addLayer("p", {
         unlocked: true,                     // You can add more variables here to add them to your layer.
         points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
         best: new Decimal(0),
-        best2: new Decimal(0)
+        best2: new Decimal(0),
+        pu1EffType: "mult"
     }},
 
     color: "#FF0000",                       // The color for this layer, which affects many elements.
@@ -398,19 +409,29 @@ addLayer("p", {
     update(diff){
         player.p.points = player.points
         if (player.points.gte(player.p.best)){player.p.best = player.points}
+        if ((hasUpgrade("P",13) && !inChallenge("P",22)) || getClickableState("F",13) == 1)player.p.pu1EffType = "exp"
+        else player.p.pu1EffType = "mult"
     },
     
     upgrades: {
         11: {
             title: "1",
-            description(){
+            effect(){
                 if(hasUpgrade("p",13)){
                     if(hasUpgrade("P",13) && !inChallenge("P",22)){
-                        return "增益点数<br>效果：*1e10"
+                        if (getClickableState("F",13) == 1){
+                        if (false){
+                            return new Decimal(1)
+	                    }
+                            return new Decimal(1.1)
+	                    }
+                        return new Decimal(1e10)
                     }
-                    return "增益点数<br>效果：*7"
+                    return new Decimal(7)
                 }
-                return "增益点数<br>效果：*4"
+                return new Decimal(4)},
+            description(){
+                return "增益点数<br>效果：" + (player.p.pu1EffType == "exp" ? "^" : "*") + format(this.effect())
             },
             unlocked(){return true},
             cost: new Decimal(300)
@@ -419,6 +440,13 @@ addLayer("p", {
             title: "2",
             description(){
                 return "点数增益自己<br>效果：*" + format(player.points.max(player.p.best2).min("1.79e308").add(1).log(Math.E).add(1))
+            },
+            effect(){
+                let hc = new Decimal(1)
+                hc = new Decimal("1.79e308")
+                
+                if(getClickableState("F",12) == 1)return new Decimal(1)
+                return player.points.max(player.p.best2).min(hc).add(1).log(Math.E).add(1)
             },
             tooltip(){
                 let s = "公式：*(ln(点数+1)+1)"
@@ -432,6 +460,12 @@ addLayer("p", {
             title: "3",
             description(){
                 if(hasUpgrade("P",13) && !inChallenge("P",22)){
+                    if (getClickableState("F",13) == 1){
+                    if (false){
+                        return "增益点数<br>效果：^ee45e4"
+	                }
+                        return "增益点数<br>效果：不想写了看升级1吧qwq"
+	                }
                     return "升级1的效果更好(*4→*1e10)"
                 }
                 return "升级1的效果更好(*4→*7)"
@@ -452,10 +486,26 @@ addLayer("p", {
             unlocked(){return hasUpgrade("p",13)},
             cost: new Decimal(40000)
         },
+            effect(){
+                let hc = new Decimal(1)
+                if(!hasMilestone("F",1))hc = new Decimal("1.79e308")
+                else{
+                    hc = new Decimal("1.79e308")
+                }
+                
+                return player.points.max(player.p.best2).min(hc).pow(0.25).add(1)
+            },
         15: {
             title: "5",
             description(){
                 return "点数增益自己<br>效果：*" + format(player.points.max(player.p.best2).min("1.79e308").pow(0.25).add(1))
+            },
+            effect(){
+                let hc = new Decimal(1)
+                hc = new Decimal("1.79e308")
+                
+                if(getClickableState("F",12) == 1)return new Decimal(1)
+                return player.points.max(player.p.best2).min(hc).pow(0.25).add(1)
             },
             tooltip(){
                 let s = "公式：*(点数^0.25+1)"
@@ -538,7 +588,7 @@ addLayer("p", {
             challengeDescription: "点数需要主动获取",
             canComplete: function() {return player.points.gte(100000)},
             goalDescription: "100000点数",
-            rewardDescription: "升级2,4,5可以基于点数最大值(声望重置保留)",
+            rewardDescription: "升级2,4,5可以基于点数最大值(声望重置保留),同时点数*1e20",
             unlocked(){return hasChallenge("p",11)},
             onEnter(){
                 player.points = new Decimal(0)
@@ -679,7 +729,7 @@ buyables: {
         if (hasChallenge("p",12) && resettingLayer == "P") keep.push("best2")
         if (hasUpgrade("p",24) && resettingLayer == "P") keep.push("buyables")
         
-        if ((resettingLayer == "ED" && getClickableState("ED",11) == 1 ) || resettingLayer == "L" || resettingLayer == "P") {layerDataReset(this.layer, keep)}
+        if ((resettingLayer == "ED" && getClickableState("ED",11) == 1 ) || resettingLayer == "L" || resettingLayer == "P" || resettingLayer == "F") {layerDataReset(this.layer, keep)}
     }
 })
 addLayer("P", {
@@ -705,7 +755,9 @@ addLayer("P", {
     exponent: 0.2,                          // "normal" prestige gain is (currency^exponent).
 
     gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
-        return new Decimal(1)               // Factor in any bonuses multiplying gain here.
+        let mult = new Decimal(1)
+    	if (hasMilestone("L",5) && (getClickableState("F",11) == 1))mult = mult.times((hasMilestone("P",3) ? player.L.layerPoint : new Decimal(10)).pow(player.L.layerPoint))
+        return new mult               // Factor in any bonuses multiplying gain here.
     },
     gainExp() {                             // Returns the exponent to your gain of the prestige resource.
         return new Decimal(1)
@@ -769,6 +821,12 @@ addLayer("P", {
         13: {
             title: "P3",
             description(){
+                if (getClickableState("F",13) == 1){
+                    if (false){
+                        return "增益点数<br>效果：^ee45e4"
+	                }
+                    return "增益点数<br>效果：不想写了看升级1吧qwq"
+	            }
                 return "升级3的效果更好(*7→*1e10)"
             },
             unlocked(){return hasUpgrade("P",12)},
@@ -869,7 +927,7 @@ addLayer("P", {
         },
         22: {
             name: "PC5",
-            challengeDescription: "声望升级没有效果,同时点数/1e114(好臭的削弱)",
+            challengeDescription: "声望升级1,3没有效果,同时点数/1e114(好臭的削弱)",
             canComplete: function() {return player.points.gte(1e80)},
             goalDescription: "1e80点数",
             rewardDescription: "点数*1000",
@@ -939,7 +997,7 @@ addLayer("P", {
         let keep = [];
         if (resettingLayer !== "ED") keep.push("total2")
         
-        if ((resettingLayer == "ED" && getClickableState("ED",21) == 1 ) || resettingLayer == "L") {layerDataReset(this.layer, keep)}
+        if ((resettingLayer == "ED" && getClickableState("ED",21) == 1 ) || resettingLayer == "L" || resettingLayer == "F") {layerDataReset(this.layer, keep)}
     }
 })
 addLayer("GM", {
@@ -969,7 +1027,7 @@ addLayer("GM", {
         return new Decimal(1)
     },
 
-    layerShown() { return player.L.points.gte(6) },          // Returns a bool for if this layer's node should be visible in the tree.
+    layerShown() { return player.L.points.gte(player.layerLimit) },          // Returns a bool for if this layer's node should be visible in the tree.
     tooltip: "棍母",
     
     milestones: {
@@ -1054,6 +1112,280 @@ addLayer("f", {
     doReset(resettingLayer) {
         let keep = [];
         
-        if ((resettingLayer == "ED" && getClickableState("ED",22) == 1 ) || resettingLayer == "L") {layerDataReset(this.layer, keep)}
+        if ((resettingLayer == "ED" && getClickableState("ED",22) == 1 ) || resettingLayer == "L" || resettingLayer == "F") {layerDataReset(this.layer, keep)}
+    }
+})
+
+addLayer("F", {
+    startData() { return {                  // startData is a function that returns default data for a layer. 
+        unlocked: false,                     // You can add more variables here to add them to your layer.
+        points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
+        best: new Decimal(0),
+        best2: new Decimal(0),
+        falsePoint: new Decimal(0),
+        falsePointGain: new Decimal(0)
+    }},
+
+    color: "#BF8F8F",                       // The color for this layer, which affects many elements.
+    resource: "错误",            // The name of this layer's main prestige resource.
+    row: 10,                                 // The row this layer is on (0 is the first row).
+
+    baseResource: "层级",                 // The name of the resource your prestige gain is based on.
+    baseAmount() { return player.L.points },  // A function to return the current amount of baseResource.
+
+    requires(){return player.F.points.add(5)},              // The amount of the base needed to  gain 1 of the prestige currency.
+                                            // Also the amount required to unlock the layer.
+
+    type: "static",                         // Determines the formula used for calculating prestige currency.
+    exponent: 1,                          // "normal" prestige gain is (currency^exponent).
+    base(){
+    return new Decimal(1)
+    },
+
+    gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
+        return new Decimal(1)               // Factor in any bonuses multiplying gain here.
+    },
+    gainExp() {                             // Returns the exponent to your gain of the prestige resource.
+        return new Decimal(1)
+    },
+
+    layerShown() { return player.test && (player.L.points.gte(5) || hasMilestone("F",1))},          // Returns a bool for if this layer's node should be visible in the tree.
+    tooltipLocked: "解锁了吗",
+    update(diff){
+        if (player.F.best.gte(player.F.best2)){player.F.best2 = player.F.best}
+        let gain = player.points.add(1).log(Math.E)
+        
+        player.F.falsePointGain = gain
+        player.F.falsePoint = player.F.falsePoint.add(player.F.falsePointGain.times(diff))
+    },
+    
+    milestones: {
+        1: {
+            requirementDescription: "1错误",
+            effectDescription: "永久显示F层级,开启升/降级1",
+            done() { return player.F.points.gte(1)},
+            onComplete(){setClickableState("F",11,1)}
+        },
+        2: {
+            requirementDescription: "1错误和3层级",
+            effectDescription: "开启升/降级2",
+            done() { return player.F.points.gte(1) || player.L.points.gte(3)},
+            onComplete(){setClickableState("F",12,1)}
+        },
+        3: {
+            requirementDescription: "1错误和1声望点数",
+            effectDescription: "开启升/降级3",
+            done() { return player.F.points.gte(1) || player.P.points.gte(1)},
+            onComplete(){setClickableState("F",13,1)}
+        },
+        4: {
+            requirementDescription: "1错误和...",
+            effectDescription: "开启升/降级4",
+            done() { return player.F.points.gte(1) || true},
+            onComplete(){setClickableState("F",14,1)}
+        },
+        5: {
+            requirementDescription: "1错误和...",
+            effectDescription: "开启升/降级5",
+            done() { return player.F.points.gte(1) || true},
+            onComplete(){setClickableState("F",15,1)}
+        }
+    },
+    upgrades: {
+        91: {
+            title: "点不到的升级",
+            description(){
+                if (hasUpgrade(this.layer,this.id)) return "层级更便宜"
+                return "棍母"
+            },
+            canAfford(){return player.F.best2.lte(0)},
+            pay(){},
+            cost: new Decimal(0)
+        }
+    },
+buyables: {
+    11: {
+        title: "FB1",
+        cost(x) {
+            return new Decimal(1e270).times(new Decimal(1e10).pow(x))
+        },
+        effect(x){
+            return new Decimal(1e3).pow(x)
+        },
+        display() {
+           return "增益错误点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount("p",11))
+        },
+        tooltip: "效果公式：*1000^(可购买数量)",
+        canAfford() { return player[this.layer].falsePoint.gte(this.cost()) },
+        buy() {
+            player[this.layer].falsePoint = player[this.layer].falsePoint.minus(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        }
+    },
+    12: {
+        title: "FB2",
+        cost(x) {
+            return new Decimal("1e315").times(new Decimal(1e15).pow(x))
+        },
+        effect(x){
+            return player.points.pow(new Decimal(x).add(1).log(Math.E).add(1).log(Math.E).times(0.05)).add(1)
+        },
+        display() {
+           return "增益点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount("p",12))
+        },
+        tooltip: "效果公式：*点数^(ln(ln(可购买数量+1)+1)*0.05)+1",
+        canAfford() { return player[this.layer].falsePoint.gte(this.cost()) },
+        buy() {
+            player[this.layer].falsePoint = player[this.layer].falsePoint.minus(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+        unlocked(){return (getClickableState("F",12) == 1)}
+    },
+    13: {
+        title: "FB3",
+        cost(x) {
+            return new Decimal("1e350").times(new Decimal(1e20).pow(x))
+        },
+        effect(x){
+            return new Decimal(x).add(1).log(Math.E).times(hasMilestone("P",5) ? 0.03 : 0.01).add(1)
+        },
+        display() {
+           return "增益声望点数<br>效果：^" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount("p",13))
+        },
+        tooltip(){return "效果公式：^(ln(可购买数量+1)*" + (hasMilestone("P",5) ? "0.03" : "0.01") + "+1)"},
+        canAfford() { return player[this.layer].falsePoint.gte(this.cost()) },
+        buy() {
+            player[this.layer].falsePoint = player[this.layer].falsePoint.minus(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+        unlocked(){return (getClickableState("F",14) == 1)}
+    }
+},
+    clickables: {
+    11: {
+        title: "升/降级1",
+        display() {
+            return "修改层级里程碑效果,解锁错误点数<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+        },
+        onClick(){
+            if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
+            else setClickableState(this.layer,this.id,0)
+        },
+        canClick(){
+            return false
+        }
+    },
+    12: {
+        title: "升/降级2",
+        display() {
+            return "修改点数升级效果,解锁一个可购买<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+        },
+        onClick(){
+            if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
+            else setClickableState(this.layer,this.id,0)
+        },
+        canClick(){
+            return false
+        }
+    },
+    13: {
+        title: "升/降级3",
+        display() {
+            return "升级P3的效果更好?<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+        },
+        onClick(){
+            if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
+            else setClickableState(this.layer,this.id,0)
+        },
+        canClick(){
+            return false
+        }
+    },
+    14: {
+        title: "升/降级4",
+        display() {
+            return "… ,解锁一个可购买<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+        },
+        onClick(){
+            if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
+            else setClickableState(this.layer,this.id,0)
+        },
+        canClick(){
+            return false
+        }
+    },
+    15: {
+        title: "升/降级5",
+        display() {
+            return "…<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+        },
+        onClick(){
+            if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
+            else setClickableState(this.layer,this.id,0)
+        },
+        canClick(){
+            return false
+        }
+    }
+    },
+    tabFormat: {
+    "啊?": {
+        unlocked(){return false},
+        content: [
+        ["display-text",function(){
+          let s=""
+          s+="好吧解锁了<br>"
+          return s
+        }]]
+    },
+    "里程碑": {
+        content: [
+        "main-display",
+          "blank",
+        ["prestige-button",function(){return ""}],
+        "blank",
+        "resource-display",
+        "blank",
+        "blank",
+        "milestones"]
+    },
+    "升/降级": {
+        content: [
+        "main-display",
+          "blank",
+        ["prestige-button",function(){return ""}],
+        "blank",
+        "resource-display",
+        "blank",
+        "blank",
+        ["row",[["clickable",11],["clickable",12],["clickable",13],["clickable",14] ["clickable",15]]],
+        "upgrades"]
+    },
+    "错误点数": {
+        unlocked(){return (getClickableState("F",11) == 1)}
+        content: [
+        "main-display",
+          "blank",
+        ["prestige-button",function(){return ""}],
+        "blank",
+        "resource-display",
+        "blank",
+        ["display-text",function(){
+          let s=""
+          s+="你有" + format(player.F.falsePoint) + "错误点数<br>(" + format(player.F.falsePointGain) + "每秒)<br>这将点数*" + format(player.F.falsePoint.pow(0.2)) + "<br>公式：ln(点数+1)"
+          return s
+        }]
+        "blank",
+        "buyables"]
+    }
+    
+    },
+    doReset(resettingLayer) {
+        let keep = [];
+        
+        if (resettingLayer=="ED") {
+        keep.push("milestones")
+        }
+        if (resettingLayer == "ED" && getClickableState("ED",1011) == 1 ) {layerDataReset(this.layer, keep)}
     }
 })
