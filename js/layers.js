@@ -1362,7 +1362,7 @@ buyables: {
         "upgrades"]
     },
     "错误点数": {
-        unlocked(){return (getClickableState("F",11) == 1)}
+        unlocked(){return (getClickableState("F",11) == 1)},
         content: [
         "main-display",
           "blank",
