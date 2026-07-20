@@ -515,6 +515,8 @@ addLayer("p", {
                 return player.points.max(player.p.best2).min(hc).pow(0.25).add(1)
             },
             tooltip(){
+                let hc = new Decimal(1)
+                hc = new Decimal("1.79e308")
                 let s = "公式：*(点数^0.25+1)"
                 if(player.points.gte(hc)) s+="<br>现在点数超过了" + format(hc) + ",效果达到硬上限"
                 return s
