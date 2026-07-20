@@ -439,7 +439,7 @@ addLayer("p", {
         12: {
             title: "2",
             description(){
-                return "点数增益自己<br>效果：*" + format(upgradeEffect(this.layer,this.id))
+                return ((getClickableState("F",12) == 1) ? "声望指数提高(0.2→0.5)" : ("点数增益自己<br>效果：*" + format(upgradeEffect(this.layer,this.id))))
             },
             effect(){
                 let hc = new Decimal(1)
@@ -505,7 +505,7 @@ addLayer("p", {
         15: {
             title: "5",
             description(){
-                return "点数增益自己<br>效果：*" + format(upgradeEffect(this.layer,this.id))
+                return ((getClickableState("F",12) == 1) ? "声望基础价格降低(1e14→1e555)但声望点数/10000" : ("点数增益自己<br>效果：*" + format(upgradeEffect(this.layer,this.id))))
             },
             effect(){
                 let hc = new Decimal(1)
@@ -757,16 +757,17 @@ addLayer("P", {
     baseResource: "点数",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.points },  // A function to return the current amount of baseResource.
 
-    requires: new Decimal(1e14),              // The amount of the base needed to  gain 1 of the prestige currency.
+    requires(){return ((getClickableState("F",12) == 1) && hasUpgrade("p",15) ? new Decimal(1e14) : new Decimal(1e14))},              // The amount of the base needed to  gain 1 of the prestige currency.
                                             // Also the amount required to unlock the layer.
 
     type: "normal",                         // Determines the formula used for calculating prestige currency.
-    exponent: 0.2,                          // "normal" prestige gain is (currency^exponent).
+    exponent(){return ((getClickableState("F",12) == 1) && hasUpgrade("p",12) ? 0.5 : 0.2)},                          // "normal" prestige gain is (currency^exponent).
 
     gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
         let mult = new Decimal(1)
     	if (hasMilestone("L",5) && (getClickableState("F",11) == 1))mult = mult.times((hasMilestone("P",3) ? player.L.layerPoint : new Decimal(10)).pow(player.L.layerPoint))
         if(hasMilestone("F",2))mult = mult.times(buyableEffect("F",12))
+        if((getClickableState("F",12) == 1) && hasUpgrade("p",12))mult = mult.div(10000)
         return mult               // Factor in any bonuses multiplying gain here.
     },
     gainExp() {                             // Returns the exponent to your gain of the prestige resource.
@@ -1388,6 +1389,7 @@ buyables: {
           return s
         }],
         "blank",
+        ["row",[["clickable",91]]]
         "buyables"]
     }
     
