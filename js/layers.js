@@ -1389,7 +1389,7 @@ buyables: {
           return s
         }],
         "blank",
-        ["row",[["clickable",91]]]
+        ["row",[["clickable",91]]],
         "buyables"]
     }
     
