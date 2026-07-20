@@ -766,6 +766,7 @@ addLayer("P", {
     gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
         let mult = new Decimal(1)
     	if (hasMilestone("L",5) && (getClickableState("F",11) == 1))mult = mult.times((hasMilestone("P",3) ? player.L.layerPoint : new Decimal(10)).pow(player.L.layerPoint))
+        if(hasMilestone("F",2))mult = mult.times(buyableEffect("F",12))
         return mult               // Factor in any bonuses multiplying gain here.
     },
     gainExp() {                             // Returns the exponent to your gain of the prestige resource.
@@ -1135,6 +1136,7 @@ addLayer("F", {
     }},
 
     color: "#BF8F8F",                       // The color for this layer, which affects many elements.
+    symbol: "×", // This appears on the layer's node. Default is the id with the first letter capitalized
     resource: "错误",            // The name of this layer's main prestige resource.
     row: 10,                                 // The row this layer is on (0 is the first row).
 
@@ -1158,44 +1160,45 @@ addLayer("F", {
     },
 
     layerShown() { return player.test && (player.L.points.gte(5) || hasMilestone("F",1))},          // Returns a bool for if this layer's node should be visible in the tree.
-    tooltipLocked: "解锁了吗",
+    tooltip: "解锁了吗",
     update(diff){
         let gain = player.points.add(1).log(Math.E)
+        if(hasMilestone("F",2))gain = gain.times(buyableEffect("F",12))
         
-        player.F.falsePointGain = gain
-        if(getClickableState("F",11) == 1)player.F.falsePoint = player.F.falsePoint.add(player.F.falsePointGain.times(diff))
+        if(getClickableState("F",91) == 1)player.F.falsePointGain = gain
+        if(hasMilestone("F",1))player.F.falsePoint = player.F.falsePoint.add(player.F.falsePointGain.times(diff))
     },
     branches: ["L"],
     
     milestones: {
         1: {
             requirementDescription: "1错误",
-            effectDescription: "永久显示F层级,开启升/降级1",
+            effectDescription: "永久显示F层级,开启升/降级1,解锁错误点数",
             done() { return player.F.points.gte(1) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
             onComplete(){setClickableState("F",11,1)}
         },
         2: {
-            requirementDescription: "1错误和3层级",
-            effectDescription: "开启升/降级2",
-            done() { return player.F.points.gte(1) && player.L.points.gte(3) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
+            requirementDescription: "1错误和3层级(和1错误点数)(为什么你别管)",
+            effectDescription: "开启升/降级2,解锁一个可购买",
+            done() { return player.F.points.gte(1) && player.L.points.gte(3) && player.F.falsePoint.gte(1) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
             onComplete(){setClickableState("F",12,1)}
         },
         3: {
-            requirementDescription: "1错误和1声望点数",
+            requirementDescription: "1错误和1声望点数(和1错误点数)(为什么你别管)",
             effectDescription: "开启升/降级3",
-            done() { return player.F.points.gte(1) && player.P.points.gte(1) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
+            done() { return player.F.points.gte(1) && player.P.points.gte(1) && player.F.falsePoint.gte(1) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
             onComplete(){setClickableState("F",13,1)}
         },
         4: {
-            requirementDescription: "1错误和...",
-            effectDescription: "开启升/降级4",
-            done() { return player.F.points.gte(1) && false && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
+            requirementDescription: "1错误和...(和1错误点数)(为什么你别管)",
+            effectDescription: "开启升/降级4,解锁一个可购买",
+            done() { return player.F.points.gte(1) && false && player.F.falsePoint.gte(1) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
             onComplete(){setClickableState("F",14,1)}
         },
         5: {
-            requirementDescription: "1错误和...",
+            requirementDescription: "1错误和...(和1错误点数)(为什么你别管)",
             effectDescription: "开启升/降级5",
-            done() { return player.F.points.gte(1) && false && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
+            done() { return player.F.points.gte(1) && false && player.F.falsePoint.gte(1) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
             onComplete(){setClickableState("F",15,1)}
         }
     },
@@ -1209,7 +1212,7 @@ buyables: {
             return new Decimal(1e3).pow(x)
         },
         display() {
-           return "增益错误点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount(this.layer,this.id))
+           return "增益点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount(this.layer,this.id))
         },
         tooltip: "效果公式：*1000^(可购买数量)",
         canAfford() { return player[this.layer].falsePoint.gte(this.cost()) },
@@ -1227,7 +1230,7 @@ buyables: {
             return player.points.pow(new Decimal(x).add(1).log(Math.E).add(1).log(Math.E).times(0.05)).add(1)
         },
         display() {
-           return "增益点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount(this.layer,this.id))
+           return "增益错误点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount(this.layer,this.id))
         },
         tooltip: "效果公式：*点数^(ln(ln(可购买数量+1)+1)*0.05)+1",
         canAfford() { return player[this.layer].falsePoint.gte(this.cost()) },
@@ -1235,7 +1238,7 @@ buyables: {
             player[this.layer].falsePoint = player[this.layer].falsePoint.minus(this.cost())
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
         },
-        unlocked(){return (getClickableState("F",12) == 1)}
+        unlocked(){return (hasMilestone("F",2))}
     },
     13: {
         title: "FB3",
@@ -1254,14 +1257,14 @@ buyables: {
             player[this.layer].falsePoint = player[this.layer].falsePoint.minus(this.cost())
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
         },
-        unlocked(){return (getClickableState("F",14) == 1)}
+        unlocked(){return (hasMilestone("F",4))}
     }
 },
     clickables: {
     11: {
         title: "升/降级1",
         display() {
-            return "修改层级里程碑效果,解锁错误点数<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+            return "修改层级里程碑效果<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
             if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
@@ -1274,7 +1277,7 @@ buyables: {
     12: {
         title: "升/降级2",
         display() {
-            return "修改点数升级效果,解锁一个可购买<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+            return "修改点数升级效果<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
             if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
@@ -1300,7 +1303,7 @@ buyables: {
     14: {
         title: "升/降级4",
         display() {
-            return "… ,解锁一个可购买<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+            return "…<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
             if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
@@ -1322,7 +1325,21 @@ buyables: {
         canClick(){
             return false
         }
+    },
+    91: {
+        title: "开始生产错误点数",
+        display() {
+            return ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+        },
+        onClick(){
+            if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
+        },
+        canClick(){
+            return true
+        },
+        tooltip: "(哪来的你也别管)"
     }
+    
     },
     tabFormat: {
     "啊?": {
@@ -1357,7 +1374,7 @@ buyables: {
         ["row",[["clickable",11],["clickable",12],["clickable",13],["clickable",14],["clickable",15]]]]
     },
     "错误点数": {
-        unlocked(){return (getClickableState("F",11) == 1)},
+        unlocked(){return (hasMilestone("F",1))},
         content: [
         "main-display",
           "blank",
@@ -1367,7 +1384,7 @@ buyables: {
         "blank",
         ["display-text",function(){
           let s=""
-          s+="你有" + format(player.F.falsePoint) + "错误点数<br>(" + format(player.F.falsePointGain) + "每秒)<br>这将点数*" + format(player.F.falsePoint.pow(0.2)) + "<br>公式：ln(点数+1)"
+          s+="你有" + format(player.F.falsePoint) + "错误点数<br>(" + format(player.F.falsePointGain) + "每秒,公式：ln(点数+1))<br>这将点数*" + format(player.F.falsePoint.pow(0.2).add(1)) + "<br>公式：错误点数^0.2+1"
           return s
         }],
         "blank",
@@ -1379,7 +1396,6 @@ buyables: {
         let keep = [];
         
         if (resettingLayer=="ED") {
-        keep.push("milestones")
         }
         if (resettingLayer == "ED" && getClickableState("ED",101) == 1 ) {layerDataReset(this.layer, keep)}
     }
