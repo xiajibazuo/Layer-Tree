@@ -1118,10 +1118,9 @@ addLayer("f", {
 
 addLayer("F", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
-        unlocked: false,                     // You can add more variables here to add them to your layer.
+        unlocked: true,                     // You can add more variables here to add them to your layer.
         points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
         best: new Decimal(0),
-        best2: new Decimal(0),
         falsePoint: new Decimal(0),
         falsePointGain: new Decimal(0)
     }},
@@ -1152,7 +1151,6 @@ addLayer("F", {
     layerShown() { return player.test && (player.L.points.gte(5) || hasMilestone("F",1))},          // Returns a bool for if this layer's node should be visible in the tree.
     tooltipLocked: "解锁了吗",
     update(diff){
-        if (player.F.best.gte(player.F.best2)){player.F.best2 = player.F.best}
         let gain = player.points.add(1).log(Math.E)
         
         player.F.falsePointGain = gain
@@ -1163,44 +1161,32 @@ addLayer("F", {
         1: {
             requirementDescription: "1错误",
             effectDescription: "永久显示F层级,开启升/降级1",
-            done() { return player.F.points.gte(1)},
+            done() { return player.F.points.gte(1) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
             onComplete(){setClickableState("F",11,1)}
         },
         2: {
             requirementDescription: "1错误和3层级",
             effectDescription: "开启升/降级2",
-            done() { return player.F.points.gte(1) || player.L.points.gte(3)},
+            done() { return player.F.points.gte(1) && player.L.points.gte(3) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
             onComplete(){setClickableState("F",12,1)}
         },
         3: {
             requirementDescription: "1错误和1声望点数",
             effectDescription: "开启升/降级3",
-            done() { return player.F.points.gte(1) || player.P.points.gte(1)},
+            done() { return player.F.points.gte(1) && player.P.points.gte(1) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
             onComplete(){setClickableState("F",13,1)}
         },
         4: {
             requirementDescription: "1错误和...",
             effectDescription: "开启升/降级4",
-            done() { return player.F.points.gte(1) || true},
+            done() { return player.F.points.gte(1) && false && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
             onComplete(){setClickableState("F",14,1)}
         },
         5: {
             requirementDescription: "1错误和...",
             effectDescription: "开启升/降级5",
-            done() { return player.F.points.gte(1) || true},
+            done() { return player.F.points.gte(1) && false && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
             onComplete(){setClickableState("F",15,1)}
-        }
-    },
-    upgrades: {
-        91: {
-            title: "点不到的升级",
-            description(){
-                if (hasUpgrade(this.layer,this.id)) return "层级更便宜"
-                return "棍母"
-            },
-            canAfford(){return player.F.best2.lte(0)},
-            pay(){},
-            cost: new Decimal(0)
         }
     },
 buyables: {
@@ -1358,8 +1344,7 @@ buyables: {
         "resource-display",
         "blank",
         "blank",
-        ["row",[["clickable",11],["clickable",12],["clickable",13],["clickable",14] ["clickable",15]]],
-        "upgrades"]
+        ["row",[["clickable",11],["clickable",12],["clickable",13],["clickable",14] ["clickable",15]]]]
     },
     "错误点数": {
         unlocked(){return (getClickableState("F",11) == 1)},
