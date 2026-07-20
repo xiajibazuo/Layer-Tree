@@ -439,7 +439,7 @@ addLayer("p", {
         12: {
             title: "2",
             description(){
-                return "点数增益自己<br>效果：*" + format(player.points.max(player.p.best2).min("1.79e308").add(1).log(Math.E).add(1))
+                return "点数增益自己<br>效果：*" + format(upgradeEffect(this.layer,this.id))
             },
             effect(){
                 let hc = new Decimal(1)
@@ -449,8 +449,10 @@ addLayer("p", {
                 return player.points.max(player.p.best2).min(hc).add(1).log(Math.E).add(1)
             },
             tooltip(){
-                let s = "公式：*(ln(点数+1)+1)"
-                if(player.points.gte("1.79e308")) s+="<br>现在点数超过了1.79e308,效果达到硬上限"
+                let hc = new Decimal(1)
+                hc = new Decimal("1.79e308")
+                let s = "公式：*(点数^0.25+1)"
+                if(player.points.gte(hc)) s+="<br>现在点数超过了" + format(hc) + ",效果达到硬上限"
                 return s
             },
             unlocked(){return hasUpgrade("p",11)},
@@ -476,16 +478,18 @@ addLayer("p", {
         14: {
             title: "4",
             description(){
-                return "点数增益自己<br>效果：*" + format(player.points.max(player.p.best2).min("1.79e308").pow(0.25).add(1))
+                return "点数增益自己<br>效果：*" + format(upgradeEffect(this.layer,this.id))
             },
             tooltip(){
+                let hc = new Decimal(1)
+                if(!hasMilestone("F",1))hc = new Decimal("1.79e308")
+                else{
+                    hc = new Decimal("1.79e308")
+                }
                 let s = "公式：*(点数^0.25+1)"
-                if(player.points.gte("1.79e308")) s+="<br>现在点数超过了1.79e308,效果达到硬上限"
+                if(player.points.gte(hc)) s+="<br>现在点数超过了" + format(hc) + ",效果达到硬上限"
                 return s
             },
-            unlocked(){return hasUpgrade("p",13)},
-            cost: new Decimal(40000)
-        },
             effect(){
                 let hc = new Decimal(1)
                 if(!hasMilestone("F",1))hc = new Decimal("1.79e308")
@@ -495,10 +499,13 @@ addLayer("p", {
                 
                 return player.points.max(player.p.best2).min(hc).pow(0.25).add(1)
             },
+            unlocked(){return hasUpgrade("p",13)},
+            cost: new Decimal(40000)
+        },
         15: {
             title: "5",
             description(){
-                return "点数增益自己<br>效果：*" + format(player.points.max(player.p.best2).min("1.79e308").pow(0.25).add(1))
+                return "点数增益自己<br>效果：*" + format(upgradeEffect(this.layer,this.id))
             },
             effect(){
                 let hc = new Decimal(1)
@@ -509,7 +516,7 @@ addLayer("p", {
             },
             tooltip(){
                 let s = "公式：*(点数^0.25+1)"
-                if(player.points.gte("1.79e308")) s+="<br>现在点数超过了1.79e308,效果达到硬上限"
+                if(player.points.gte(hc)) s+="<br>现在点数超过了" + format(hc) + ",效果达到硬上限"
                 return s
             },
             unlocked(){return hasUpgrade("p",14)},
