@@ -253,7 +253,7 @@ addLayer("ED", {
     }},
 
     color: "#808080",                       // The color for this layer, which affects many elements.
-    resource: "结束",            // The name of this layer's main prestige resource.
+    resource: "终局",            // The name of this layer's main prestige resource.
     row: 11,                                 // The row this layer is on (0 is the first row).
 
     baseResource: "点数",                 // The name of the resource your prestige gain is based on.
@@ -364,7 +364,7 @@ addLayer("ED", {
         "blank",
         ["display-text",function(){
           let s=""
-          s+="选择结束是否重置以下层级<br>"
+          s+="选择终局是否重置以下层级<br>"
           return s
         }],
         "clickables"]
@@ -409,7 +409,7 @@ addLayer("p", {
     update(diff){
         player.p.points = player.points
         if (player.points.gte(player.p.best)){player.p.best = player.points}
-        if ((hasUpgrade("P",13) && !inChallenge("P",22)) || getClickableState("F",13) == 1)player.p.pu1EffType = "exp"
+        if ((hasUpgrade("P",13) && !inChallenge("P",22)) && getClickableState("F",13) == 1)player.p.pu1EffType = "exp"
         else player.p.pu1EffType = "mult"
     },
     
@@ -1161,8 +1161,9 @@ addLayer("F", {
         let gain = player.points.add(1).log(Math.E)
         
         player.F.falsePointGain = gain
-        player.F.falsePoint = player.F.falsePoint.add(player.F.falsePointGain.times(diff))
+        if(getClickableState("F",11) == 1)player.F.falsePoint = player.F.falsePoint.add(player.F.falsePointGain.times(diff))
     },
+    branches: ["L"],
     
     milestones: {
         1: {
@@ -1206,7 +1207,7 @@ buyables: {
             return new Decimal(1e3).pow(x)
         },
         display() {
-           return "增益错误点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount("p",11))
+           return "增益错误点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount(this.layer,this.id))
         },
         tooltip: "效果公式：*1000^(可购买数量)",
         canAfford() { return player[this.layer].falsePoint.gte(this.cost()) },
@@ -1224,7 +1225,7 @@ buyables: {
             return player.points.pow(new Decimal(x).add(1).log(Math.E).add(1).log(Math.E).times(0.05)).add(1)
         },
         display() {
-           return "增益点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount("p",12))
+           return "增益点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount(this.layer,this.id))
         },
         tooltip: "效果公式：*点数^(ln(ln(可购买数量+1)+1)*0.05)+1",
         canAfford() { return player[this.layer].falsePoint.gte(this.cost()) },
@@ -1243,7 +1244,7 @@ buyables: {
             return new Decimal(x).add(1).log(Math.E).times(hasMilestone("P",5) ? 0.03 : 0.01).add(1)
         },
         display() {
-           return "增益声望点数<br>效果：^" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount("p",13))
+           return "增益声望点数<br>效果：^" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount(this.layer,this.id))
         },
         tooltip(){return "效果公式：^(ln(可购买数量+1)*" + (hasMilestone("P",5) ? "0.03" : "0.01") + "+1)"},
         canAfford() { return player[this.layer].falsePoint.gte(this.cost()) },
@@ -1351,7 +1352,7 @@ buyables: {
         "resource-display",
         "blank",
         "blank",
-        ["row",[["clickable",11],["clickable",12],["clickable",13],["clickable",14] ["clickable",15]]]]
+        ["row",[["clickable",11],["clickable",12],["clickable",13],["clickable",14],["clickable",15]]]]
     },
     "错误点数": {
         unlocked(){return (getClickableState("F",11) == 1)},
@@ -1378,6 +1379,6 @@ buyables: {
         if (resettingLayer=="ED") {
         keep.push("milestones")
         }
-        if (resettingLayer == "ED" && getClickableState("ED",1011) == 1 ) {layerDataReset(this.layer, keep)}
+        if (resettingLayer == "ED" && getClickableState("ED",101) == 1 ) {layerDataReset(this.layer, keep)}
     }
 })
