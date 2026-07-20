@@ -82,7 +82,7 @@ function getPointGen() {
 	if (hasUpgrade("p",25))gain = gain.times(10)
 	if (hasMilestone("P",2))gain = gain.times(1000)
 	if (hasMilestone("P",4))gain = gain.times(100)
-	if (getClickableState("F",11) == 1)gain = gain.times(player.F.falsePoint.pow(0.2))
+	if (hasMilestone("F",1))gain = gain.times(player.F.falsePoint.pow(0.2).add(1)).times(buyableEffect("F",11))
 	
 	if (inChallenge("P",11))exp = exp.times(0.15)
 	if (inChallenge("P",21))exp = exp.times(0.05)
