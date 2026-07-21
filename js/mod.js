@@ -68,8 +68,14 @@ function getPointGen() {
 	if (inChallenge("P",13))gain = gain.div(player.points.pow(0.3).add(1)).div(1e30)
 	if (hasUpgrade("P",14))gain = gain.times(1000)
 	if (inChallenge("p",11))gain = gain.div(1e20)
-	if (hasChallenge("p",11))gain = gain.times(1e20)
-	if (hasChallenge("p",12))gain = gain.times(1e20)
+	if (hasChallenge("p",11)){
+	    if(getClickableState("F",14) == 1)exp = exp.times(1.01)
+	    else gain = gain.times(1e20)
+	}
+	if (hasChallenge("p",12)){
+	    if(getClickableState("F",14) == 1)exp = exp.times(1.01)
+	    else gain = gain.times(1e20)
+	}
 	if (hasChallenge("P",22))gain = gain.times(1000)
 	if (inChallenge("P",22))gain = gain.div(1e114)
 	if (inChallenge("P",23))gain = gain.div(1e114)
