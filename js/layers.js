@@ -174,6 +174,17 @@ addLayer("L", {
         canClick(){
             return true
         }
+    },
+    21: {
+        display() {return "=1"},
+        onClick(){
+            if(player.devSpeed.eq(0))player.devSpeed = new Decimal(1)
+            else player.devSpeed = new Decimal(1)
+        },
+        canClick(){
+            return true
+        },
+        unlocked(){return player.test}
     }
     },
     tabFormat: {
@@ -409,7 +420,7 @@ addLayer("p", {
     update(diff){
         player.p.points = player.points
         if (player.points.gte(player.p.best)){player.p.best = player.points}
-        if ((hasUpgrade("P",13) && !inChallenge("P",22)) && getClickableState("F",13) == 1)player.p.pu1EffType = "exp"
+        if (hasUpgrade("P",13) && hasUpgrade("p",13) && hasUpgrade("p",11) && !inChallenge("P",22) && getClickableState("F",13) == 1)player.p.pu1EffType = "exp"
         else player.p.pu1EffType = "mult"
     },
     
@@ -451,9 +462,9 @@ addLayer("p", {
             tooltip(){
                 let hc = new Decimal(1)
                 hc = new Decimal("1.79e308")
-                let s = "公式：*(点数^0.25+1)"
+                let s = "公式：*(ln(点数+1)+1)"
                 if(player.points.gte(hc)) s+="<br>现在点数超过了" + format(hc) + ",效果达到硬上限"
-                return s
+                return ((getClickableState("F",12) == 1) ? "" : s)
             },
             unlocked(){return hasUpgrade("p",11)},
             cost: new Decimal(1200)
@@ -519,7 +530,7 @@ addLayer("p", {
                 hc = new Decimal("1.79e308")
                 let s = "公式：*(点数^0.25+1)"
                 if(player.points.gte(hc)) s+="<br>现在点数超过了" + format(hc) + ",效果达到硬上限"
-                return s
+                return ((getClickableState("F",12) == 1) ? "" : s)
             },
             unlocked(){return hasUpgrade("p",14)},
             cost: new Decimal(1000000)
@@ -586,7 +597,7 @@ addLayer("p", {
             challengeDescription: "点数/1e20(没那么难,指数前面)",
             canComplete: function() {return player.points.gte(100)},
             goalDescription: "100点数",
-            rewardDescription: "点数*1e20(没那么好,指数前面)",
+            rewardDescription(){return "点数" + (getClickableState("F",14) == 1 ? "^1.01" : "*1e20(没那么好,指数前面)")},
             unlocked(){return true},
             onEnter(){
                 player.points = new Decimal(0)
@@ -597,7 +608,7 @@ addLayer("p", {
             challengeDescription: "点数需要主动获取",
             canComplete: function() {return player.points.gte(100000)},
             goalDescription: "100000点数",
-            rewardDescription: "升级2,4,5可以基于点数最大值(声望重置保留),同时点数*1e20",
+            rewardDescription: "升级2,4,5可以基于点数最大值(声望重置保留),同时点数" + (getClickableState("F",14) == 1 ? "^1.01" : "*1e20"),
             unlocked(){return hasChallenge("p",11)},
             onEnter(){
                 player.points = new Decimal(0)
@@ -757,7 +768,7 @@ addLayer("P", {
     baseResource: "点数",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.points },  // A function to return the current amount of baseResource.
 
-    requires(){return ((getClickableState("F",12) == 1) && hasUpgrade("p",15) ? new Decimal(1e14) : new Decimal(1e14))},              // The amount of the base needed to  gain 1 of the prestige currency.
+    requires(){return ((getClickableState("F",12) == 1) && hasUpgrade("p",15) ? new Decimal(1e6) : new Decimal(1e14))},              // The amount of the base needed to  gain 1 of the prestige currency.
                                             // Also the amount required to unlock the layer.
 
     type: "normal",                         // Determines the formula used for calculating prestige currency.
@@ -766,7 +777,7 @@ addLayer("P", {
     gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
         let mult = new Decimal(1)
     	if (hasMilestone("L",5) && (getClickableState("F",11) == 1))mult = mult.times((hasMilestone("P",3) ? player.L.layerPoint : new Decimal(10)).pow(player.L.layerPoint))
-        if(hasMilestone("F",2))mult = mult.times(buyableEffect("F",12))
+        if(hasMilestone("F",4))mult = mult.times(buyableEffect("F",13))
         if((getClickableState("F",12) == 1) && hasUpgrade("p",12))mult = mult.div(10000)
         return mult               // Factor in any bonuses multiplying gain here.
     },
@@ -1191,15 +1202,15 @@ addLayer("F", {
             onComplete(){setClickableState("F",13,1)}
         },
         4: {
-            requirementDescription: "1错误和...(和1错误点数)(为什么你别管)",
+            requirementDescription: "1错误和通过声望挑战4(和1错误点数)(为什么你别管)",
             effectDescription: "开启升/降级4,解锁一个可购买",
-            done() { return player.F.points.gte(1) && false && player.F.falsePoint.gte(1) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
+            done() { return player.F.points.gte(1) && hasChallenge("P",21) && player.F.falsePoint.gte(1) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
             onComplete(){setClickableState("F",14,1)}
         },
         5: {
-            requirementDescription: "1错误和...(和1错误点数)(为什么你别管)",
+            requirementDescription: "1错误和解锁可购买(和1错误点数)(为什么你别管)",
             effectDescription: "开启升/降级5",
-            done() { return player.F.points.gte(1) && false && player.F.falsePoint.gte(1) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
+            done() { return player.F.points.gte(1) && getBuyableAmount("p",11).gte(1) && player.F.falsePoint.gte(1) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
             onComplete(){setClickableState("F",15,1)}
         }
     },
@@ -1207,10 +1218,10 @@ buyables: {
     11: {
         title: "FB1",
         cost(x) {
-            return new Decimal(1e270).times(new Decimal(1e10).pow(x))
+            return new Decimal(1e2).times(new Decimal(1e2).pow(x))
         },
         effect(x){
-            return new Decimal(1e3).pow(x)
+            return new Decimal(1e2).pow(x)
         },
         display() {
            return "增益点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount(this.layer,this.id))
@@ -1218,7 +1229,6 @@ buyables: {
         tooltip: "效果公式：*1000^(可购买数量)",
         canAfford() { return player[this.layer].falsePoint.gte(this.cost()) },
         buy() {
-            player[this.layer].falsePoint = player[this.layer].falsePoint.minus(this.cost())
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
         }
     },
@@ -1236,7 +1246,6 @@ buyables: {
         tooltip: "效果公式：*点数^(ln(ln(可购买数量+1)+1)*0.05)+1",
         canAfford() { return player[this.layer].falsePoint.gte(this.cost()) },
         buy() {
-            player[this.layer].falsePoint = player[this.layer].falsePoint.minus(this.cost())
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
         },
         unlocked(){return (hasMilestone("F",2))}
@@ -1255,7 +1264,6 @@ buyables: {
         tooltip(){return "效果公式：^(ln(可购买数量+1)*" + (hasMilestone("P",5) ? "0.03" : "0.01") + "+1)"},
         canAfford() { return player[this.layer].falsePoint.gte(this.cost()) },
         buy() {
-            player[this.layer].falsePoint = player[this.layer].falsePoint.minus(this.cost())
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
         },
         unlocked(){return (hasMilestone("F",4))}
@@ -1304,7 +1312,7 @@ buyables: {
     14: {
         title: "升/降级4",
         display() {
-            return "…<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+            return "修改声望升级效果和点数挑战效果<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
             if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
@@ -1385,7 +1393,7 @@ buyables: {
         "blank",
         ["display-text",function(){
           let s=""
-          s+="你有" + format(player.F.falsePoint) + "错误点数<br>(" + format(player.F.falsePointGain) + "每秒,公式：ln(点数+1))<br>这将点数*" + format(player.F.falsePoint.pow(0.2).add(1)) + "<br>公式：错误点数^0.2+1"
+          s+="你有" + format(player.F.falsePoint) + "错误点数<br>(" + format(player.F.falsePointGain) + "每秒,公式：ln(点数+1))<br>这将点数*" + format(player.F.falsePoint.pow(0.2).add(1)) + "<br>公式：错误点数^0.2+1<br>善良的xiajibazuo不忍心墙玩家,所以可购买不消耗错误点数"
           return s
         }],
         "blank",
