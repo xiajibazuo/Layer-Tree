@@ -608,7 +608,7 @@ addLayer("p", {
             challengeDescription: "点数需要主动获取",
             canComplete: function() {return player.points.gte(100000)},
             goalDescription: "100000点数",
-            rewardDescription: "升级2,4,5可以基于点数最大值(声望重置保留),同时点数" + (getClickableState("F",14) == 1 ? "^1.01" : "*1e20"),
+            rewardDescription(){return "升级2,4,5可以基于点数最大值(声望重置保留),同时点数" + (getClickableState("F",14) == 1 ? "^1.01" : "*1e20")},
             unlocked(){return hasChallenge("p",11)},
             onEnter(){
                 player.points = new Decimal(0)
