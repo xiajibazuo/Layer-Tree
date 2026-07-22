@@ -77,8 +77,8 @@ function getPointGen() {
 	    else gain = gain.times(1e20)
 	}
 	if (hasChallenge("P",22))gain = gain.times(1000)
-	if (inChallenge("P",22))gain = gain.div(1e114)
-	if (inChallenge("P",23))gain = gain.div(1e114)
+	if (inChallenge("P",22))gain = gain.div(getClickableState("F",14) == 1 ? 114514 : 1e114)
+	if (inChallenge("P",23))gain = gain.div(getClickableState("F",14) == 1 ? 114514 : 1e114)
 	if (hasUpgrade("p",21))gain = gain.times(10)
 	if (hasUpgrade("p",21))gain = gain.times(buyableEffect("p",11))
 	if (hasUpgrade("p",23))gain = gain.times(buyableEffect("p",12))
