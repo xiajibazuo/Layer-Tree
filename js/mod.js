@@ -62,7 +62,7 @@ function getPointGen() {
 	if (hasUpgrade("p",12))gain = gain.times(upgradeEffect("p",12))
 	if (hasUpgrade("p",14) && !inChallenge("P",12))gain = gain.times(upgradeEffect("p",14))
 	if (hasUpgrade("p",15) && !inChallenge("P",12))gain = gain.times(upgradeEffect("p",15))
-	if (hasUpgrade("P",11) && !inChallenge("P",22))gain = gain.times(player.P.points.times(player.P.points.add(1).log(Math.E)).add(1))
+	if (hasUpgrade("P",11) && !inChallenge("P",22))gain = gain.times(upgradeEffect("P",11))
 	if (hasChallenge("P",11))gain = gain.times(1000)
 	if (hasChallenge("P",12))gain = gain.times(1000)
 	if (inChallenge("P",13))gain = gain.div(player.points.pow(0.3).add(1)).div(1e30)
