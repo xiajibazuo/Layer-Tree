@@ -538,11 +538,11 @@ addLayer("p", {
         21: {
             title: "6",
             description(){
-                return "解锁点数可购买,这一行每一个升级点数*10<br>需要在PC4中购买"
+                return "解锁点数可购买,这一行每一个升级点数*10<br>需要在PC" + (getClickableState("F",14) == 1 ? "1" : "4") + "中购买"
             },
             unlocked(){return hasChallenge("P",23)},
             cost(){
-                if (!inChallenge("P",21)) return new Decimal("eeeeeeeeee114514")
+                if (!inChallenge("P",(getClickableState("F",14) == 1 ? 11 : 21))) return new Decimal("eeeeeeeeee114514")
                 return new Decimal(1e15)
             }
         },
@@ -832,6 +832,7 @@ addLayer("P", {
             effect(){
                 let sc = new Decimal(1)
                 sc = new Decimal("1.79e308")
+                if(getClickableState("F",13) == 1)sc = new Decimal(1e20)
                 let eff = new Decimal(1)
                 if(player.P.points.gte(sc)) eff = player.P.points.times(player.P.points.add(1).log(Math.E)).add(1).pow(0.5).times(sc.pow(1-0.5))
                 else eff = player.P.points.times(player.P.points.add(1).log(Math.E)).add(1)
@@ -930,8 +931,8 @@ addLayer("P", {
             s+=("点数削弱自己(公式：/(点数^0.5+1),同时点数/1e30<br>效果：/" + format(player.points.pow(0.3).add(1).times(1e30)))
             return s
             },
-            canComplete: function() {return player.points.gte(1e20)},
-            goalDescription: "1e20点数",
+            canComplete: function() {return player.points.gte(getClickableState("F",13) == 1 ? 1e15 : 1e20)},
+            goalDescription: (getClickableState("F",13) == 1 ? "1e15" : "1e20") + "点数",
             rewardDescription: "解锁更多声望升级",
             unlocked(){return hasChallenge("P",12)},
             onEnter(){
@@ -963,9 +964,9 @@ addLayer("P", {
         },
         22: {
             name: "PC5",
-            challengeDescription: "声望升级1,3没有效果,同时点数/1e114(好臭的削弱)",
-            canComplete: function() {return player.points.gte(1e80)},
-            goalDescription: "1e80点数",
+            challengeDescription: "声望升级1,3没有效果,同时点数/" + (getClickableState("F",14) == 1 ? "114514" : "1e114") + "(好臭的削弱)",
+            canComplete: function() {return player.points.gte(getClickableState("F",14) == 1 ? 1e35 : 1e80)},
+            goalDescription: (getClickableState("F",14) == 1 ? "1e35" : "1e80") + "点数",
             rewardDescription: "点数*1000",
             unlocked(){return hasChallenge("P",21)}
         },
@@ -975,7 +976,7 @@ addLayer("P", {
             let s = ""
             if(hasUpgrade("p",22))s+="<del>重置点数升级,同时</del>"
             else s+="重置点数升级,同时"
-            s+=("点数削弱自己(公式：^(1/(ln(ln(点数^0.5+1)+1)+1))),同时点数/1e114(好臭的削弱)<br>效果：^(1/" + format(player.points.pow(0.5).add(1).log(Math.E).add(1).log(Math.E).add(1)) + ")")
+            s+=("点数削弱自己(公式：^(1/(ln(ln(点数^0.5+1)+1)+1))),同时点数/" + (getClickableState("F",14) == 1 ? "114514" : "1e114") + "(好臭的削弱)<br>效果：^(1/" + format(player.points.pow(0.5).add(1).log(Math.E).add(1).log(Math.E).add(1)) + ")")
             return s
             },
             canComplete: function() {return player.points.gte(1e33)},
@@ -1224,7 +1225,7 @@ addLayer("F", {
         5: {
             requirementDescription: "1错误和解锁可购买(和1错误点数)(为什么你别管)",
             effectDescription: "开启升/降级5",
-            done() { return player.F.points.gte(1) && getBuyableAmount("p",11).gte(1) && player.F.falsePoint.gte(1) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
+            done() { return player.F.points.gte(1) && hasUpgrade("p",21) && player.F.falsePoint.gte(1) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
             onComplete(){setClickableState("F",15,1)}
         }
     },
@@ -1249,7 +1250,7 @@ buyables: {
     12: {
         title: "FB2",
         cost(x) {
-            return new Decimal("1e3").times(new Decimal(1e3).pow(x))
+            return new Decimal("1e3").times(new Decimal(200).pow(x))
         },
         effect(x){
             return new Decimal(10).pow(x)
@@ -1313,7 +1314,7 @@ buyables: {
     13: {
         title: "升/降级3",
         display() {
-            return "升级P3的效果更好?<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+            return "升级P1的软上限提前,挑战PC3的要求降低,升级P3的效果更好?<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
             if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
@@ -1326,7 +1327,7 @@ buyables: {
     14: {
         title: "升/降级4",
         display() {
-            return "修改声望升级效果和点数挑战效果<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+            return "修改声望升级效果和点数挑战效果,修改PC5,PC6,升级6<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
             if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
@@ -1350,9 +1351,8 @@ buyables: {
         }
     },
     91: {
-        title: "开始生产错误点数",
         display() {
-            return ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+            return "开始生产错误点数<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
             if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
