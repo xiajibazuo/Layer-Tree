@@ -932,7 +932,7 @@ addLayer("P", {
             return s
             },
             canComplete: function() {return player.points.gte(getClickableState("F",13) == 1 ? 1e15 : 1e20)},
-            goalDescription: (getClickableState("F",13) == 1 ? "1e15" : "1e20") + "点数",
+            goalDescription(){return (getClickableState("F",13) == 1 ? "1e15" : "1e20") + "点数"},
             rewardDescription: "解锁更多声望升级",
             unlocked(){return hasChallenge("P",12)},
             onEnter(){
@@ -964,9 +964,9 @@ addLayer("P", {
         },
         22: {
             name: "PC5",
-            challengeDescription: "声望升级1,3没有效果,同时点数/" + (getClickableState("F",14) == 1 ? "114514" : "1e114") + "(好臭的削弱)",
+            challengeDescription(){return "声望升级1,3没有效果,同时点数/" + (getClickableState("F",14) == 1 ? "114514" : "1e114") + "(好臭的削弱)"},
             canComplete: function() {return player.points.gte(getClickableState("F",14) == 1 ? 1e35 : 1e80)},
-            goalDescription: (getClickableState("F",14) == 1 ? "1e35" : "1e80") + "点数",
+            goalDescription(){return (getClickableState("F",14) == 1 ? "1e35" : "1e80") + "点数"},
             rewardDescription: "点数*1000",
             unlocked(){return hasChallenge("P",21)}
         },
