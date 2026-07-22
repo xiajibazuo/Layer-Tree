@@ -176,10 +176,10 @@ addLayer("L", {
         }
     },
     21: {
-        display() {return "=1"},
+        display() {return "pause"},
         onClick(){
             if(player.devSpeed.eq(0))player.devSpeed = new Decimal(1)
-            else player.devSpeed = new Decimal(1)
+            else player.devSpeed = new Decimal(0)
         },
         canClick(){
             return true
@@ -827,9 +827,23 @@ addLayer("P", {
         11: {
             title: "P1",
             description(){
-                return "声望点数增益点数<br>效果：*" + format(player.P.points.times(player.P.points.add(1).log(2.718281828)).add(1))
+                return ("声望点数增益点数<br>效果：*" + format(upgradeEffect(this.layer,this.id)))
             },
-            tooltip: "公式：*(声望点数*ln(声望点数+1)+1)",
+            effect(){
+                let sc = new Decimal(1)
+                sc = new Decimal("1.79e308")
+                let eff = new Decimal(1)
+                if(player.P.points.gte(sc)) eff = player.P.points.times(player.P.points.add(1).log(Math.E)).add(1).pow(0.5).times(sc.pow(1-0.5))
+                else eff = player.P.points.times(player.P.points.add(1).log(Math.E)).add(1)
+                return eff
+            },
+            tooltip(){
+                let sc = new Decimal(1)
+                sc = new Decimal("1.79e308")
+                let s = "公式：*(声望点数*ln(声望点数+1)+1)"
+                if(player.P.points.gte(sc)) s+="<br>现在声望点数超过了" + format(sc) + ",效果达到软上限(^0.5)"
+                return s
+            },
             cost: new Decimal(1)
         },
         12: {
@@ -1226,7 +1240,7 @@ buyables: {
         display() {
            return "增益点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount(this.layer,this.id))
         },
-        tooltip: "效果公式：*1000^(可购买数量)",
+        tooltip: "效果公式：*100^(可购买数量)",
         canAfford() { return player[this.layer].falsePoint.gte(this.cost()) },
         buy() {
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
@@ -1235,15 +1249,15 @@ buyables: {
     12: {
         title: "FB2",
         cost(x) {
-            return new Decimal("1e315").times(new Decimal(1e15).pow(x))
+            return new Decimal("1e3").times(new Decimal(1e3).pow(x))
         },
         effect(x){
-            return player.points.pow(new Decimal(x).add(1).log(Math.E).add(1).log(Math.E).times(0.05)).add(1)
+            return new Decimal(10).pow(x)
         },
         display() {
            return "增益错误点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount(this.layer,this.id))
         },
-        tooltip: "效果公式：*点数^(ln(ln(可购买数量+1)+1)*0.05)+1",
+        tooltip: "效果公式：*(10^可购买数量)",
         canAfford() { return player[this.layer].falsePoint.gte(this.cost()) },
         buy() {
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
