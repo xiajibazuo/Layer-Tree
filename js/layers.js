@@ -797,7 +797,7 @@ addLayer("P", {
     	if (hasMilestone("L",5) && (getClickableState("F",11) == 1))mult = mult.times((hasMilestone("P",3) ? player.L.layerPoint : new Decimal(10)).pow(player.L.layerPoint))
         if(hasMilestone("F",4))mult = mult.times(buyableEffect("F",13))
         if((getClickableState("F",12) == 1) && hasUpgrade("p",12))mult = mult.div(10000)
-       	if (hasUpgrade("P",14) && getClickableState("F",14) == 1)mult = mult.times(upgradeEffect(this.layer,this.id))
+       	if (hasUpgrade("P",14) && getClickableState("F",14) == 1)mult = mult.times(upgradeEffect(this.layer,14))
         return mult               // Factor in any bonuses multiplying gain here.
     },
     gainExp() {                             // Returns the exponent to your gain of the prestige resource.
