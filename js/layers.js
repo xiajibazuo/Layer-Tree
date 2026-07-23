@@ -263,6 +263,7 @@ addLayer("L", {
             if (getClickableState("F",11)){
                 keep.push("buyables")
                 keep.push("layerPoint")
+            }
         }
         if(resettingLayer=="F"){
             keep.push("points")
