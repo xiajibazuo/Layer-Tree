@@ -891,7 +891,7 @@ addLayer("P", {
             description(){
                 return "点数*1000" + (getClickableState("F",14) == 1 ? ("同时声望点数增益自己<br>效果：" + format(upgradeEffect(this.layer,this.id))) : "")
             },
-            tooltip(){return (getClickableState("F",14) == 1 ? ("公式：*声望点数^0.1+1" : "")},
+            tooltip(){return (getClickableState("F",14) == 1 ? "公式：*声望点数^0.1+1" : "")},
             unlocked(){return hasChallenge("P",13)},
             cost: new Decimal(1e17)
         },
