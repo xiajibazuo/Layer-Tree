@@ -265,7 +265,7 @@ addLayer("L", {
                 keep.push("layerPoint")
             }
         }
-        if(resettingLayer=="F"){
+        if(resettingLayer=="F" && hasMilestone("F",6)){
             keep.push("points")
             keep.push("milestones")
             keep.push("buyables")
@@ -1311,7 +1311,7 @@ buyables: {
     11: {
         title: "升/降级1",
         display() {
-            return "修改层级里程碑效果<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关") + (hasMilestone("F",6) ? "并且进行一次错误重置" : "")
+            return "修改层级里程碑效果<br>" + (hasMilestone("F",6) ? "并且进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
             doReset("F")
@@ -1319,13 +1319,13 @@ buyables: {
             else setClickableState(this.layer,this.id,0)
         },
         canClick(){
-            return false
+            return hasMilestone("F",6)
         }
     },
     12: {
         title: "升/降级2",
         display() {
-            return "修改点数升级效果<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关") + (hasMilestone("F",6) ? "并且进行一次错误重置" : "")
+            return "修改点数升级效果<br>" + (hasMilestone("F",6) ? "并且进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
             doReset("F")
@@ -1333,13 +1333,13 @@ buyables: {
             else setClickableState(this.layer,this.id,0)
         },
         canClick(){
-            return false
+            return hasMilestone("F",6)
         }
     },
     13: {
         title: "升/降级3",
         display() {
-            return "升级P1的软上限提前,挑战PC3的要求降低,升级P3的效果更好?<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关") + (hasMilestone("F",6) ? "并且进行一次错误重置" : "")
+            return "升级P1的软上限提前,挑战PC3的要求降低,升级P3的效果更好?<br>" + (hasMilestone("F",6) ? "并且进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
             doReset("F")
@@ -1347,13 +1347,13 @@ buyables: {
             else setClickableState(this.layer,this.id,0)
         },
         canClick(){
-            return false
+            return hasMilestone("F",6)
         }
     },
     14: {
         title: "升/降级4",
         display() {
-            return "修改声望升级效果和点数挑战效果,修改PC5,PC6,升级6<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关") + (hasMilestone("F",6) ? "并且进行一次错误重置" : "")
+            return "修改声望升级效果和点数挑战效果,修改PC5,PC6,升级6<br>" + (hasMilestone("F",6) ? "并且进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
             doReset("F")
@@ -1361,13 +1361,13 @@ buyables: {
             else setClickableState(this.layer,this.id,0)
         },
         canClick(){
-            return false
+            return hasMilestone("F",6)
         }
     },
     15: {
         title: "升/降级5",
         display() {
-            return "点数可购买的价格降低,但效果降低<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关") + (hasMilestone("F",6) ? "并且进行一次错误重置" : "")
+            return "点数可购买的价格降低,但效果降低<br>" + (hasMilestone("F",6) ? "并且进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
             doReset("F")
@@ -1375,28 +1375,12 @@ buyables: {
             else setClickableState(this.layer,this.id,0)
         },
         canClick(){
-            return false
+            return hasMilestone("F",6)
         }
-    },
-    21: {
-        display() {
-            return 
-        },
-        onClick(){
-            if (getClickableState(this.layer,this.id) >= 2){
-                doReset("F")
-                setClickableState(this.layer,this.id,0)
-            }
-            else setClickableState(this.layer,this.id,(getClickableState(this.layer,this.id) + 1))
-        },
-        canClick(){
-            return true
-        },
-        tooltip: "(哪来的你也别管)"
     },
     91: {
         display() {
-            return "开始生产错误点数<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+            return "开始产生错误点数<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
             if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
