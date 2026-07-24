@@ -834,7 +834,7 @@ addLayer("P", {
         },
         5: {
             requirementDescription: "1e75总声望点数",
-            effectDescription: "pB3效果更好(^(ln(可购买数量+1)*0.01+1)→^(ln(可购买数量+1)*" + (getClickableState("F",15) == 1 ? "0.02" : "0.03") + "+1))",
+            effectDescription(){return "pB3效果更好(^(ln(可购买数量+1)*0.01+1)→^(ln(可购买数量+1)*" + (getClickableState("F",15) == 1 ? "0.02" : "0.03") + "+1))"},
             done() { return player.P.total.gte(1e75) }
         }
     },
