@@ -572,18 +572,18 @@ addLayer("p", {
             unlocked(){return hasUpgrade("p",21)},
             cost(){
                 if (!inChallenge("P",12)) return new Decimal("eeeeeeeeee114514")
-                return new Decimal(1e135)
+                return new Decimal(getClickableState("F",15) == 1 ? 1e114 : 1e135)
             }
         },
         23: {
             title: "8",
             description(){
-                return "解锁一个可购买<br>需要在PC1中购买"
+                return "解锁一个可购买<br>需要在PC" + (getClickableState("F",14) == 1 ? "4" : "1") + "中购买"
             },
             unlocked(){return hasUpgrade("p",22)},
             cost(){
-                if (!inChallenge("P",11)) return new Decimal("eeeeeeeeee114514")
-                return new Decimal(1e45)
+                if (!inChallenge("P",(getClickableState("F",15) == 1 ? 11 : 21))) return new Decimal("eeeeeeeeee114514")
+                return new Decimal(getClickableState("F",15) == 1 ? 1e10 : 1e45)
             }
         },
         24: {
@@ -594,7 +594,7 @@ addLayer("p", {
             unlocked(){return hasUpgrade("p",23)},
             cost(){
                 if (!inChallenge("P",22)) return new Decimal("eeeeeeeeee114514")
-                return new Decimal(1e115)
+                return new Decimal(getClickableState("F",15) == 1 ? "1e90" : "1e115")
             }
         },
         25: {
@@ -605,7 +605,7 @@ addLayer("p", {
             unlocked(){return hasUpgrade("p",24)},
             cost(){
                 if (!inChallenge("P",13)) return new Decimal("eeeeeeeeee114514")
-                return new Decimal(1e250)
+                return new Decimal(getClickableState("F",15) == 1 ? "1e180" : "1e250")
             }
         }
     },
@@ -648,15 +648,15 @@ buyables: {
     11: {
         title: "pB1",
         cost(x) {
-            return new Decimal(getClickableState("F",15) == 1 ? 1e100 : "1e270").times(new Decimal(1e10).pow(x))
+            return new Decimal(getClickableState("F",15) == 1 ? 1e100 : "1e270").times(new Decimal(getClickableState("F",15) == 1 ? 1e5 : 1e10).pow(x))
         },
         effect(x){
-            return new Decimal(1e3).pow(x)
+            return new Decimal(getClickableState("F",15) == 1 ? 10 : 1e3).pow(x)
         },
         display() {
            return "增益点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount("p",11))
         },
-        tooltip: "效果公式：*1000^(可购买数量)",
+        tooltip(){return "效果公式：*" + (getClickableState("F",15) == 1 ? "10" : "1000") + "^(可购买数量)"},
         canAfford() { return player[this.layer].points.gte(this.cost()) },
         buy() {
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
@@ -665,15 +665,15 @@ buyables: {
     12: {
         title: "pB2",
         cost(x) {
-            return new Decimal("1e315").times(new Decimal(1e15).pow(x))
+            return new Decimal(getClickableState("F",15) == 1 ? "1e200" : "1e315").times(new Decimal(getClickableState("F",15) == 1 ? "1e10" : "1e15").pow(x))
         },
         effect(x){
-            return player.points.pow(new Decimal(x).add(1).log(Math.E).add(1).log(Math.E).times(0.05)).add(1)
+            return player.points.pow(new Decimal(x).add(1).log(Math.E).add(1).log(Math.E).times(getClickableState("F",15) == 1 ? 0.03 : 0.05)).add(1)
         },
         display() {
            return "增益点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount("p",12))
         },
-        tooltip: "效果公式：*点数^(ln(ln(可购买数量+1)+1)*0.05)+1",
+        tooltip: "效果公式：*点数^(ln(ln(可购买数量+1)+1)*" + (getClickableState("F",15) == 1 ? "0.03" : "0.05") + ")+1",
         canAfford() { return player[this.layer].points.gte(this.cost()) },
         buy() {
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
@@ -683,10 +683,10 @@ buyables: {
     13: {
         title: "pB3",
         cost(x) {
-            return new Decimal("1e350").times(new Decimal(1e20).pow(x))
+            return new Decimal(getClickableState("F",15) == 1 ? "1e280" : "1e350").times(new Decimal(getClickableState("F",15) == 1 ? "1e15" : "1e20").pow(x))
         },
         effect(x){
-            return new Decimal(x).add(1).log(Math.E).times(hasMilestone("P",5) ? 0.03 : 0.01).add(1)
+            return new Decimal(x).add(1).log(Math.E).times(hasMilestone("P",5) ? (getClickableState("F",15) == 1 ? 0.02 : 0.03) : 0.01).add(1)
         },
         display() {
            return "增益点数<br>效果：^" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount("p",13))
@@ -834,7 +834,7 @@ addLayer("P", {
         },
         5: {
             requirementDescription: "1e75总声望点数",
-            effectDescription: "pB3效果更好(^(ln(可购买数量+1)*0.01+1)→^(ln(可购买数量+1)*0.03+1))",
+            effectDescription: "pB3效果更好(^(ln(可购买数量+1)*0.01+1)→^(ln(可购买数量+1)*" + (getClickableState("F",15) == 1 ? "0.02" : "0.03") + "+1))",
             done() { return player.P.total.gte(1e75) }
         }
     },
@@ -1367,7 +1367,7 @@ buyables: {
     15: {
         title: "升/降级5",
         display() {
-            return "点数可购买的价格降低,但效果降低<br>" + (hasMilestone("F",6) ? "并且进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+            return "点数可购买的价格降低,但效果降低,声望里程碑5效果降低<br>" + (hasMilestone("F",6) ? "并且进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
             doReset("F")
