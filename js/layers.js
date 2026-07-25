@@ -582,7 +582,7 @@ addLayer("p", {
             },
             unlocked(){return hasUpgrade("p",22)},
             cost(){
-                if (!inChallenge("P",(getClickableState("F",15) == 1 ? 11 : 21))) return new Decimal("eeeeeeeeee114514")
+                if (!inChallenge("P",(getClickableState("F",15) == 1 ? 21 : 11))) return new Decimal("eeeeeeeeee114514")
                 return new Decimal(getClickableState("F",15) == 1 ? 1e10 : 1e45)
             }
         },
@@ -1247,9 +1247,9 @@ addLayer("F", {
             onComplete(){setClickableState("F",15,1)}
         },
         6: {
-            requirementDescription: "1错误和5层级(和1错误点数)(为什么你别管)",
+            requirementDescription: "1错误和20层级点数(和1错误点数)(为什么你别管)",
             effectDescription: "错误不重置层级,在重置时可以开启/关闭升/降级",
-            done() { return player.F.points.gte(1) && player.L.points.gte(5) && player.F.falsePoint.gte(1) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))}
+            done() { return player.F.points.gte(1) && player.L.points.gte(5) && player.F.falsePoint.gte(1) && (player.test && (player.L.layerPoint.gte(20) || hasMilestone("F",1)))}
            }
        },
 buyables: {
@@ -1314,7 +1314,10 @@ buyables: {
             return "修改层级里程碑效果<br>" + (hasMilestone("F",6) ? "并且进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
-            doReset("F")
+        player.points = new Decimal(0)
+            layerDataReset("p",[])
+            layerDataReset("P",[])
+            layerDataReset("f",[])
             if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
             else setClickableState(this.layer,this.id,0)
         },
@@ -1328,7 +1331,10 @@ buyables: {
             return "修改点数升级效果<br>" + (hasMilestone("F",6) ? "并且进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
-            doReset("F")
+        player.points = new Decimal(0)
+            layerDataReset("p",[])
+            layerDataReset("P",[])
+            layerDataReset("f",[])
             if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
             else setClickableState(this.layer,this.id,0)
         },
@@ -1342,7 +1348,10 @@ buyables: {
             return "升级P1的软上限提前,挑战PC3的要求降低,升级P3的效果更好?<br>" + (hasMilestone("F",6) ? "并且进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
-            doReset("F")
+        player.points = new Decimal(0)
+            layerDataReset("p",[])
+            layerDataReset("P",[])
+            layerDataReset("f",[])
             if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
             else setClickableState(this.layer,this.id,0)
         },
@@ -1356,7 +1365,10 @@ buyables: {
             return "修改声望升级效果和点数挑战效果,修改PC5,PC6,升级6<br>" + (hasMilestone("F",6) ? "并且进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
-            doReset("F")
+        player.points = new Decimal(0)
+            layerDataReset("p",[])
+            layerDataReset("P",[])
+            layerDataReset("f",[])
             if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
             else setClickableState(this.layer,this.id,0)
         },
@@ -1370,7 +1382,10 @@ buyables: {
             return "点数可购买的价格降低,但效果降低,声望里程碑5效果降低<br>" + (hasMilestone("F",6) ? "并且进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
-            doReset("F")
+        player.points = new Decimal(0)
+            layerDataReset("p",[])
+            layerDataReset("P",[])
+            layerDataReset("f",[])
             if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
             else setClickableState(this.layer,this.id,0)
         },
