@@ -59,9 +59,9 @@ function getPointGen() {
 	    }
 	    else gain=gain.times(upgradeEffect("p",11))
 	}
-	if (hasUpgrade("p",12))gain = gain.times(upgradeEffect("p",12))
-	if (hasUpgrade("p",14) && !inChallenge("P",12))gain = gain.times(upgradeEffect("p",14))
-	if (hasUpgrade("p",15) && !inChallenge("P",12))gain = gain.times(upgradeEffect("p",15))
+	if (hasUpgrade("p",12) && !inChallenge("F",11))gain = gain.times(upgradeEffect("p",12))
+	if (hasUpgrade("p",14) && !inChallenge("P",12) && !inChallenge("F",11))gain = gain.times(upgradeEffect("p",14))
+	if (hasUpgrade("p",15) && !inChallenge("P",12) && !inChallenge("F",11))gain = gain.times(upgradeEffect("p",15))
 	if (hasUpgrade("P",11) && !inChallenge("P",22))gain = gain.times(upgradeEffect("P",11))
 	if (hasChallenge("P",11))gain = gain.times(1000)
 	if (hasChallenge("P",12))gain = gain.times(1000)
@@ -80,8 +80,8 @@ function getPointGen() {
 	if (inChallenge("P",22))gain = gain.div(getClickableState("F",14) == 1 ? 114514 : 1e114)
 	if (inChallenge("P",23))gain = gain.div(getClickableState("F",14) == 1 ? 114514 : 1e114)
 	if (hasUpgrade("p",21))gain = gain.times(10)
-	if (hasUpgrade("p",21))gain = gain.times(buyableEffect("p",11))
-	if (hasUpgrade("p",23))gain = gain.times(buyableEffect("p",12))
+	if (hasUpgrade("p",21) && !inChallenge("F",12))gain = gain.times(buyableEffect("p",11))
+	if (hasUpgrade("p",23) && !inChallenge("F",12))gain = gain.times(buyableEffect("p",12))
 	if (hasUpgrade("p",22))gain = gain.times(10)
 	if (hasUpgrade("p",23))gain = gain.times(10)
 	if (hasUpgrade("p",24))gain = gain.times(10)
@@ -93,9 +93,9 @@ function getPointGen() {
 	if (inChallenge("P",11))exp = exp.times(0.15)
 	if (inChallenge("P",21))exp = exp.times(0.05)
 	if (inChallenge("P",23))exp = exp.div(player.points.pow(0.5).add(1).log(Math.E).add(1).log(Math.E).add(1))
-	if (hasUpgrade("p",25))exp = exp.times(buyableEffect("p",13))
+	if (hasUpgrade("p",25) && !inChallenge("F",12))exp = exp.times(buyableEffect("p",13))
 	
-	gain = gain.pow(exp)
+	if (!inChallenge("F",11))gain = gain.pow(exp)
 	
 	if(!canGenPoints()){
 	    player.preGetPointGen = gain
