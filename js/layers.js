@@ -1378,7 +1378,7 @@ challenges: {
         rewardEffect(){return new Decimal(10).minus(challengeCompletions(this.layer,this.id).times(2.75).minus(challengeCompletions(this.layer,this.id).pow(2).div(4)))},
         rewardDescription(){return "点数/声望点数购买层级点数价格降低"  //((10^(10^购买次数))→(10-(购买次数*2.75-购买次数^2/4)^(10-(购买次数*2.75-购买次数^2/4)^购买次数))/)<br>效果：-" + challengeEffect(this.layer,this.id)}
     },
-    13:: {
+    13: {
         name: "FC3",
         challengeDescription: "声望获得乘数恒定为1",
         canComplete: function() {
