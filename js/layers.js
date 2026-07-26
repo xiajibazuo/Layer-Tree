@@ -1,6 +1,6 @@
 /*i d k y do i fill 棍母
-mod.js
-
+check layer.js(<del>1314</del>1343:idk)
+&& mod.js
 
 */
 addLayer("L", {
@@ -92,14 +92,16 @@ addLayer("L", {
 
     11: {
         title: "点数",
+            cost(x){
+            if(new Decimal(x).eq(0))return new Decimal("5")
+            return new Decimal(hasChallenge("F",12) ? challengeEffect(this.layer,this.id) : 10).pow(new Decimal(hasChallenge("F",12) ? challengeEffect(this.layer,this.id) : 10).pow(x))},
         display() {
             if(getBuyableAmount("L",11).eq(0)) return "价格：5点数<br>数量：0"
-            else return "价格：" + format(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L",11)))) + "点数<br>数量：" +format(getBuyableAmount("L",11))
+            else return "价格：" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount("L",11))
         },
         unlocked() { return true },
         canAfford() { 
-            if(getBuyableAmount("L",11).eq(0)) return player.points.gte(5)
-            else return player.points.gte(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L",11)))) 
+            return player.points.gte(this.cost()) 
         },
         buy() { 
             if(getBuyableAmount("L",11).eq(0)) player.points = player.points.minus(5)
@@ -113,12 +115,14 @@ addLayer("L", {
     },
     12: {
         title: "层级点数",
+        cost(x){
+            return new Decimal("3").pow(new Decimal(x))},
         display() {
-           return "价格：达到" + format(new Decimal("3").pow(getBuyableAmount("L", 12))) + "层级点数<br>数量：" +format(getBuyableAmount("L",12))
+           return "价格：达到" + format(this.cost()) + "层级点数<br>数量：" +format(getBuyableAmount("L",12))
         },
         unlocked() { return true },
         canAfford() { 
-            return player.L.layerPoint.gte(new Decimal("3").pow(getBuyableAmount("L", 12)))
+            return player.L.layerPoint.gte(this.cost())
         },
         buy() {
             setBuyableAmount("L", 12, getBuyableAmount("L", 12).add(1))
@@ -128,8 +132,8 @@ addLayer("L", {
     13: {
         title: "声望点数",
         cost(x){
-            if(new Decimal(x).gte(7))return new Decimal("10").pow(new Decimal(x).pow(new Decimal(x).times(0.02).add(2)).times(0.5).add(new Decimal(x).pow(new Decimal(x).times(0.02).add(1)).times(1.5).add(1)))
-            return new Decimal("10").pow(new Decimal(x).pow(2).times(0.5).add(new Decimal(x).times(1.5).add(1)))},
+            if(new Decimal(x).gte(7))return new Decimal(hasChallenge("F",12) ? challengeEffect(this.layer,this.id) : 10).pow(new Decimal(x).pow(new Decimal(x).times(0.02).add(2)).times(0.5).add(new Decimal(x).pow(new Decimal(x).times(0.02).add(1)).times(1.5).add(1)))
+            return new Decimal(hasChallenge("F",12) ? challengeEffect(this.layer,this.id) : 10).pow(new Decimal(x).pow(2).times(0.5).add(new Decimal(x).times(1.5).add(1)))},
         display() {
            return "价格：" + format(this.cost()) + "声望点数<br>数量：" +format(getBuyableAmount("L",13))
         },
@@ -578,7 +582,7 @@ addLayer("p", {
         23: {
             title: "8",
             description(){
-                return "解锁一个可购买<br>需要在PC" + (getClickableState("F",14) == 1 ? "4" : "1") + "中购买"
+                return "解锁一个可购买<br>需要在PC" + (getClickableState("F",15) == 1 ? "4" : "1") + "中购买"
             },
             unlocked(){return hasUpgrade("p",22)},
             cost(){
@@ -798,6 +802,7 @@ addLayer("P", {
         if(hasMilestone("F",4))mult = mult.times(buyableEffect("F",13))
         if((getClickableState("F",12) == 1) && hasUpgrade("p",12))mult = mult.div(10000)
        	if (hasUpgrade("P",14) && getClickableState("F",14) == 1)mult = mult.times(upgradeEffect(this.layer,14))
+       	if (inChallenge("F",13)) return new Decimal(1)
         return mult               // Factor in any bonuses multiplying gain here.
     },
     gainExp() {                             // Returns the exponent to your gain of the prestige resource.
@@ -889,7 +894,7 @@ addLayer("P", {
             title: "P4",
             effect(){return player.P.points.pow(0.1).add(1)},
             description(){
-                return "点数*1000" + (getClickableState("F",14) == 1 ? ("同时声望点数增益自己<br>效果：" + format(upgradeEffect(this.layer,this.id))) : "")
+                return "点数*1000" + (getClickableState("F",14) == 1 ? (",同时声望点数增益自己<br>效果：" + format(upgradeEffect(this.layer,this.id))) : "")
             },
             tooltip(){return (getClickableState("F",14) == 1 ? "公式：*声望点数^0.1+1" : "")},
             unlocked(){return hasChallenge("P",13)},
@@ -1209,6 +1214,7 @@ addLayer("F", {
     update(diff){
         let gain = player.points.add(1).log(Math.E)
         if(hasMilestone("F",2))gain = gain.times(buyableEffect("F",12))
+        if(hasMilestone("F",6))gain = gain.times(challengeEffect(this.layer,11)).times(challengeEffect(this.layer,13))
         
         if(getClickableState("F",91) == 1)player.F.falsePointGain = gain
         if(hasMilestone("F",1))player.F.falsePoint = player.F.falsePoint.add(player.F.falsePointGain.times(diff))
@@ -1307,11 +1313,109 @@ buyables: {
         unlocked(){return (hasMilestone("F",4))}
     }
 },
+challenges: {
+    11: {
+        name: "FC1",
+        challengeDescription: "点数指数和点数自增益没有作用",
+        canComplete: function() {
+            let a = challengeCompletions(this.layer,this.id)
+            let b = ""
+            if (a=1) b+=("114514")
+            if (a=2) b+=("114514")
+            if (a=3) b+=("114514")
+            if (a=4) b+=("114514")
+            if (a=5) b+=("114514")
+            if (a>5) b+=("eeeeeeeeee114514")
+            return player.points.gte(new Decimal(b))
+        },
+        completionLimit(){return 5},
+        goalDescription(){
+            let s = ""
+            let a = challengeCompletions(this.layer,this.id)
+            let b = ""
+            if (a=1) b+=("114514")
+            if (a=2) b+=("114514")
+            if (a=3) b+=("114514")
+            if (a=4) b+=("114514")
+            if (a=5) b+=("114514")
+            if (a>5) b+=("eeeeeeeeee114514")
+            s+=b
+            s+="点数(" + challengeCompletions(this.layer,this.id) + "/5)"
+            return s
+        },
+        rewardEffect(){return player.points.pow(challengeCompletions(this.layer,this.id).times(0.002))},
+        rewardDescription(){return "点数增益错误点数(公式：*点数^(通过次数*0.002))<br>效果：" + challengeEffect(this.layer,this.id)}
+    },
+    12: {
+        name: "FC2",
+        challengeDescription: "点数可购买没有作用",
+        canComplete: function() {
+            let a = challengeCompletions(this.layer,this.id)
+            let b = ""
+            if (a=1) b+=("1")
+            if (a=2) b+=("1")
+            if (a=3) b+=("1")
+            if (a=4) b+=("1")
+            if (a=5) b+=("1")
+            if (a>5) b+=("eeeeeeeeee114514")
+            return getBuyableAmount("p",11).gte(new Decimal(b))
+        },
+        completionLimit(){return 5},
+        goalDescription(){
+            let s = ""
+            let a = challengeCompletions(this.layer,this.id)
+            let b = ""
+            if (a=1) b+=("114514")
+            if (a=2) b+=("114514")
+            if (a=3) b+=("114514")
+            if (a=4) b+=("114514")
+            if (a=5) b+=("114514")
+            if (a>5) b+=("eeeeeeeeee114514")
+            s+=b
+            s+="pB1购买次数(" + challengeCompletions(this.layer,this.id) + "/5)"
+            return s
+        },
+        rewardEffect(){return new Decimal(10).minus(challengeCompletions(this.layer,this.id).times(2.75).minus(challengeCompletions(this.layer,this.id).pow(2).div(4)))},
+        rewardDescription(){return "点数/声望点数购买层级点数价格降低"  //((10^(10^购买次数))→(10-(购买次数*2.75-购买次数^2/4)^(10-(购买次数*2.75-购买次数^2/4)^购买次数))/)<br>效果：-" + challengeEffect(this.layer,this.id)}
+    },
+    13:: {
+        name: "FC3",
+        challengeDescription: "声望获得乘数恒定为1",
+        canComplete: function() {
+            let a = challengeCompletions(this.layer,this.id)
+            let b = ""
+            if (a=1) b+=("114514")
+            if (a=2) b+=("114514")
+            if (a=3) b+=("114514")
+            if (a=4) b+=("114514")
+            if (a=5) b+=("114514")
+            if (a>5) b+=("eeeeeeeeee114514")
+            return player.points.gte(new Decimal(b))
+        },
+        completionLimit(){return 5},
+        goalDescription(){
+            let s = ""
+            let a = challengeCompletions(this.layer,this.id)
+            let b = ""
+            if (a=1) b+=("114514")
+            if (a=2) b+=("114514")
+            if (a=3) b+=("114514")
+            if (a=4) b+=("114514")
+            if (a=5) b+=("114514")
+            if (a>5) b+=("eeeeeeeeee114514")
+            s+=b
+            s+="点数(" + challengeCompletions(this.layer,this.id) + "/5)"
+            return s
+        },
+        rewardEffect(){return player.P.points.pow(challengeCompletions(this.layer,this.id).times(0.005))},
+        rewardDescription(){return "声望点数增益错误点数(公式：*点数^(通过次数*0.005))<br>效果：" + challengeEffect(this.layer,this.id)}
+    },
+},
     clickables: {
     11: {
         title: "升/降级1",
         display() {
-            return "修改层级里程碑效果<br>" + (hasMilestone("F",6) ? "并且进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+            return "修改层级里程碑效果<br>" + (hasMilestone("F",6) ? "点击时进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
         player.points = new Decimal(0)
@@ -1328,7 +1432,7 @@ buyables: {
     12: {
         title: "升/降级2",
         display() {
-            return "修改点数升级效果<br>" + (hasMilestone("F",6) ? "并且进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+            return "修改点数升级效果<br>" + (hasMilestone("F",6) ? "点击时进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
         player.points = new Decimal(0)
@@ -1345,7 +1449,7 @@ buyables: {
     13: {
         title: "升/降级3",
         display() {
-            return "升级P1的软上限提前,挑战PC3的要求降低,升级P3的效果更好?<br>" + (hasMilestone("F",6) ? "并且进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+            return "升级P1的软上限提前,挑战PC3的要求降低,升级P3的效果更好?<br>" + (hasMilestone("F",6) ? "点击时进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
         player.points = new Decimal(0)
@@ -1362,7 +1466,7 @@ buyables: {
     14: {
         title: "升/降级4",
         display() {
-            return "修改声望升级效果和点数挑战效果,修改PC5,PC6,升级6<br>" + (hasMilestone("F",6) ? "并且进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+            return "修改声望升级效果和点数挑战效果,修改PC5,PC6,升级6<br>" + (hasMilestone("F",6) ? "点击时进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
         player.points = new Decimal(0)
@@ -1379,7 +1483,7 @@ buyables: {
     15: {
         title: "升/降级5",
         display() {
-            return "点数可购买的价格降低,但效果降低,声望里程碑5效果降低<br>" + (hasMilestone("F",6) ? "并且进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+            return "点数可购买的价格降低,但效果降低,声望里程碑5效果降低<br>" + (hasMilestone("F",6) ? "点击时进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
         player.points = new Decimal(0)
@@ -1450,7 +1554,7 @@ buyables: {
         "blank",
         ["display-text",function(){
           let s=""
-          s+="你有" + format(player.F.falsePoint) + "错误点数<br>(" + format(player.F.falsePointGain) + "每秒,公式：ln(点数+1))<br>这将点数*" + format(player.F.falsePoint.pow(0.2).add(1)) + "<br>公式：错误点数^0.2+1<br>善良的xiajibazuo不忍心墙玩家,所以可购买不消耗错误点数"
+          s+="你有" + format(player.F.falsePoint) + "错误点数<br>(" + format(player.F.falsePointGain) + "每秒,公式：ln(点数+1))<br>这将点数*" + format(player.F.falsePoint.pow(0.2).add(1)) + "<br>公式：*(错误点数^0.2+1)<br>善良的xiajibazuo不忍心墙玩家,所以可购买不消耗错误点数"
           return s
         }],
         "blank",
