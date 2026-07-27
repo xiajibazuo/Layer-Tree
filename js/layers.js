@@ -94,7 +94,7 @@ addLayer("L", {
         title: "点数",
             cost(x){
             if(new Decimal(x).eq(0))return new Decimal("5")
-            return new Decimal(hasChallenge("F",12) ? challengeEffect(this.layer,this.id) : 10).pow(new Decimal(hasChallenge("F",12) ? challengeEffect(this.layer,this.id) : 10).pow(x))},
+            return new Decimal(hasChallenge("F",12) ? challengeEffect("F",12) : 10).pow(new Decimal(hasChallenge("F",12) ? challengeEffect("F",12) : 10).pow(x))},
         display() {
             if(getBuyableAmount("L",11).eq(0)) return "价格：5点数<br>数量：0"
             else return "价格：" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount("L",11))
@@ -132,8 +132,8 @@ addLayer("L", {
     13: {
         title: "声望点数",
         cost(x){
-            if(new Decimal(x).gte(7))return new Decimal(hasChallenge("F",12) ? challengeEffect(this.layer,this.id) : 10).pow(new Decimal(x).pow(new Decimal(x).times(0.02).add(2)).times(0.5).add(new Decimal(x).pow(new Decimal(x).times(0.02).add(1)).times(1.5).add(1)))
-            return new Decimal(hasChallenge("F",12) ? challengeEffect(this.layer,this.id) : 10).pow(new Decimal(x).pow(2).times(0.5).add(new Decimal(x).times(1.5).add(1)))},
+            if(new Decimal(x).gte(7))return new Decimal(hasChallenge("F",12) ? challengeEffect("F",12) : 10).pow(new Decimal(x).pow(new Decimal(x).times(0.02).add(2)).times(0.5).add(new Decimal(x).pow(new Decimal(x).times(0.02).add(1)).times(1.5).add(1)))
+            return new Decimal(hasChallenge("F",12) ? challengeEffect("F",12) : 10).pow(new Decimal(x).pow(2).times(0.5).add(new Decimal(x).times(1.5).add(1)))},
         display() {
            return "价格：" + format(this.cost()) + "声望点数<br>数量：" +format(getBuyableAmount("L",13))
         },
@@ -1254,7 +1254,7 @@ addLayer("F", {
         },
         6: {
             requirementDescription: "1错误和20层级点数(和1错误点数)(为什么你别管)",
-            effectDescription: "错误不重置层级,在重置时可以开启/关闭升/降级",
+            effectDescription: "错误不重置层级,在重置时可以开启/关闭升/降级,解锁错误挑战",
             done() { return player.F.points.gte(1) && player.L.points.gte(5) && player.F.falsePoint.gte(1) && (player.test && (player.L.layerPoint.gte(20) || hasMilestone("F",1)))}
            }
        },
@@ -1320,12 +1320,12 @@ challenges: {
         canComplete: function() {
             let a = challengeCompletions(this.layer,this.id)
             let b = ""
-            if (a=1) b+=("114514")
-            if (a=2) b+=("114514")
-            if (a=3) b+=("114514")
-            if (a=4) b+=("114514")
-            if (a=5) b+=("114514")
-            if (a>5) b+=("eeeeeeeeee114514")
+            if (a==1) b=("1e200")//11001
+            else if (a==2) b=("114514")
+            else if (a==3) b=("114514")
+            else if (a==4) b=("114514")
+            else if (a==5) b=("114514")
+            else if (a>5) b=("eeeeeeeeee114514")
             return player.points.gte(new Decimal(b))
         },
         completionLimit(){return 5},
@@ -1333,18 +1333,18 @@ challenges: {
             let s = ""
             let a = challengeCompletions(this.layer,this.id)
             let b = ""
-            if (a=1) b+=("114514")
-            if (a=2) b+=("114514")
-            if (a=3) b+=("114514")
-            if (a=4) b+=("114514")
-            if (a=5) b+=("114514")
-            if (a>5) b+=("eeeeeeeeee114514")
+            if (a==1) b=("1e200")
+            else if (a==2) b=("114514")
+            else if (a==3) b=("114514")
+            else if (a==4) b=("114514")
+            else if (a==5) b=("114514")
+            else if (a>5) b=("eeeeeeeeee114514")
             s+=b
             s+="点数(" + challengeCompletions(this.layer,this.id) + "/5)"
             return s
         },
         rewardEffect(){return player.points.pow(new Decimal(challengeCompletions(this.layer,this.id)).times(0.002))},
-        rewardDescription(){return "点数增益错误点数(公式：*点数^(通过次数*0.002))<br>效果：" + challengeEffect(this.layer,this.id)}
+        rewardDescription(){return "点数增益错误点数(公式：*点数^(通过次数*0.002))<br>效果：*" + challengeEffect(this.layer,this.id)}
     },
     12: {
         name: "FC2",
@@ -1352,12 +1352,12 @@ challenges: {
         canComplete: function() {
             let a = challengeCompletions(this.layer,this.id)
             let b = ""
-            if (a=1) b+=("1")
-            if (a=2) b+=("1")
-            if (a=3) b+=("1")
-            if (a=4) b+=("1")
-            if (a=5) b+=("1")
-            if (a>5) b+=("eeeeeeeeee114514")
+            if (a==1) b=("48")
+            else if (a==2) b=("1")
+            else if (a==3) b=("1")
+            else if (a==4) b=("14")
+            else if (a==5) b=("14")
+            else if (a>5) b=("eeeeeeeeee114514")
             return getBuyableAmount("p",11).gte(new Decimal(b))
         },
         completionLimit(){return 5},
@@ -1365,12 +1365,12 @@ challenges: {
             let s = ""
             let a = challengeCompletions(this.layer,this.id)
             let b = ""
-            if (a=1) b+=("114514")
-            if (a=2) b+=("114514")
-            if (a=3) b+=("114514")
-            if (a=4) b+=("114514")
-            if (a=5) b+=("114514")
-            if (a>5) b+=("eeeeeeeeee114514")
+            if (a==1) b=("48")
+            else if (a==2) b=("114514")
+            else if (a==3) b=("114514")
+            else if (a==4) b=("114514")
+            else if (a==5) b=("114514")
+            else if (a>5) b=("eeeeeeeeee114514")
             s+=b
             s+="pB1购买次数(" + challengeCompletions(this.layer,this.id) + "/5)"
             return s
@@ -1385,12 +1385,12 @@ challenges: {
         canComplete: function() {
             let a = challengeCompletions(this.layer,this.id)
             let b = ""
-            if (a=1) b+=("114514")
-            if (a=2) b+=("114514")
-            if (a=3) b+=("114514")
-            if (a=4) b+=("114514")
-            if (a=5) b+=("114514")
-            if (a>5) b+=("eeeeeeeeee114514")
+            if (a==1) b=("1e180")
+            else if (a==2) b=("114514")
+            else if (a==3) b=("114514")
+            else if (a==4) b=("114514")
+            else if (a==5) b=("114514")
+            else if (a>5) b=("eeeeeeeeee114514")
             return player.points.gte(new Decimal(b))
         },
         completionLimit(){return 5},
@@ -1398,12 +1398,12 @@ challenges: {
             let s = ""
             let a = challengeCompletions(this.layer,this.id)
             let b = ""
-            if (a=1) b+=("114514")
-            if (a=2) b+=("114514")
-            if (a=3) b+=("114514")
-            if (a=4) b+=("114514")
-            if (a=5) b+=("114514")
-            if (a>5) b+=("eeeeeeeeee114514")
+            if (a==1) b=("1e180")
+            else if (a==2) b=("114514")
+            else if (a==3) b=("114514")
+            else if (a==4) b=("114514")
+            else if (a==5) b=("114514")
+            else if (a>5) b=("eeeeeeeeee114514")
             s+=b
             s+="点数(" + challengeCompletions(this.layer,this.id) + "/5)"
             return s
@@ -1484,7 +1484,7 @@ challenges: {
     15: {
         title: "升/降级5",
         display() {
-            return "点数可购买的价格降低,但效果降低,声望里程碑5效果降低<br>" + (hasMilestone("F",6) ? "点击时进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+            return "点数可购买的价格降低,但效果降低,声望里程碑5效果降低,修改升级8<br>" + (hasMilestone("F",6) ? "点击时进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
         player.points = new Decimal(0)
@@ -1500,10 +1500,11 @@ challenges: {
     },
     91: {
         display() {
-            return "开始产生错误点数<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+            return "开始生产错误点数<br>" + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
             if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
+            else setClickableState(this.layer,this.id,0)
         },
         canClick(){
             return true
@@ -1563,6 +1564,7 @@ challenges: {
         "buyables"]
     },
     "挑战": {
+        unlocked(){return hasMilestone("F",6)},
         content: [
         "main-display",
           "blank",
