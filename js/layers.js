@@ -1561,8 +1561,18 @@ challenges: {
         "blank",
         ["clickable",91],
         "buyables"]
+    },
+    "挑战": {
+        content: [
+        "main-display",
+          "blank",
+        ["prestige-button",function(){return ""}],
+        "blank",
+        "resource-display",
+        "blank",
+        "blank",
+        "challenges"]
     }
-    
     },
     doReset(resettingLayer) {
         let keep = [];
