@@ -104,12 +104,11 @@ addLayer("L", {
             return player.points.gte(this.cost()) 
         },
         buy() { 
-            if(getBuyableAmount("L",11).eq(0)) player.points = player.points.minus(5)
-            else {player.points = player.points.minus(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L",11))))}
+            player.points = player.points.minus(this.cost())
             setBuyableAmount("L", 11, getBuyableAmount("L", 11).add(1))
         },
         style(){
-            if (player.points.gte(new Decimal("10").pow(new Decimal("10").pow(getBuyableAmount("L",11))))) return {'height':'100px','width':'200px',"background-color": "#FF0000"}
+            if (player.points.gte(this.cost())) return {'height':'100px','width':'200px',"background-color": "#FF0000"}
             else return {'height':'100px','width':'200px',"background-color": "#BF8F8F"}
         }
     },
@@ -860,7 +859,7 @@ addLayer("P", {
             },
             tooltip(){
                 let sc = new Decimal(1)
-                sc = new Decimal("1.79e308")
+                sc = new Decimal("1e80")
                 if(getClickableState("F",13) == 1)sc = new Decimal(1e20)
                 let s = "公式：*(声望点数*ln(声望点数+1)+1)"
                 if(player.P.points.gte(sc)) s+="<br>现在声望点数超过了" + format(sc) + ",效果达到软上限(^0.5)"
@@ -1318,7 +1317,7 @@ challenges: {
         name: "FC1",
         challengeDescription: "点数指数和点数自增益没有作用",
         canComplete: function() {
-            let a = challengeCompletions(this.layer,this.id)
+            let a = challengeCompletions(this.layer,this.id)-1
             let b = ""
             if (a==1) b=("1e200")//11001
             else if (a==2) b=("114514")
@@ -1331,7 +1330,7 @@ challenges: {
         completionLimit(){return 5},
         goalDescription(){
             let s = ""
-            let a = challengeCompletions(this.layer,this.id)
+            let a = challengeCompletions(this.layer,this.id)-1
             let b = ""
             if (a==1) b=("1e200")
             else if (a==2) b=("114514")
@@ -1350,9 +1349,9 @@ challenges: {
         name: "FC2",
         challengeDescription: "点数可购买没有作用",
         canComplete: function() {
-            let a = challengeCompletions(this.layer,this.id)
+            let a = challengeCompletions(this.layer,this.id)-1
             let b = ""
-            if (a==1) b=("48")
+            if (a==1) b=("48")//10001
             else if (a==2) b=("1")
             else if (a==3) b=("1")
             else if (a==4) b=("14")
@@ -1363,7 +1362,7 @@ challenges: {
         completionLimit(){return 5},
         goalDescription(){
             let s = ""
-            let a = challengeCompletions(this.layer,this.id)
+            let a = challengeCompletions(this.layer,this.id)-1
             let b = ""
             if (a==1) b=("48")
             else if (a==2) b=("114514")
@@ -1383,7 +1382,7 @@ challenges: {
         name: "FC3",
         challengeDescription: "声望获得乘数恒定为1",
         canComplete: function() {
-            let a = challengeCompletions(this.layer,this.id)
+            let a = challengeCompletions(this.layer,this.id)-1
             let b = ""
             if (a==1) b=("1e180")
             else if (a==2) b=("114514")
@@ -1396,7 +1395,7 @@ challenges: {
         completionLimit(){return 5},
         goalDescription(){
             let s = ""
-            let a = challengeCompletions(this.layer,this.id)
+            let a = challengeCompletions(this.layer,this.id)-1
             let b = ""
             if (a==1) b=("1e180")
             else if (a==2) b=("114514")
