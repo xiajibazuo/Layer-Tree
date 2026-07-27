@@ -1,6 +1,6 @@
 /*i d k y do i fill 棍母
-check layer.js(<del>1314</del>1343:idk)
-&& mod.js
+
+wtf of chal comp is a num not a Decimal?!
 
 */
 addLayer("L", {
@@ -1343,7 +1343,7 @@ challenges: {
             s+="点数(" + challengeCompletions(this.layer,this.id) + "/5)"
             return s
         },
-        rewardEffect(){return player.points.pow(challengeCompletions(this.layer,this.id).times(0.002))},
+        rewardEffect(){return player.points.pow(new Decimal(challengeCompletions(this.layer,this.id)).times(0.002))},
         rewardDescription(){return "点数增益错误点数(公式：*点数^(通过次数*0.002))<br>效果：" + challengeEffect(this.layer,this.id)}
     },
     12: {
@@ -1375,7 +1375,7 @@ challenges: {
             s+="pB1购买次数(" + challengeCompletions(this.layer,this.id) + "/5)"
             return s
         },
-        rewardEffect(){return new Decimal(10).minus(challengeCompletions(this.layer,this.id).times(2.75).minus(challengeCompletions(this.layer,this.id).pow(2).div(4)))},
+        rewardEffect(){return new Decimal(10).minus(new Decimal(challengeCompletions(this.layer,this.id)).times(2.75).minus(new Decimal(challengeCompletions(this.layer,this.id)).pow(2).div(4)))},
         rewardDescription(){return "点数/声望点数购买层级点数价格降低"  //((10^(10^购买次数))→(10-(购买次数*2.75-购买次数^2/4)^(10-(购买次数*2.75-购买次数^2/4)^购买次数))/)<br>效果：-" + challengeEffect(this.layer,this.id)
         }
     },
@@ -1408,7 +1408,7 @@ challenges: {
             s+="点数(" + challengeCompletions(this.layer,this.id) + "/5)"
             return s
         },
-        rewardEffect(){return player.P.points.pow(challengeCompletions(this.layer,this.id).times(0.005))},
+        rewardEffect(){return player.P.points.pow(new Decimal(challengeCompletions(this.layer,this.id)).times(0.005))},
         rewardDescription(){return "声望点数增益错误点数(公式：*点数^(通过次数*0.005))<br>效果：" + challengeEffect(this.layer,this.id)}
     },
 },
