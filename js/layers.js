@@ -444,6 +444,14 @@ addLayer("p", {
         if (hasUpgrade("P",13) && hasUpgrade("p",13) && hasUpgrade("p",11) && !inChallenge("P",22) && getClickableState("F",13) == 1)player.p.pu1EffType = "exp"
         else player.p.pu1EffType = "mult"
     },
+    autoUpgrade(){return hasMilestone("F",7)},
+    automateStuff(){
+        if(hasMilestone("F",7)){
+            if(canBuyBuyable(this.layer,11))buyBuyable(this.layer,11)
+            if(canBuyBuyable(this.layer,12))buyBuyable(this.layer,12)
+            if(canBuyBuyable(this.layer,13))buyBuyable(this.layer,13)
+        }
+    },
     
     upgrades: {
         11: {
@@ -1216,7 +1224,7 @@ addLayer("F", {
         if(hasMilestone("F",6))gain = gain.times(challengeEffect(this.layer,11)).times(challengeEffect(this.layer,13))
         
         if(getClickableState("F",91) == 1)player.F.falsePointGain = gain
-        if(hasMilestone("F",1))player.F.falsePoint = player.F.falsePoint.add(player.F.falsePointGain.times(diff))
+        if(hasMilestone("F",1) && getClickableState("F",91) == 1)player.F.falsePoint = player.F.falsePoint.add(player.F.falsePointGain.times(diff))
     },
     branches: ["L"],
     
@@ -1254,8 +1262,13 @@ addLayer("F", {
         6: {
             requirementDescription: "1错误和20层级点数(和1错误点数)(为什么你别管)",
             effectDescription: "错误不重置层级,在重置时可以开启/关闭升/降级,解锁错误挑战",
-            done() { return player.F.points.gte(1) && player.L.points.gte(5) && player.F.falsePoint.gte(1) && (player.test && (player.L.layerPoint.gte(20) || hasMilestone("F",1)))}
-           }
+            done() { return player.F.points.gte(1) && player.L.layerPoint.gte(20) && player.F.falsePoint.gte(1) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))}
+        },
+        7: {
+            requirementDescription: "通过FC3",
+            effectDescription: "(终于给qol了qwq)自动购买点数升级和可购买,C2外点数可点击总是作用中",
+            done() { return hasChallenge("F"13)}
+        }
        },
 buyables: {
     11: {
@@ -1317,7 +1330,7 @@ challenges: {
         name: "FC1",
         challengeDescription: "点数指数和点数自增益没有作用",
         canComplete: function() {
-            let a = challengeCompletions(this.layer,this.id)-1
+            let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
             if (a==1) b=("1e200")//11001
             else if (a==2) b=("114514")
@@ -1330,7 +1343,7 @@ challenges: {
         completionLimit(){return 5},
         goalDescription(){
             let s = ""
-            let a = challengeCompletions(this.layer,this.id)-1
+            let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
             if (a==1) b=("1e200")
             else if (a==2) b=("114514")
@@ -1349,7 +1362,7 @@ challenges: {
         name: "FC2",
         challengeDescription: "点数可购买没有作用",
         canComplete: function() {
-            let a = challengeCompletions(this.layer,this.id)-1
+            let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
             if (a==1) b=("48")//10001
             else if (a==2) b=("1")
@@ -1362,7 +1375,7 @@ challenges: {
         completionLimit(){return 5},
         goalDescription(){
             let s = ""
-            let a = challengeCompletions(this.layer,this.id)-1
+            let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
             if (a==1) b=("48")
             else if (a==2) b=("114514")
@@ -1382,9 +1395,9 @@ challenges: {
         name: "FC3",
         challengeDescription: "声望获得乘数恒定为1",
         canComplete: function() {
-            let a = challengeCompletions(this.layer,this.id)-1
+            let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
-            if (a==1) b=("1e180")
+            if (a==1) b=("1e180")//01
             else if (a==2) b=("114514")
             else if (a==3) b=("114514")
             else if (a==4) b=("114514")
@@ -1395,7 +1408,7 @@ challenges: {
         completionLimit(){return 5},
         goalDescription(){
             let s = ""
-            let a = challengeCompletions(this.layer,this.id)-1
+            let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
             if (a==1) b=("1e180")
             else if (a==2) b=("114514")
@@ -1483,7 +1496,7 @@ challenges: {
     15: {
         title: "升/降级5",
         display() {
-            return "点数可购买的价格降低,但效果降低,声望里程碑5效果降低,修改升级8<br>" + (hasMilestone("F",6) ? "点击时进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+            return "点数可购买的价格降低,但效果降低,声望里程碑5效果降低,修改升级7~10<br>" + (hasMilestone("F",6) ? "点击时进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
         player.points = new Decimal(0)
