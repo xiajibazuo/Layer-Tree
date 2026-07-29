@@ -1,5 +1,5 @@
 /*i d k y do i fill 棍母
-
+remember p autobuybuyables
 wtf of chal comp is a num not a Decimal?!
 
 */
@@ -443,13 +443,14 @@ addLayer("p", {
         if (player.points.gte(player.p.best)){player.p.best = player.points}
         if (hasUpgrade("P",13) && hasUpgrade("p",13) && hasUpgrade("p",11) && !inChallenge("P",22) && getClickableState("F",13) == 1)player.p.pu1EffType = "exp"
         else player.p.pu1EffType = "mult"
+        if(player.p.best.gt(player.p.best2) && hasMilestone("F",7)) player.p.best2 = player.p.best
     },
     autoUpgrade(){return hasMilestone("F",7)},
     automateStuff(){
         if(hasMilestone("F",7)){
-            if(canBuyBuyable(this.layer,11))buyBuyable(this.layer,11)
-            if(canBuyBuyable(this.layer,12))buyBuyable(this.layer,12)
-            if(canBuyBuyable(this.layer,13))buyBuyable(this.layer,13)
+            if(canBuyBuyable(this.layer,11))setBuyableAmount(this.layer, 11, player.points.div(getClickableState("F",15) == 1 ? 1e100 : "1e270").log(new Decimal(getClickableState("F",15) == 1 ? 1e5 : 1e10)).floor().add(1))
+            if(canBuyBuyable(this.layer,12))setBuyableAmount(this.layer, 12, player.points.div(getClickableState("F",15) == 1 ? "1e200" : "1e315").log(new Decimal(getClickableState("F",15) == 1 ? "1e10" : "1e15")).floor().add(1))
+            if(canBuyBuyable(this.layer,13))setBuyableAmount(this.layer, 13, player.points.div(getClickableState("F",15) == 1 ? "1e280" : "1e350").log(new Decimal(getClickableState("F",15) == 1 ? "1e15" : "1e20")).floor().add(1))
         }
     },
     
@@ -1267,7 +1268,7 @@ addLayer("F", {
         7: {
             requirementDescription: "通过FC3",
             effectDescription: "(终于给qol了qwq)自动购买点数升级和可购买,C2外点数可点击总是作用中",
-            done() { return hasChallenge("F"13)}
+            done() { return hasChallenge("F",13)}
         }
        },
 buyables: {
