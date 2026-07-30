@@ -448,9 +448,9 @@ addLayer("p", {
     autoUpgrade(){return hasMilestone("F",7)},
     automateStuff(){
         if(hasMilestone("F",7)){
-            if(canBuyBuyable(this.layer,11))setBuyableAmount(this.layer, 11, player.points.div(getClickableState("F",15) == 1 ? 1e100 : "1e270").log(new Decimal(getClickableState("F",15) == 1 ? 1e5 : 1e10)).floor().add(1))
-            if(canBuyBuyable(this.layer,12))setBuyableAmount(this.layer, 12, player.points.div(getClickableState("F",15) == 1 ? "1e200" : "1e315").log(new Decimal(getClickableState("F",15) == 1 ? "1e10" : "1e15")).floor().add(1))
-            if(canBuyBuyable(this.layer,13))setBuyableAmount(this.layer, 13, player.points.div(getClickableState("F",15) == 1 ? "1e280" : "1e350").log(new Decimal(getClickableState("F",15) == 1 ? "1e15" : "1e20")).floor().add(1))
+            if(canBuyBuyable(this.layer,11))setBuyableAmount(this.layer, 11, (player.points.neq(0) ? player.points.div(getClickableState("F",15) == 1 ? 1e100 : "1e270").log(new Decimal(getClickableState("F",15) == 1 ? 1e5 : 1e10)).floor().add(1) : getBuyableAmount(this.layer,11)))
+            if(canBuyBuyable(this.layer,12))setBuyableAmount(this.layer, 12, (player.points.neq(0) ? player.points.div(getClickableState("F",15) == 1 ? "1e200" : "1e315").log(new Decimal(getClickableState("F",15) == 1 ? "1e10" : "1e15")).floor().add(1) : getBuyableAmount(this.layer,11)))
+            if(canBuyBuyable(this.layer,13))setBuyableAmount(this.layer, 13, (player.points.neq(0) ? player.points.div(getClickableState("F",15) == 1 ? "1e280" : "1e350").log(new Decimal(getClickableState("F",15) == 1 ? "1e15" : "1e20")).floor().add(1) : getBuyableAmount(this.layer,11)))
         }
     },
     
@@ -859,7 +859,7 @@ addLayer("P", {
             },
             effect(){
                 let sc = new Decimal(1)
-                sc = new Decimal("1.79e308")
+                sc = new Decimal("1e80")
                 if(getClickableState("F",13) == 1)sc = new Decimal(1e20)
                 let eff = new Decimal(1)
                 if(player.P.points.gte(sc)) eff = player.P.points.times(player.P.points.add(1).log(Math.E)).add(1).pow(0.5).times(sc.pow(1-0.5))
@@ -902,7 +902,7 @@ addLayer("P", {
             title: "P4",
             effect(){return player.P.points.pow(0.1).add(1)},
             description(){
-                return "点数*1000" + (getClickableState("F",14) == 1 ? (",同时声望点数增益自己<br>效果：" + format(upgradeEffect(this.layer,this.id))) : "")
+                return "点数*1000" + (getClickableState("F",14) == 1 ? (",同时声望点数增益自己<br>效果：*" + format(upgradeEffect(this.layer,this.id))) : "")
             },
             tooltip(){return (getClickableState("F",14) == 1 ? "公式：*声望点数^0.1+1" : "")},
             unlocked(){return hasChallenge("P",13)},
@@ -1269,6 +1269,11 @@ addLayer("F", {
             requirementDescription: "通过FC3",
             effectDescription: "(终于给qol了qwq)自动购买点数升级和可购买,C2外点数可点击总是作用中",
             done() { return hasChallenge("F",13)}
+        },
+        8: {
+            requirementDescription: "通过FC3*2",
+            effectDescription: "解锁一个挑战",
+            done() { return challengeCompletions(this.layer,13)>=2}
         }
        },
 buyables: {
@@ -1333,7 +1338,7 @@ challenges: {
         canComplete: function() {
             let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
-            if (a==1) b=("1e200")//11001
+            if (a==1) b=("1e170")//11001
             else if (a==2) b=("114514")
             else if (a==3) b=("114514")
             else if (a==4) b=("114514")
@@ -1346,7 +1351,7 @@ challenges: {
             let s = ""
             let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
-            if (a==1) b=("1e200")
+            if (a==1) b=("1e170")
             else if (a==2) b=("114514")
             else if (a==3) b=("114514")
             else if (a==4) b=("114514")
@@ -1356,8 +1361,10 @@ challenges: {
             s+="点数(" + challengeCompletions(this.layer,this.id) + "/5)"
             return s
         },
-        rewardEffect(){return player.points.pow(new Decimal(challengeCompletions(this.layer,this.id)).times(0.002))},
-        rewardDescription(){return "点数增益错误点数(公式：*点数^(通过次数*0.002))<br>效果：*" + challengeEffect(this.layer,this.id)}
+        rewardEffect(){
+            if(player.points.pow(new Decimal(challengeCompletions(this.layer,this.id)).times(0.002)).gt(challengeEffect(this.layer,this.id)))return player.points.pow(new Decimal(challengeCompletions(this.layer,this.id)).times(0.002))
+            return new Decimal(challengeEffect(this.layer,this.id))},
+        rewardDescription(){return "最佳点数增益错误点数(公式：*点数^(通过次数*0.002))<br>效果：*" + challengeEffect(this.layer,this.id)}
     },
     12: {
         name: "FC2",
@@ -1365,7 +1372,7 @@ challenges: {
         canComplete: function() {
             let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
-            if (a==1) b=("48")//10001
+            if (a==1) b=("49")//00001
             else if (a==2) b=("1")
             else if (a==3) b=("1")
             else if (a==4) b=("14")
@@ -1378,7 +1385,7 @@ challenges: {
             let s = ""
             let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
-            if (a==1) b=("48")
+            if (a==1) b=("49")
             else if (a==2) b=("114514")
             else if (a==3) b=("114514")
             else if (a==4) b=("114514")
@@ -1398,31 +1405,70 @@ challenges: {
         canComplete: function() {
             let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
-            if (a==1) b=("1e180")//01
+            if (a==1) b=("1e190")//01011
             else if (a==2) b=("114514")
             else if (a==3) b=("114514")
             else if (a==4) b=("114514")
             else if (a==5) b=("114514")
             else if (a>5) b=("eeeeeeeeee114514")
-            return player.points.gte(new Decimal(b))
+            return player.P.points.gte(new Decimal(b))
         },
         completionLimit(){return 5},
         goalDescription(){
             let s = ""
             let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
-            if (a==1) b=("1e180")
+            if (a==1) b=("1e190")
             else if (a==2) b=("114514")
             else if (a==3) b=("114514")
             else if (a==4) b=("114514")
             else if (a==5) b=("114514")
             else if (a>5) b=("eeeeeeeeee114514")
             s+=b
-            s+="点数(" + challengeCompletions(this.layer,this.id) + "/5)"
+            s+="声望点数(" + challengeCompletions(this.layer,this.id) + "/5)"
             return s
         },
-        rewardEffect(){return player.P.points.pow(new Decimal(challengeCompletions(this.layer,this.id)).times(0.005))},
-        rewardDescription(){return "声望点数增益错误点数(公式：*点数^(通过次数*0.005))<br>效果：" + challengeEffect(this.layer,this.id)}
+        rewardEffect(){
+            if(player.P.points.pow(new Decimal(challengeCompletions(this.layer,this.id)).times(0.005)).gt(challengeEffect(this.layer,this.id)))return player.P.points.pow(new Decimal(challengeCompletions(this.layer,this.id)).times(0.005))
+            return new Decimal(challengeEffect(this.layer,this.id))
+        },
+        rewardDescription(){return "最佳声望点数增益错误点数(公式：*点数^(通过次数*0.005))<br>效果：" + challengeEffect(this.layer,this.id)}
+    },
+    21: {
+        name: "FC4",
+        challengeDescription: "…",
+        unlocked(){return hasMilestone("F",8)}
+        canComplete: function() {
+            let a = challengeCompletions(this.layer,this.id)+1
+            let b = ""
+            if (a==1) b=("1e190")
+            else if (a==2) b=("114514")
+            else if (a==3) b=("114514")
+            else if (a==4) b=("114514")
+            else if (a==5) b=("114514")
+            else if (a>5) b=("eeeeeeeeee114514")
+            return player.P.points.gte(new Decimal(b))
+        },
+        completionLimit(){return 5},
+        goalDescription(){
+            let s = ""
+            let a = challengeCompletions(this.layer,this.id)+1
+            let b = ""
+            if (a==1) b=("1e190")
+            else if (a==2) b=("114514")
+            else if (a==3) b=("114514")
+            else if (a==4) b=("114514")
+            else if (a==5) b=("114514")
+            else if (a>5) b=("eeeeeeeeee114514")
+            s+=b
+            s+="声望点数(" + challengeCompletions(this.layer,this.id) + "/5)"
+            return s
+        },
+        rewardEffect(){
+            if(player.P.points.pow(new Decimal(challengeCompletions(this.layer,this.id)).times(0.005)).gt(challengeEffect(this.layer,this.id)))return player.P.points.pow(new Decimal(challengeCompletions(this.layer,this.id)).times(0.005))
+            return new Decimal(challengeEffect(this.layer,this.id))
+        },
+        rewardDescription(){return "最佳声望点数增益错误点数(公式：*点数^(通过次数*0.005))<br>效果：" + challengeEffect(this.layer,this.id)}
     },
 },
     clickables: {
