@@ -1437,7 +1437,7 @@ challenges: {
     21: {
         name: "FC4",
         challengeDescription: "…",
-        unlocked(){return hasMilestone("F",8)}
+        unlocked(){return hasMilestone("F",8)},
         canComplete: function() {
             let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
