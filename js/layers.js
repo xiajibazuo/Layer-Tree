@@ -1641,7 +1641,7 @@ challenges: {
         canClick(){
             return hasMilestone("F",6)
         },
-        unlocked(){return challengeCompletion("F",21) >= this.id-20}
+        unlocked(){return challengeCompletions("F",21) >= this.id-20}
     },
     22: {
         title: "升/降级7",
@@ -1659,7 +1659,7 @@ challenges: {
         canClick(){
             return hasMilestone("F",6)
         },
-        unlocked(){return challengeCompletion("F",21) >= this.id-20}
+        unlocked(){return challengeCompletions("F",21) >= this.id-20}
     },
     23: {
         title: "升/降级8",
@@ -1677,7 +1677,7 @@ challenges: {
         canClick(){
             return hasMilestone("F",6)
         },
-        unlocked(){return challengeCompletion("F",21) >= this.id-20}
+        unlocked(){return challengeCompletions("F",21) >= this.id-20}
     },
     24: {
         title: "升/降级9",
@@ -1695,7 +1695,7 @@ challenges: {
         canClick(){
             return hasMilestone("F",6)
         },
-        unlocked(){return challengeCompletion("F",21) >= this.id-20}
+        unlocked(){return challengeCompletions("F",21) >= this.id-20}
     },
     25: {
         title: "升/降级10",
@@ -1713,7 +1713,7 @@ challenges: {
         canClick(){
             return hasMilestone("F",6)
         },
-        unlocked(){return challengeCompletion("F",21) >= this.id-20}
+        unlocked(){return challengeCompletions("F",21) >= this.id-20}
     },
     91: {
         display() {
