@@ -1436,6 +1436,74 @@ challenges: {
     },
     21: {
         name: "FC4",
+        challengeDescription: "开启一个升/降级点数/1e5,反之点数^0.95",
+        unlocked(){return hasMilestone("F",8)},
+        canComplete: function() {
+            let a = challengeCompletions(this.layer,this.id)+1
+            let b = ""
+            if (a==1) b=("1e190")
+            else if (a==2) b=("114514")
+            else if (a==3) b=("114514")
+            else if (a==4) b=("114514")
+            else if (a==5) b=("114514")
+            else if (a>5) b=("eeeeeeeeee114514")
+            return player.points.gte(new Decimal(b))
+        },
+        completionLimit(){return 5},
+        goalDescription(){
+            let s = ""
+            let a = challengeCompletions(this.layer,this.id)+1
+            let b = ""
+            if (a==1) b=("1e190")
+            else if (a==2) b=("114514")
+            else if (a==3) b=("114514")
+            else if (a==4) b=("114514")
+            else if (a==5) b=("114514")
+            else if (a>5) b=("eeeeeeeeee114514")
+            s+=b
+            s+="点数(" + challengeCompletions(this.layer,this.id) + "/5)"
+            return s
+        },
+        rewardDescription(){return "解锁(通过次数)个升/降级"}
+    },
+    22: {
+        name: "FC5",
+        challengeDescription: "点数^0.05,但是点数*(错误点数^100)(没那么好,指数前面)",
+        unlocked(){return hasMilestone("F",8)},
+        canComplete: function() {
+            let a = challengeCompletions(this.layer,this.id)+1
+            let b = ""
+            if (a==1) b=("1e190")
+            else if (a==2) b=("114514")
+            else if (a==3) b=("114514")
+            else if (a==4) b=("114514")
+            else if (a==5) b=("114514")
+            else if (a>5) b=("eeeeeeeeee114514")
+            return player.points.gte(new Decimal(b))
+        },
+        completionLimit(){return 5},
+        goalDescription(){
+            let s = ""
+            let a = challengeCompletions(this.layer,this.id)+1
+            let b = ""
+            if (a==1) b=("1e190")
+            else if (a==2) b=("114514")
+            else if (a==3) b=("114514")
+            else if (a==4) b=("114514")
+            else if (a==5) b=("114514")
+            else if (a>5) b=("eeeeeeeeee114514")
+            s+=b
+            s+="点数(" + challengeCompletions(this.layer,this.id) + "/5)"
+            return s
+        },
+        rewardEffect(){
+            if(player.P.points.pow(new Decimal(challengeCompletions(this.layer,this.id)).times(0.005)).gt(challengeEffect(this.layer,this.id)))return player.P.points.pow(new Decimal(challengeCompletions(this.layer,this.id)).times(0.005))
+            return new Decimal(challengeEffect(this.layer,this.id))
+        },
+        rewardDescription(){return "最佳声望点数增益错误点数(公式：*点数^(通过次数*0.005))<br>效果：" + challengeEffect(this.layer,this.id)}
+    },
+    23: {
+        name: "FC6",
         challengeDescription: "…",
         unlocked(){return hasMilestone("F",8)},
         canComplete: function() {
@@ -1556,6 +1624,96 @@ challenges: {
         canClick(){
             return hasMilestone("F",6)
         }
+    },
+    21: {
+        title: "升/降级6",
+        display() {
+            return "…<br>" + (hasMilestone("F",6) ? "点击时进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+        },
+        onClick(){
+        player.points = new Decimal(0)
+            layerDataReset("p",[])
+            layerDataReset("P",[])
+            layerDataReset("f",[])
+            if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
+            else setClickableState(this.layer,this.id,0)
+        },
+        canClick(){
+            return hasMilestone("F",6)
+        },
+        unlocked(){return challengeCompletion("F",21) >= this.id-20}
+    },
+    22: {
+        title: "升/降级7",
+        display() {
+            return "点数可购买的价格降低,但效果降低,声望里程碑5效果降低,修改升级7~10<br>" + (hasMilestone("F",6) ? "点击时进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+        },
+        onClick(){
+        player.points = new Decimal(0)
+            layerDataReset("p",[])
+            layerDataReset("P",[])
+            layerDataReset("f",[])
+            if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
+            else setClickableState(this.layer,this.id,0)
+        },
+        canClick(){
+            return hasMilestone("F",6)
+        },
+        unlocked(){return challengeCompletion("F",21) >= this.id-20}
+    },
+    23: {
+        title: "升/降级8",
+        display() {
+            return "点数可购买的价格降低,但效果降低,声望里程碑5效果降低,修改升级7~10<br>" + (hasMilestone("F",6) ? "点击时进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+        },
+        onClick(){
+        player.points = new Decimal(0)
+            layerDataReset("p",[])
+            layerDataReset("P",[])
+            layerDataReset("f",[])
+            if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
+            else setClickableState(this.layer,this.id,0)
+        },
+        canClick(){
+            return hasMilestone("F",6)
+        },
+        unlocked(){return challengeCompletion("F",21) >= this.id-20}
+    },
+    24: {
+        title: "升/降级9",
+        display() {
+            return "点数可购买的价格降低,但效果降低,声望里程碑5效果降低,修改升级7~10<br>" + (hasMilestone("F",6) ? "点击时进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+        },
+        onClick(){
+        player.points = new Decimal(0)
+            layerDataReset("p",[])
+            layerDataReset("P",[])
+            layerDataReset("f",[])
+            if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
+            else setClickableState(this.layer,this.id,0)
+        },
+        canClick(){
+            return hasMilestone("F",6)
+        },
+        unlocked(){return challengeCompletion("F",21) >= this.id-20}
+    },
+    25: {
+        title: "升/降级10",
+        display() {
+            return "点数可购买的价格降低,但效果降低,声望里程碑5效果降低,修改升级7~10<br>" + (hasMilestone("F",6) ? "点击时进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+        },
+        onClick(){
+        player.points = new Decimal(0)
+            layerDataReset("p",[])
+            layerDataReset("P",[])
+            layerDataReset("f",[])
+            if (getClickableState(this.layer,this.id) == 0) setClickableState(this.layer,this.id,1)
+            else setClickableState(this.layer,this.id,0)
+        },
+        canClick(){
+            return hasMilestone("F",6)
+        },
+        unlocked(){return challengeCompletion("F",21) >= this.id-20}
     },
     91: {
         display() {
