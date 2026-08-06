@@ -628,7 +628,7 @@ addLayer("p", {
             canComplete: function() {return player.points.gte(100)},
             goalDescription: "100点数",
             rewardDescription(){return "点数" + (getClickableState("F",14) == 1 ? "^1.01" : "*1e20(没那么好,指数前面)")},
-            unlocked(){return true},
+            unlocked(){return (inChallenge("P",21) || hasChallenge("P",21))},
             onEnter(){
                 player.points = new Decimal(0)
             }
@@ -672,7 +672,8 @@ buyables: {
         canAfford() { return player[this.layer].points.gte(this.cost()) },
         buy() {
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
-        }
+        },
+        unlocked(){return hasUpgrade("p",21)}
     },
     12: {
         title: "pB2",
@@ -940,7 +941,7 @@ addLayer("P", {
             canComplete: function() {return player.points.gte(1e7)},
             goalDescription: "10000000点数",
             rewardDescription: "点数*1000",
-            unlocked(){return true},
+            unlocked(){return hasMilestone("f",0)},
             onEnter(){
                 if(!hasUpgrade("p",22))player.p.upgrades = []
             }
@@ -959,7 +960,7 @@ addLayer("P", {
             let s = ""
             s+="重置点数升级"
             if(hasUpgrade("p",22))s+="1~5"
-            s+=(",同时点数削弱自己(公式：/(点数^0.5+1),同时点数/1e30<br>效果：/" + format(player.points.pow(0.3).add(1).times(1e30)))
+            s+=(",同时点数削弱自己(公式：/(点数^0.5+1),同时点数/1e30<br>当前：/" + format(player.points.pow(0.3).add(1).times(1e30)))
             return s
             },
             canComplete: function() {return player.points.gte(getClickableState("F",13) == 1 ? 1e15 : 1e20)},
@@ -1007,7 +1008,7 @@ addLayer("P", {
             let s = ""
             s+="重置点数升级"
             if(hasUpgrade("p",22))s+="1~5"
-            s+=(",同时点数削弱自己(公式：^(1/(ln(ln(点数^0.5+1)+1)+1))),同时点数/" + (getClickableState("F",14) == 1 ? "114514" : "1e114") + "(好臭的削弱)<br>效果：^(1/" + format(player.points.pow(0.5).add(1).log(Math.E).add(1).log(Math.E).add(1)) + ")")
+            s+=(",同时点数削弱自己(公式：^(1/(ln(ln(点数^0.5+1)+1)+1))),同时点数/" + (getClickableState("F",14) == 1 ? "114514" : "1e114") + "(好臭的削弱)<br>当前：^(1/" + format(player.points.pow(0.5).add(1).log(Math.E).add(1).log(Math.E).add(1)) + ")")
             return s
             },
             canComplete: function() {return player.points.gte(1e33)},
@@ -1468,12 +1469,12 @@ challenges: {
     },
     22: {
         name: "FC5",
-        challengeDescription: "点数^0.05,但是点数*(错误点数^110)(没那么好,指数前面)",
+        challengeDescription: "点数^0.05,但是点数*(错误点数^100)(没那么好,指数前面)",
         unlocked(){return hasMilestone("F",7)},
         canComplete: function() {
             let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
-            if (a==1) b=("1e90")//11111(...)
+            if (a==1) b=("1e85")//11111(...)
             else if (a==2) b=("114514")
             else if (a==3) b=("114514")
             else if (a==4) b=("114514")
@@ -1486,7 +1487,7 @@ challenges: {
             let s = ""
             let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
-            if (a==1) b=("1e90")
+            if (a==1) b=("1e85")
             else if (a==2) b=("114514")
             else if (a==3) b=("114514")
             else if (a==4) b=("114514")
@@ -1772,7 +1773,7 @@ challenges: {
         "blank",
         ["display-text",function(){
           let s=""
-          s+="你有" + format(player.F.falsePoint) + "错误点数<br>(" + format(player.F.falsePointGain) + "每秒,公式：ln(点数+1))<br>这将点数*" + format(player.F.falsePoint.pow(0.2).add(1)) + "<br>公式：*(错误点数^0.2+1)<br>善良的xiajibazuo不忍心墙玩家,所以可购买不消耗错误点数"
+          s+="你有" + format(player.F.falsePoint) + "错误点数<br>(" + format(player.F.falsePointGain) + "每秒,公式：ln(点数+1))<br>这将点数*" + format(player.F.falsePoint.pow(hasChallenge("F",22) ? challengeEffect("F",22) 0.2).add(1)) + "<br>公式：*(错误点数^" + (hasChallenge("F",22) ? challengeEffect("F",22) 0.2) + "+1)<br>善良的xiajibazuo不忍心墙玩家,所以可购买不消耗错误点数"
           return s
         }],
         "blank",
