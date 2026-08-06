@@ -1,7 +1,7 @@
 /*i d k y do i fill 棍母
 remember p autobuybuyables
 wtf of chal comp is a num not a Decimal?!
-
+aminos
 */
 addLayer("L", {
     name: "层级", // This is optional, only used in a few places, If absent it just uses the layer id.
