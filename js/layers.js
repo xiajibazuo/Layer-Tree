@@ -1,7 +1,7 @@
 /*i d k y do i fill 棍母
 remember p autobuybuyables
 wtf of chal comp is a num not a Decimal?!
-aminos
+
 */
 addLayer("L", {
     name: "层级", // This is optional, only used in a few places, If absent it just uses the layer id.
@@ -1773,7 +1773,7 @@ challenges: {
         "blank",
         ["display-text",function(){
           let s=""
-          s+="你有" + format(player.F.falsePoint) + "错误点数<br>(" + format(player.F.falsePointGain) + "每秒,公式：ln(点数+1))<br>这将点数*" + format(player.F.falsePoint.pow(hasChallenge("F",22) ? challengeEffect("F",22) 0.2).add(1)) + "<br>公式：*(错误点数^" + (hasChallenge("F",22) ? challengeEffect("F",22) 0.2) + "+1)<br>善良的xiajibazuo不忍心墙玩家,所以可购买不消耗错误点数"
+          s+="你有" + format(player.F.falsePoint) + "错误点数<br>(" + format(player.F.falsePointGain) + "每秒,公式：ln(点数+1))<br>这将点数*" + format(player.F.falsePoint.pow(hasChallenge("F",22) ? challengeEffect("F",22) : 0.2).add(1)) + "<br>公式：*(错误点数^" + (hasChallenge("F",22) ? challengeEffect("F",22) : 0.2) + "+1)<br>善良的xiajibazuo不忍心墙玩家,所以可购买不消耗错误点数"
           return s
         }],
         "blank",
