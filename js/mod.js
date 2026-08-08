@@ -69,16 +69,16 @@ function getPointGen() {
 	if (hasUpgrade("P",14))gain = gain.times(1000)
 	if (inChallenge("p",11))gain = gain.div(1e20)
 	if (hasChallenge("p",11)){
-	    if(getClickableState("F",14) == 1)exp = exp.times(1.01)
+	    if(getClickableState("F",14) == 1)exp = exp.times(hasMilestone("F",8) ? 1.02 : 1.01)
 	    else gain = gain.times(1e20)
 	}
 	if (hasChallenge("p",12)){
-	    if(getClickableState("F",14) == 1)exp = exp.times(1.01)
+	    if(getClickableState("F",14) == 1)exp = exp.times(hasMilestone("F",8) ? 1.02 : 1.01)
 	    else gain = gain.times(1e20)
 	}
 	if (hasChallenge("P",22))gain = gain.times(1000)
-	if (inChallenge("P",22))gain = gain.div(getClickableState("F",14) == 1 ? 114514 : 1e114)
-	if (inChallenge("P",23))gain = gain.div(getClickableState("F",14) == 1 ? 114514 : 1e114)
+	if (inChallenge("P",22))gain = gain.div(getClickableState("F",14) == 1 || hasMilestone("F",8) ? 114514 : 1e114)
+	if (inChallenge("P",23))gain = gain.div(getClickableState("F",14) == 1 || hasMilestone("F",8) ? 114514 : 1e114)
 	if (hasUpgrade("p",21))gain = gain.times(10)
 	if (hasUpgrade("p",21) && !inChallenge("F",12))gain = gain.times(buyableEffect("p",11))
 	if (hasUpgrade("p",23) && !inChallenge("F",11) && !inChallenge("F",12))gain = gain.times(buyableEffect("p",12))
@@ -111,13 +111,14 @@ function getPointGen() {
 	    if (getClickableState("F",25) == 1)gain = gain.div(1e5)
 	    else exp = exp.times(0.95)
 	}
-	if (inChallenge("F",22))gain = gain.times(player.F.falsePoint.pow(100))
+	if (inChallenge("F",22))gain = gain.times(player.F.falsePoint.pow(110))
 	
 	if (inChallenge("P",11))exp = exp.times(0.15)
 	if (inChallenge("P",21))exp = exp.times(0.05)
 	if (inChallenge("P",23))exp = exp.div(player.points.pow(0.5).add(1).log(Math.E).add(1).log(Math.E).add(1))
 	if (hasUpgrade("p",25) && !inChallenge("F",12))exp = exp.times(buyableEffect("p",13))
 	if (inChallenge("F",22))exp = exp.times(0.05)
+	if (getClickableState("F",21) == 1)exp = exp.times(0.04)
 	
 	if (!inChallenge("F",11))gain = gain.pow(exp)
 	
