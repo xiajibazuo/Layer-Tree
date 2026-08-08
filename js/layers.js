@@ -1762,7 +1762,7 @@ challenges: {
         "resource-display",
         "blank",
         "blank",
-        ["row",[["clickable",11],["clickable",12],["clickable",13],["clickable",14],["clickable",15]]]],
+        ["row",[["clickable",11],["clickable",12],["clickable",13],["clickable",14],["clickable",15]]],
         ["row",[["clickable",21],["clickable",22],["clickable",23],["clickable",24],["clickable",25]]]]
     },
     "错误点数": {
