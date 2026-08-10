@@ -307,6 +307,10 @@ addLayer("ED", {
         return new Decimal(1)
     },
     branches: ["L"],
+    prestigeButtonText(){
+        if(player.ED.points.gte(1))return "重置以重置("
+        return "重置以通关"
+    },
     
     clickables: {
     11: {
@@ -547,7 +551,7 @@ addLayer("p", {
         15: {
             title: "5",
             description(){
-                return ((getClickableState("F",12) == 1) ? "声望基础价格降低(1e14→1e555)但声望点数/10000" : ("点数增益自己<br>效果：*" + format(upgradeEffect(this.layer,this.id))))
+                return ((getClickableState("F",12) == 1) ? "声望基础价格降低(1e14→1e6)但声望点数/10000" : ("点数增益自己<br>效果：*" + format(upgradeEffect(this.layer,this.id))))
             },
             effect(){
                 let hc = new Decimal(1)
@@ -825,6 +829,8 @@ addLayer("P", {
     update(diff){
         if (player.P.total.gte(player.P.total2)){player.P.total2 = player.P.total}
     },
+    autoUpgrade(){return hasMilestone("F",9)},
+    passiveGeneration(){return hasMilestone("F",9) ? 1 : 0},
     
     milestones: {
         1: {
@@ -993,6 +999,11 @@ addLayer("P", {
             unlocked(){return hasUpgrade("P",15)},
             onEnter(){
                 if(!hasUpgrade("p",22))player.p.upgrades = []
+                if(hasMilestone("F",9)){
+                    player.p.Challenges[11]=1
+                    player.p.Challenges[12]=1
+                    player.p.Challenges[13]=1
+                }
             }
         },
         22: {
@@ -1153,6 +1164,7 @@ addLayer("f", {
 
     layerShown() { return player.L.points.gte(4)},          // Returns a bool for if this layer's node should be visible in the tree.
     branches: ["L","P"],
+    autoPrestige(){return hasMilestone("F",9) && player.f.points.lt(1)},
 
     milestones: {
         0: {
@@ -1270,13 +1282,18 @@ addLayer("F", {
         },
         7: {
             requirementDescription: "通过FC3",
-            effectDescription: "(终于给qol了qwq)自动购买点数升级和可购买,C2外点数可点击总是作用中,解锁三个挑战",
+            effectDescription: "(终于给qol了qwq)自动购买点数升级和可购买,C2外点数可点击总是作用中,解锁二个挑战",
             done() { return hasChallenge("F",13)}
         },
         8: {
             requirementDescription: "通过FC4",
             effectDescription: "升/降级更好,其中一些增益总是有效(斜体显示)",
             done() { return hasChallenge("F",21)}
+        },
+        9: {
+            requirementDescription: "…",
+            effectDescription: "每秒获得100%的声望点数,自动购买声望升级,快速点数<1时自动重置快速点数,进入PC4时完成C1~3",
+            done() { return false}
         }
        },
 buyables: {
@@ -1503,7 +1520,7 @@ challenges: {
             return new Decimal(challengeCompletions(this.layer,this.id))
         },
         rewardDescription(){return "提高错误点数增益指数<br>效果：(0.2→" + challengeEffect(this.layer,this.id) + ")"}
-    },
+    },/*
     23: {
         name: "FC6",
         challengeDescription: "…",
@@ -1539,7 +1556,7 @@ challenges: {
             return new Decimal(challengeEffect(this.layer,this.id))
         },
         rewardDescription(){return "最佳声望点数增益错误点数(公式：*点数^(通过次数*0.005))<br>效果：" + challengeEffect(this.layer,this.id)}
-    },
+    }*/
 },
     clickables: {
     11: {
@@ -1630,7 +1647,7 @@ challenges: {
     21: {
         title: "升/降级6",
         display() {
-            return "点数^0.04,但错误点数*(点数)<br>" + (hasMilestone("F",6) ? "点击时进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
+            return "点数^0.08,但错误点数*(点数)<br>" + (hasMilestone("F",6) ? "点击时进行一次错误重置<br>" : "") + ((getClickableState(this.layer,this.id) == 1) ? "开" : "关")
         },
         onClick(){
         player.points = new Decimal(0)
