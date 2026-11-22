@@ -197,7 +197,7 @@ addLayer("L", {
         canClick(){
             return true
         },
-        unlocked(){return player.test}
+        unlocked(){return true}
     }
     },
     tabFormat: {
@@ -387,7 +387,7 @@ addLayer("ED", {
             return hasUpgrade("P",91)
         },
         style: {"background-color": "#BF8F8F"},
-        unlocked(){return player.test},
+        unlocked(){return true},
         tooltip: "能点吗"
     }
     },
@@ -453,9 +453,12 @@ addLayer("p", {
     autoUpgrade(){return hasMilestone("F",7)},
     automateStuff(){
         if(hasMilestone("F",7)){
-            if(canBuyBuyable(this.layer,11))setBuyableAmount(this.layer, 11, (player.points.neq(0) ? player.points.div(getClickableState("F",15) == 1 ? 1e100 : "1e270").log(new Decimal(getClickableState("F",15) == 1 ? 1e5 : 1e10)).floor().add(1) : getBuyableAmount(this.layer,11)))
-            if(canBuyBuyable(this.layer,12))setBuyableAmount(this.layer, 12, (player.points.neq(0) ? player.points.div(getClickableState("F",15) == 1 ? "1e200" : "1e315").log(new Decimal(getClickableState("F",15) == 1 ? "1e10" : "1e15")).floor().add(1) : getBuyableAmount(this.layer,12)))
-            if(canBuyBuyable(this.layer,13))setBuyableAmount(this.layer, 13, (player.points.neq(0) ? player.points.div(getClickableState("F",15) == 1 ? "1e280" : "1e350").log(new Decimal(getClickableState("F",15) == 1 ? "1e15" : "1e20")).floor().add(1) : getBuyableAmount(this.layer,13)))
+            let b1=1e5
+            let b2=1e10
+            let b3=1e15
+            if(canBuyBuyable(this.layer,11))setBuyableAmount(this.layer, 11, (player.points.neq(0) ? player.points.div(getClickableState("F",15) == 1 ? 1e100 : "1e270").log(new Decimal(getClickableState("F",15) == 1 ? (hasMilestone("F",8) ? b1 : 1e5) : 1e10)).floor().add(1) : getBuyableAmount(this.layer,11)))
+            if(canBuyBuyable(this.layer,12))setBuyableAmount(this.layer, 12, (player.points.neq(0) ? player.points.div(getClickableState("F",15) == 1 ? "1e200" : "1e315").log(new Decimal(getClickableState("F",15) == 1 ? (hasMilestone("F",8) ? b2 : 1e10) : "1e15")).floor().add(1) : getBuyableAmount(this.layer,12)))
+            if(canBuyBuyable(this.layer,13))setBuyableAmount(this.layer, 13, (player.points.neq(0) ? player.points.div(getClickableState("F",15) == 1 ? "1e280" : "1e350").log(new Decimal(getClickableState("F",15) == 1 ? (hasMilestone("F",8) ? b3 : 1e15) : "1e20")).floor().add(1) : getBuyableAmount(this.layer,13)))
         }
     },
     
@@ -831,6 +834,13 @@ addLayer("P", {
     },
     autoUpgrade(){return hasMilestone("F",9)},
     passiveGeneration(){return hasMilestone("F",9) ? 1 : 0},
+    hotkeys: [
+        {
+            key: "p", // What the hotkey button is. Use uppercase if it's combined with shift, or "ctrl+x" for holding down ctrl.
+            description: "P:按下以重置获得声望点数", // The description of the hotkey that is displayed in the game's How To Play tab
+            onPress() { if (player.P.unlocked) doReset("P") }
+        }
+    ],
     
     milestones: {
         1: {
@@ -866,20 +876,31 @@ addLayer("P", {
                 return ("声望点数增益点数<br>效果：*" + format(upgradeEffect(this.layer,this.id)))
             },
             effect(){
-                let sc = new Decimal(1)
-                sc = new Decimal("1e80")
+                let sc = new Decimal("1e80")
                 if(getClickableState("F",13) == 1 && !hasMilestone("F",8))sc = new Decimal(1e20)
-                let eff = new Decimal(1)
-                if(player.P.points.gte(sc)) eff = player.P.points.times(player.P.points.add(1).log(Math.E)).add(1).pow(0.5).times(sc.pow(1-0.5))
-                else eff = player.P.points.times(player.P.points.add(1).log(Math.E)).add(1)
+                let scdb = 0.5
+                let sc2 = new Decimal("1e250")
+                let scdb2 = 0
+                
+                function sc0eff(a){return a.times(a.add(1).log(Math.E)).add(1)}
+                function sc1eff(a){return sc0eff(a).pow(scdb).times(sc0eff(sc).pow(1-scdb))}
+                function sc2eff(a){return sc1eff(a).pow(scdb2).times(sc1eff(sc2).pow(1-scdb2))}
+
+                let eff = sc0eff(player.P.points)
+                if(player.P.points.gte(sc)) eff = sc1eff(player.P.points)
+                if(player.P.points.gte(sc2)) eff = sc2eff(player.P.points)
                 return eff
             },
             tooltip(){
-                let sc = new Decimal(1)
-                sc = new Decimal("1e80")
+                let sc = new Decimal("1e80")
                 if(getClickableState("F",13) == 1 && !hasMilestone("F",8))sc = new Decimal(1e20)
+                let scdb = 0.5
+                let sc2 = new Decimal("1e250")
+                let scdb2 = 0
+                
                 let s = "公式：*(声望点数*ln(声望点数+1)+1)"
-                if(player.P.points.gte(sc)) s+="<br>现在声望点数超过了" + format(sc) + ",效果达到软上限(^0.5)"
+                if(player.P.points.gte(sc)) s+="<br>现在声望点数超过了" + format(sc) + ",效果达到软上限(^" + scdb + ")"
+                if(player.P.points.gte(sc2)) s+="<br>现在声望点数超过了" + format(sc2) + ",效果达到二重软上限(再^" + scdb2 + ")"
                 return s
             },
             cost: new Decimal(1)
@@ -993,16 +1014,16 @@ addLayer("P", {
             s+="点数^0.05,解锁点数挑战"
             return s
             },
-            canComplete: function() {return hasChallenge("p",13)},
+            canComplete: function() {return hasChallenge("p",13) && player.p.best.gte(1e6)},
             goalDescription: "???",
             rewardDescription: "重置时保留点数挑战",
             unlocked(){return hasUpgrade("P",15)},
             onEnter(){
                 if(!hasUpgrade("p",22))player.p.upgrades = []
                 if(hasMilestone("F",9)){
-                    player.p.Challenges[11]=1
-                    player.p.Challenges[12]=1
-                    player.p.Challenges[13]=1
+                    player.p.challenges[11]=1
+                    player.p.challenges[12]=1
+                    player.p.challenges[13]=1
                 }
             }
         },
@@ -1231,7 +1252,7 @@ addLayer("F", {
         return new Decimal(1)
     },
 
-    layerShown() { return player.test && (player.L.points.gte(5) || hasMilestone("F",1))},          // Returns a bool for if this layer's node should be visible in the tree.
+    layerShown() { return true && (player.L.points.gte(5) || hasMilestone("F",1))},          // Returns a bool for if this layer's node should be visible in the tree.
     tooltip: "解锁了吗",
     update(diff){
         let gain = player.points.add(1).log(Math.E)
@@ -1248,37 +1269,37 @@ addLayer("F", {
         1: {
             requirementDescription: "1错误",
             effectDescription: "永久显示F层级,开启升/降级1,解锁错误点数",
-            done() { return player.F.points.gte(1) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
+            done() { return player.F.points.gte(1) && (true && (player.L.points.gte(5) || hasMilestone("F",1)))},
             onComplete(){setClickableState("F",11,1)}
         },
         2: {
             requirementDescription: "1错误和3层级(和1错误点数)(为什么你别管)",
             effectDescription: "开启升/降级2,解锁一个可购买",
-            done() { return player.F.points.gte(1) && player.L.points.gte(3) && player.F.falsePoint.gte(1) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
+            done() { return player.F.points.gte(1) && player.L.points.gte(3) && player.F.falsePoint.gte(1) && (true && (player.L.points.gte(5) || hasMilestone("F",1)))},
             onComplete(){setClickableState("F",12,1)}
         },
         3: {
             requirementDescription: "1错误和1声望点数(和1错误点数)(为什么你别管)",
             effectDescription: "开启升/降级3",
-            done() { return player.F.points.gte(1) && player.P.points.gte(1) && player.F.falsePoint.gte(1) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
+            done() { return player.F.points.gte(1) && player.P.points.gte(1) && player.F.falsePoint.gte(1) && (true && (player.L.points.gte(5) || hasMilestone("F",1)))},
             onComplete(){setClickableState("F",13,1)}
         },
         4: {
             requirementDescription: "1错误和通过点数挑战3(和1错误点数)(为什么你别管)",
             effectDescription: "开启升/降级4,解锁一个可购买",
-            done() { return player.F.points.gte(1) && hasChallenge("p",13) && player.F.falsePoint.gte(1) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
+            done() { return player.F.points.gte(1) && hasChallenge("p",13) && player.F.falsePoint.gte(1) && (true && (player.L.points.gte(5) || hasMilestone("F",1)))},
             onComplete(){setClickableState("F",14,1)}
         },
         5: {
             requirementDescription: "1错误和解锁可购买(和1错误点数)(为什么你别管)",
             effectDescription: "开启升/降级5",
-            done() { return player.F.points.gte(1) && hasUpgrade("p",21) && player.F.falsePoint.gte(1) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))},
+            done() { return player.F.points.gte(1) && hasUpgrade("p",21) && player.F.falsePoint.gte(1) && (true && (player.L.points.gte(5) || hasMilestone("F",1)))},
             onComplete(){setClickableState("F",15,1)}
         },
         6: {
             requirementDescription: "1错误和20层级点数(和1错误点数)(为什么你别管)",
             effectDescription: "错误不重置层级,在重置时可以开启/关闭升/降级,解锁错误挑战",
-            done() { return player.F.points.gte(1) && player.L.layerPoint.gte(20) && player.F.falsePoint.gte(1) && (player.test && (player.L.points.gte(5) || hasMilestone("F",1)))}
+            done() { return player.F.points.gte(1) && player.L.layerPoint.gte(20) && player.F.falsePoint.gte(1) && (true && (player.L.points.gte(5) || hasMilestone("F",1)))}
         },
         7: {
             requirementDescription: "通过FC3",
@@ -1291,9 +1312,9 @@ addLayer("F", {
             done() { return hasChallenge("F",21)}
         },
         9: {
-            requirementDescription: "…",
+            requirementDescription: "FC1*3",
             effectDescription: "每秒获得100%的声望点数,自动购买声望升级,快速点数<1时自动重置快速点数,进入PC4时完成C1~3",
-            done() { return false}
+            done() { return challengeCompletions("F",11)>=3}
         }
        },
 buyables: {
@@ -1306,7 +1327,7 @@ buyables: {
             return new Decimal(1e2).pow(x)
         },
         display() {
-           return "增益点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount(this.layer,this.id))
+           return "增益点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "错误点数<br>数量：" +format(getBuyableAmount(this.layer,this.id))
         },
         tooltip: "效果公式：*(100^可购买数量)",
         canAfford() { return player[this.layer].falsePoint.gte(this.cost()) },
@@ -1323,7 +1344,7 @@ buyables: {
             return new Decimal(10).pow(x)
         },
         display() {
-           return "增益错误点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount(this.layer,this.id))
+           return "增益错误点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "错误点数<br>数量：" +format(getBuyableAmount(this.layer,this.id))
         },
         tooltip: "效果公式：*(10^可购买数量)",
         canAfford() { return player[this.layer].falsePoint.gte(this.cost()) },
@@ -1341,7 +1362,7 @@ buyables: {
             return new Decimal(100).pow(x)
         },
         display() {
-           return "增益声望点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "点数<br>数量：" +format(getBuyableAmount(this.layer,this.id))
+           return "增益声望点数<br>效果：*" + format(this.effect()) + "价格：达到" + format(this.cost()) + "错误点数<br>数量：" +format(getBuyableAmount(this.layer,this.id))
         },
         tooltip(){return "效果公式：*(100^可购买数量)"},
         canAfford() { return player[this.layer].falsePoint.gte(this.cost()) },
@@ -1358,32 +1379,26 @@ challenges: {
         canComplete: function() {
             let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
-            if (a==1) b=("1e195")//01001
+            if (a==1) b=("1e185")//01001
             else if (a==2) b=("1e215")
-            else if (a==3) b=("114514")
-            else if (a==4) b=("114514")
-            else if (a==5) b=("114514")
-            else if (a>5) b=("eeeeeeeeee114514")
+            else if (a==3) b=("1e245")
+            else if (a>3) b=("eeeeeeeeee114514")
             return player.points.gte(new Decimal(b))
         },
-        completionLimit(){return 5},
+        completionLimit(){return 3},
         goalDescription(){
             let s = ""
             let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
-            if (a==1) b=("1e195")
+            if (a==1) b=("1e185")//01001
             else if (a==2) b=("1e215")
-            else if (a==3) b=("114514")
-            else if (a==4) b=("114514")
-            else if (a==5) b=("114514")
-            else if (a>5) b=("eeeeeeeeee114514")
+            else if (a==3) b=("1e245")
+            else if (a>3) b=("eeeeeeeeee114514")
             s+=b
-            s+="点数(" + challengeCompletions(this.layer,this.id) + "/5)"
+            s+="点数(" + challengeCompletions(this.layer,this.id) + "/3)"
             return s
         },
-        rewardEffect(){
-            if(player.points.pow(new Decimal(challengeCompletions(this.layer,this.id)).times(0.002)).gt(challengeEffect(this.layer,this.id)))return player.points.pow(new Decimal(challengeCompletions(this.layer,this.id)).times(0.002))
-            return new Decimal(challengeEffect(this.layer,this.id))},
+        rewardEffect(){return player.points.pow(new Decimal(challengeCompletions(this.layer,this.id)).times(0.002)).max(challengeEffect(this.layer,this.id))},
         rewardDescription(){return "最佳点数增益错误点数(公式：*点数^(通过次数*0.002))<br>效果：*" + challengeEffect(this.layer,this.id)}
     },
     12: {
@@ -1393,26 +1408,36 @@ challenges: {
             let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
             if (a==1) b=("49")//00001
-            else if (a==2) b=("1")
-            else if (a==3) b=("1")
-            else if (a==4) b=("14")
-            else if (a==5) b=("14")
-            else if (a>5) b=("eeeeeeeeee114514")
+            else if(hasMilestone("F",9)){
+            if (a==2) b=("0")
+            else if (a==3) b=("0")
+            else if (a>3) b=("eeeeeeeeee114514")
+            }
+            else{
+            if (a==2) b=("59")
+            else if (a==3) b=("69")
+            else if (a>3) b=("eeeeeeeeee114514")
+            }
             return getBuyableAmount("p",11).gte(new Decimal(b))
         },
-        completionLimit(){return 5},
+        completionLimit(){return 3},
         goalDescription(){
             let s = ""
             let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
-            if (a==1) b=("49")
-            else if (a==2) b=("114514")
-            else if (a==3) b=("114514")
-            else if (a==4) b=("114514")
-            else if (a==5) b=("114514")
-            else if (a>5) b=("eeeeeeeeee114514")
+            if (a==1) b=("49")//00001
+            else if(hasMilestone("F",9)){
+            if (a==2) b=("0")
+            else if (a==3) b=("0")
+            else if (a>3) b=("eeeeeeeeee114514")
+            }
+            else{
+            if (a==2) b=("59")
+            else if (a==3) b=("69")
+            else if (a>3) b=("eeeeeeeeee114514")
+            }
             s+=b
-            s+="pB1购买次数(" + challengeCompletions(this.layer,this.id) + "/5)"
+            s+="pB1购买次数(" + challengeCompletions(this.layer,this.id) + "/3)"
             return s
         },
         rewardEffect(){return new Decimal(10).minus(new Decimal(challengeCompletions(this.layer,this.id)).times(2.75).minus(new Decimal(challengeCompletions(this.layer,this.id)).pow(2).div(4)))},
@@ -1426,32 +1451,39 @@ challenges: {
             let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
             if (a==1) b=("1e190")//01011
-            else if (a==2) b=("114514")
-            else if (a==3) b=("114514")
-            else if (a==4) b=("114514")
-            else if (a==5) b=("114514")
-            else if (a>5) b=("eeeeeeeeee114514")
+            else if(hasMilestone("F",9)){
+            if (a==2) b=("0")
+            else if (a==3) b=("0")
+            else if (a>3) b=("eeeeeeeeee114514")
+            }
+            else{
+            if (a==2) b=("1e290")
+            else if (a==3) b=("1e390")
+            else if (a>3) b=("eeeeeeeeee114514")
+            }
             return player.P.points.gte(new Decimal(b))
         },
-        completionLimit(){return 5},
+        completionLimit(){return 3},
         goalDescription(){
             let s = ""
             let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
             if (a==1) b=("1e190")
-            else if (a==2) b=("114514")
-            else if (a==3) b=("114514")
-            else if (a==4) b=("114514")
-            else if (a==5) b=("114514")
-            else if (a>5) b=("eeeeeeeeee114514")
+            else if(hasMilestone("F",9)){
+            if (a==2) b=("0")
+            else if (a==3) b=("0")
+            else if (a>3) b=("eeeeeeeeee114514")
+            }
+            else{
+            if (a==2) b=("1e290")
+            else if (a==3) b=("1e390")
+            else if (a>3) b=("eeeeeeeeee114514")
+            }
             s+=b
-            s+="声望点数(" + challengeCompletions(this.layer,this.id) + "/5)"
+            s+="声望点数(" + challengeCompletions(this.layer,this.id) + "/3)"
             return s
         },
-        rewardEffect(){
-            if(player.P.points.pow(new Decimal(challengeCompletions(this.layer,this.id)).times(0.005)).gt(challengeEffect(this.layer,this.id)))return player.P.points.pow(new Decimal(challengeCompletions(this.layer,this.id)).times(0.005))
-            return new Decimal(challengeEffect(this.layer,this.id))
-        },
+        rewardEffect(){return player.P.points.pow(new Decimal(challengeCompletions(this.layer,this.id)).times(0.005)).max(challengeEffect(this.layer,this.id))},
         rewardDescription(){return "最佳声望点数增益错误点数(公式：*点数^(通过次数*0.005))<br>效果：*" + challengeEffect(this.layer,this.id)}
     },
     21: {
@@ -1461,27 +1493,23 @@ challenges: {
         canComplete: function() {
             let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
-            if (a==1) b=("1e163")//01001
-            else if (a==2) b=("114514")
-            else if (a==3) b=("114514")
-            else if (a==4) b=("114514")
-            else if (a==5) b=("114514")
-            else if (a>5) b=("eeeeeeeeee114514")
+            if (a==1) b=("1e370")//10001
+            else if (a==2) b=("1e1370")
+            else if (a==3) b=("1e2370")
+            else if (a>3) b=("eeeeeeeeee114514")
             return player.points.gte(new Decimal(b))
         },
-        completionLimit(){return 5},
+        completionLimit(){return 3},
         goalDescription(){
             let s = ""
             let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
-            if (a==1) b=("1e163")
-            else if (a==2) b=("114514")
-            else if (a==3) b=("114514")
-            else if (a==4) b=("114514")
-            else if (a==5) b=("114514")
-            else if (a>5) b=("eeeeeeeeee114514")
+            if (a==1) b=("1e370")
+            else if (a==2) b=("1e1370")
+            else if (a==3) b=("1e2370")
+            else if (a>3) b=("eeeeeeeeee114514")
             s+=b
-            s+="点数(" + challengeCompletions(this.layer,this.id) + "/5)"
+            s+="点数(" + challengeCompletions(this.layer,this.id) + "/3)"
             return s
         },
         rewardDescription(){return "解锁(通过次数)个升/降级"}
@@ -1494,26 +1522,36 @@ challenges: {
             let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
             if (a==1) b=("1e90")//11111(...)
-            else if (a==2) b=("114514")
-            else if (a==3) b=("114514")
-            else if (a==4) b=("114514")
-            else if (a==5) b=("114514")
-            else if (a>5) b=("eeeeeeeeee114514")
+            else if(hasMilestone("F",9)){
+            if (a==2) b=("0")
+            else if (a==3) b=("0")
+            else if (a>3) b=("eeeeeeeeee114514")
+            }
+            else{
+            if (a==2) b=("1e190")
+            else if (a==3) b=("1e290")
+            else if (a>3) b=("eeeeeeeeee114514")
+            }
             return player.points.gte(new Decimal(b))
         },
-        completionLimit(){return 5},
+        completionLimit(){return 3},
         goalDescription(){
             let s = ""
             let a = challengeCompletions(this.layer,this.id)+1
             let b = ""
             if (a==1) b=("1e90")
-            else if (a==2) b=("114514")
-            else if (a==3) b=("114514")
-            else if (a==4) b=("114514")
-            else if (a==5) b=("114514")
-            else if (a>5) b=("eeeeeeeeee114514")
+            else if(hasMilestone("F",9)){
+            if (a==2) b=("0")
+            else if (a==3) b=("0")
+            else if (a>3) b=("eeeeeeeeee114514")
+            }
+            else{
+            if (a==2) b=("1e190")
+            else if (a==3) b=("1e290")
+            else if (a>3) b=("eeeeeeeeee114514")
+            }
             s+=b
-            s+="点数(" + challengeCompletions(this.layer,this.id) + "/5)"
+            s+="点数(" + challengeCompletions(this.layer,this.id) + "/3)"
             return s
         },
         rewardEffect(){
