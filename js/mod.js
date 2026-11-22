@@ -100,16 +100,26 @@ function getPointGen() {
 	    else exp = exp.times(0.95)
 	    if (getClickableState("F",15) == 1)gain = gain.div(1e5)
 	    else exp = exp.times(0.95)
-	    if (getClickableState("F",21) == 1 && challengeCompletions("F",21) >=1)gain = gain.div(1e5)
-	    else exp = exp.times(0.95)
-	    if (getClickableState("F",22) == 1 && challengeCompletions("F",21) >=2)gain = gain.div(1e5)
-	    else exp = exp.times(0.95)
-	    if (getClickableState("F",23) == 1 && challengeCompletions("F",21) >=3)gain = gain.div(1e5)
-	    else exp = exp.times(0.95)
-	    if (getClickableState("F",24) == 1 && challengeCompletions("F",21) >=4)gain = gain.div(1e5)
-	    else exp = exp.times(0.95)
-	    if (getClickableState("F",25) == 1 && challengeCompletions("F",21) >=5)gain = gain.div(1e5)
-	    else exp = exp.times(0.95)
+	    if (challengeCompletions("F",21) >=1){
+			if (getClickableState("F",21) == 1)gain = gain.div(1e5)
+	    	else exp = exp.times(0.95)
+		}
+	    if (challengeCompletions("F",21) >=2){
+			if (getClickableState("F",22) == 1)gain = gain.div(1e5)
+	    	else exp = exp.times(0.95)
+		}
+	    if (challengeCompletions("F",21) >=3){
+			if (getClickableState("F",23) == 1)gain = gain.div(1e5)
+	    	else exp = exp.times(0.95)
+		}
+	    if (challengeCompletions("F",21) >=4){
+			if (getClickableState("F",24) == 1)gain = gain.div(1e5)
+	    	else exp = exp.times(0.95)
+		}
+	    if (challengeCompletions("F",21) >=5){
+			if (getClickableState("F",25) == 1)gain = gain.div(1e5)
+	    	else exp = exp.times(0.95)
+		}
 	}
 	if (inChallenge("F",22))gain = gain.times(player.F.falsePoint.pow(110))
 	
@@ -118,7 +128,7 @@ function getPointGen() {
 	if (inChallenge("P",23))exp = exp.div(player.points.pow(0.5).add(1).log(Math.E).add(1).log(Math.E).add(1))
 	if (hasUpgrade("p",25) && !inChallenge("F",12))exp = exp.times(buyableEffect("p",13))
 	if (inChallenge("F",22))exp = exp.times(0.05)
-	if (getClickableState("F",21) == 1)exp = exp.times(0.08)
+	if (getClickableState("F",21) == 1)exp = exp.times(0.06)
 	
 	if (!inChallenge("F",11))gain = gain.pow(exp)
 	
@@ -134,7 +144,7 @@ function addedPlayerData() { return {
     devSpeed: new Decimal(1),
     test: false,
     preGetPointGen: new Decimal(1),
-    layerLimit: new Decimal(6)     //别忘了改!!!!!!!!!!!!!!!!!!!!!!!
+    layerLimit: new Decimal(7)     //别忘了改!!!!!!!!!!!!!!!!!!!!!!!
 }}
 
 // Display extra things at the top of the page
